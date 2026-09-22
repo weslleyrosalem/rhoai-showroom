@@ -39,6 +39,16 @@ The namespace is lowercase `ahead`; the project display name is **AHEAD**. The o
 
 Do not display passwords, API keys, Secret YAML or browser request headers. The scoped OIDC users create keys through the API; native dashboard authentication remains OpenShift OAuth. The existing [Playground](playground.md) and Aurora test drive remain separate customer experiences.
 
+## Presenter readiness and fallback
+
+The final presenter-command rehearsal completed at **06:23 UTC on September 22, 2026**, with **51 of 51 checks passed**. It executed the actual private administrator commands used for smoke tests, OIDC, user tiers, priority selection, service accounts, corporate discovery/access, a real Anthropic request and sampled metrics. All 33 owned resources were ready/active/bound, the tenant was Ready, the mounted-token Job was complete, both gateways and OIDC discovery returned 200, and 15 pre-existing control resources retained their specs and UIDs. [Download the dated presentation-readiness record](../results/ahead-maas/presentation-readiness.json).
+
+Before presenting, run the `status` and `smoke` commands below in the approved context. The private presenter package additionally provides `presenter-check.py` and a step-by-step runbook; that check stops with a nonzero exit if an allowed call does not return 200 or a denied call differs from its expected status. It makes one bounded real Anthropic request. Run it once; repeated rehearsals can consume the small per-user and cloud-simulator quotas.
+
+Use the quota helper with recovery as one deliberate live step. Present hourly exhaustion, cached-JWKS outage and database restart as dated recorded evidence; do not rerun these disruptive or longer experiments during the default walkthrough. If an ordinary allowed request returns 429, let its minute-long budget recover before retrying once. If it returns 5xx or times out, pause that step and show the dated evidence as a previous run, not as a current live success. Do not alter shared services during the presentation.
+
+The readiness result applies to the documented presentation scope at its recorded time. The optional shared Loki/Redis changes and JWT-outage error-handling limitation below remain explicit; this is not production certification or a claim that all alternative providers/models passed.
+
 ## Preflight and a reproducible smoke test
 
 Download the [standalone Python rehearsal helper](../results/ahead-maas/rehearse.py). It uses the standard library and `oc`, discovers the AHEAD hostname/model, validates HTTPS, refuses redirects, creates only short-lived AHEAD keys, prints no credentials, and revokes its temporary keys. It does not install resources or change subscriptions.
@@ -150,6 +160,9 @@ sum by (subscription) (limited_calls_total{subscription=~"ahead-.*"})
 ```
 
 The rehearsal observed nonempty gateway, consumption and rate-limit series in the existing Thanos datasource. The native dashboard's summary follows the selected time range while its current chart uses a fixed rolling two-hour expression; their totals can differ. Prometheus sampling/`increase()` can also extrapolate. These counters are not exact per-request Loki billing records.
+
+**Short-burst caveat observed in the presenter review:** the `ahead-simulator-free` Usage filter displayed 2 tokens, 1 request and 0 rate-limited for the selected 30 minutes. The new token series was first sampled at 108 and later 110; the limited-call series was first sampled at 1 and stayed 1. Their sampled increases therefore showed only the recovery request and no later increment in blocked calls. The HTTP rehearsal still proved 108 tokens followed by 429, premium isolation and recovery. A zero increase does not mean that no request was blocked before the first sample. Use the HTTP results as the quota acceptance evidence and the Usage panel as sampled observability. See [Prometheus `increase()` semantics](https://prometheus.io/docs/prometheus/latest/querying/functions/#increase).
+
 
 ## Preserved state and deferred extensions
 

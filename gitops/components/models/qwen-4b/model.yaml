@@ -8,6 +8,8 @@ metadata:
     opendatahub.io/dashboard: 'true'
   annotations:
     opendatahub.io/display-name: aurora-qwen-4b
+    opendatahub.io/hardware-profile-name: showroom-l40s-1
+    opendatahub.io/hardware-profile-namespace: ai-showroom
     showroom.openshift.ai/model-revision: cdbee75f17c01a7cc42f958dc650907174af0554
     showroom.openshift.ai/license: apache-2.0
     showroom.openshift.ai/validation: shared-gateway-base-requires-environment-specific-acceptance

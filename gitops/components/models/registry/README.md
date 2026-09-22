@@ -61,7 +61,28 @@ Expected identity values must come from the independently approved environment r
 
 Use a single editor window for this version. The helper re-reads metadata immediately before the PATCH and aborts if it changed during measurement; the registry API does not provide a Kubernetes resourceVersion compare-and-swap transaction. Keep concurrent promotion/evaluation writers paused for this short update.
 
-On September 22, 2026, version 2 recorded `PASSED_PROTOCOL_TOOL_AND_ROUTING` with a timestamp and SHA-256 evidence reference. Its lifecycle remained `candidate`; safety and performance remained `NOT_RUN`. Fresh registrations still initialize all three checks as `NOT_RUN`. This is acceptance of the native serving protocol, not model quality, a benchmark result, or promotion.
+On September 22, 2026, version 2 recorded `PASSED_PROTOCOL_TOOL_AND_ROUTING` with a timestamp and SHA-256 evidence reference. At that step, its lifecycle remained `candidate`; safety and performance remained `NOT_RUN`. Fresh registrations still initialize all three checks as `NOT_RUN`. This is acceptance of the native serving protocol, not model quality, a benchmark result, or promotion.
+
+## Attach an existing measured performance reference
+
+The separate performance recorder attached the [September 22 raw reference measurements](https://github.com/weslleyrosalem/rhoai-showroom/blob/bc27f1bbb36a3ba8f2bba4bb9050d90d725c0c71/docs/results/engine-ab-20260922.json) to the existing candidate as `MEASURED_REFERENCE_ONLY`. Safety remains `NOT_RUN`, the runtime evidence is preserved, and the lifecycle remains `candidate`. This status records evidence; it grants no performance, safety, quality, or promotion approval.
+
+The evidence covers one repetition on the same physical L40S and temporary Pod: pinned Qwen4B BF16, identical runtime image, CPU/memory limits, tokenizer/template and workload, with prefix caching disabled. It compares a serialized batch-one Transformers reference with vLLM continuous batching at concurrency 1 and 2. It does not measure the current two-replica Gateway path or an optimized Transformers deployment.
+
+```bash
+python3 gitops/components/models/record_performance.py \
+  --expected-server "$SHOWROOM_SERVER" --expected-user "$SHOWROOM_USER" \
+  --public-commit bc27f1bbb36a3ba8f2bba4bb9050d90d725c0c71 \
+  --original-runs /private/directory/engine-ab \
+  --audit-dir /private/directory/registry-performance-NEW-DATE
+# Review the read-only PLAN, then repeat with --apply.
+```
+
+Set the expected identity from the independently approved environment record. The original measurement directory is private evidence retained by the operator who performed this run; it is not included in Git. A fresh cluster cannot claim this rehearsal as its own without its matching original measurements and live immutable model/runtime pins. No inference is performed by this recorder.
+
+The helper dynamically resolves the registered model/version/artifact, verifies the artifact URI and live image index/resolved digest, and compares the public file with its immutable GitHub copy and the hashes of all four original reports. It writes exclusive private audit files before and after updating only the version's custom properties. It preserves the original `showroom.deployment_manifest` provenance and adds `showroom.runtime_manifest=gitops/components/models/qwen-4b-private` to describe the actual serving variant.
+
+Use a **single-editor window**. The helper re-reads the version immediately before PATCH and aborts on an observed change; this is not an atomic compare-and-swap transaction. A repeated invocation with the same evidence reports `UNCHANGED`. Different existing evidence, a promoted lifecycle, or another performance decision is rejected for separate review.
 
 ## Add another model
 

@@ -55,7 +55,7 @@ The September 22, 2026 rehearsal registered these linked native records:
 | Model version | instruct-2507-cdbee75f | 2 |
 | Model artifact | aurora-qwen-4b-cdbee75f | 1 |
 
-The artifact location is `hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554`. Version metadata includes the runtime image digest, Apache 2.0 license, catalog source, hardware profile, and deployment manifest. Its lifecycle remains `candidate`. The September 22 runtime recorder later measured native inference, structured tool calling, and endpoint-picker processing, updating runtime status to `PASSED_PROTOCOL_TOOL_AND_ROUTING`. Safety and performance remain `NOT_RUN`; fresh registrations still initialize all checks as `NOT_RUN`. IDs are local to this registry and can differ on a fresh installation.
+The artifact location is `hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554`. Version metadata includes the runtime image digest, Apache 2.0 license, catalog source, hardware profile, and deployment manifest. Its lifecycle remains `candidate`. The September 22 runtime recorder later measured native inference, structured tool calling, and endpoint-picker processing, updating runtime status to `PASSED_PROTOCOL_TOOL_AND_ROUTING`. Safety remains `NOT_RUN`; performance now records the bounded reference measurement described below. Fresh registrations still initialize all checks as `NOT_RUN`. IDs are local to this registry and can differ on a fresh installation.
 
 Run the read-only onboarding plan from the repository root. Replace the guarded server and identity with values that you have intentionally selected.
 
@@ -68,7 +68,9 @@ python3 gitops/components/models/register_model.py \
 
 On a fresh cluster, create the dedicated instance using the [registry prerequisites and manifests](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/components/models/registry/README.md). After reviewing the helper plan, repeat the command with `--apply` to create absent metadata records. On the current showroom, the repeated apply preserved all three IDs. It did not duplicate the version, reset lifecycle evidence, download weights, or start a GPU deployment.
 
-For a test drive, open the version's properties and ask the visitor to find the immutable weight revision, hardware target, and three missing validation gates. Then run the helper without `--apply` and explain the `preserved` actions. A second candidate can be prepared by copying the [candidate example](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/components/models/registry/qwen-4b-candidate.json) with unique names and verified pins. Registering it is an explicit write; it still does not promote it.
+For a test drive, open the version's properties and ask the visitor to find the immutable weight revision, hardware target, and the distinction between runtime compatibility, measured reference performance, and missing quality/safety approval. Then run the helper without `--apply` and explain the `preserved` actions. A second candidate can be prepared by copying the [candidate example](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/components/models/registry/qwen-4b-candidate.json) with unique names and verified pins. Registering it is an explicit write; it still does not promote it.
+
+The existing Qwen deployment is now associated with its exact registered candidate through native registry labels discovered at runtime. Open the version’s **Deployments** tab to inspect the Ready llm-d deployment. This association does not promote the candidate or approve quality, safety, or performance. Use the guarded [deployment association lab](registry-deployment-link.md) to reproduce the link on another cluster; registry IDs are never embedded in portable manifests.
 
 The registry is protected by kube-rbac-proxy with verified TLS. The generated registry role is granted to showroom platform administrators and data scientists. Visitors are not granted editing access. The demo PostgreSQL database has a Bound 5Gi persistent volume. Preserve the registry and its database during resets; the generated database is intended for nonproduction use.
 
@@ -92,4 +94,13 @@ Expected identity values must come from the independently approved environment r
 
 Use a single editor window for this version. The helper re-reads metadata immediately before the PATCH and aborts if it changed during measurement; the registry API does not provide a Kubernetes resourceVersion compare-and-swap transaction. Keep concurrent promotion/evaluation writers paused for this short update.
 
-On September 22, 2026, version 2 recorded `PASSED_PROTOCOL_TOOL_AND_ROUTING` with a timestamp and SHA-256 evidence reference. Its lifecycle remained `candidate`; safety and performance remained `NOT_RUN`. Fresh registrations still initialize all three checks as `NOT_RUN`. This is acceptance of the native serving protocol, not model quality, a benchmark result, or promotion.
+On September 22, 2026, version 2 recorded `PASSED_PROTOCOL_TOOL_AND_ROUTING` with a timestamp and SHA-256 evidence reference. That runtime-only update kept its lifecycle `candidate` and both safety and performance `NOT_RUN`. A later update attached the separate reference measurement below; fresh registrations still initialize all three checks as `NOT_RUN`. This is acceptance of the native serving protocol, not model quality, a benchmark result, or promotion.
+
+
+## Attach measured performance without approving a candidate
+
+On September 22, 2026, the existing Qwen candidate received `showroom.performance_evaluation=MEASURED_REFERENCE_ONLY` with an immutable public report URL, SHA-256, timestamp, and scope. The [engine comparison](benchmark.md) covers one repetition of a serialized batch-one Transformers reference versus vLLM on the same physical L40S and temporary Pod, using identical pinned Qwen BF16 weights, runtime image, resources, tokenizer/template, workload, and disabled prefix caching.
+
+It grants no performance or safety approval: lifecycle remains `candidate`, safety remains `NOT_RUN`, and prior runtime evidence is preserved. `showroom.runtime_manifest` identifies `gitops/components/models/qwen-4b-private`; the original `showroom.deployment_manifest` provenance is unchanged. These historical engine measurements are distinct from the current two-replica Gateway path.
+
+The [performance recorder](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/components/models/registry/README.md#attach-an-existing-measured-performance-reference) verifies the public report against retained original measurements and the registered/live model identity before updating metadata. Use a single-editor window: immediate re-read conflict detection protects against observed changes, but the registry PATCH is not an atomic compare-and-swap transaction. A repeated PLAN reports no changes.

@@ -47,10 +47,10 @@ Add `--check-only` first to validate identity, model revision, tokenizer checksu
 
 This runs single-backend observation at concurrency one, then per-request round-robin and llm-d at concurrency two. Every mode is bounded by 30 seconds or 30 requests, whichever occurs first, and requests at most 32 output tokens. All forwards and the loopback broker close on completion or failure. This is a short functional rehearsal, not a saturation or capacity benchmark.
 
-To produce the sanitized report used by the guide:
+To produce the sanitized report used by the guide, choose a new output file. The exporter refuses to overwrite an existing report:
 
 ```bash
-.venv/bin/python summarize_ahead_llmd.py "$SHOWROOM_PRIVATE_RESULTS" /private/review/results-summary.json
+.venv/bin/python summarize_ahead_llmd.py "$SHOWROOM_PRIVATE_RESULTS" "$SHOWROOM_PRIVATE_RESULTS/results-summary.json"
 ```
 
 ## Activity 3: Read the two-backend baseline
