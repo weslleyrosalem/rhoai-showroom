@@ -288,7 +288,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../labs/mcp/" class="md-tabs__link">
+        <a href="../../labs/playground/" class="md-tabs__link">
           
   
   
@@ -979,6 +979,8 @@
       
         
       
+        
+      
     
     
     
@@ -1023,6 +1025,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/playground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native Playground
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1873,6 +1903,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#website-acceptance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Website acceptance
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2032,6 +2073,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#website-acceptance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Website acceptance
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2095,9 +2147,14 @@
 <td>Native connection still requires a scoped identity and its own tool test</td>
 </tr>
 <tr>
+<td>Feature Store and Playground runtimes were Ready but absent from native discovery</td>
+<td>Added each module's required discovery label and preserved scoped backend access</td>
+<td>Actual native screens populated after GitOps reconciliation</td>
+</tr>
+<tr>
 <td>The guide gave similar visual weight to every feature</td>
 <td>Put presentation routes first and used clear documentation hierarchy</td>
-<td>Desktop browser reviewed; responsive layout and keyboard checks are tracked separately</td>
+<td>Published desktop layout and keyboard skip-link/action navigation passed; mobile viewport verification remains open</td>
 </tr>
 </tbody>
 </table>
@@ -2109,6 +2166,8 @@
 <p>At the end of a test drive, ask the participant to explain the result in their own words and repeat one small change without presenter help. Record the task, the step where they paused, the expected result, and the observed result. Fix the smallest demonstrated problem, repeat the same task, and preserve the before/after evidence.</p>
 <p><a class="md-button" href="https://github.com/weslleyrosalem/rhoai-showroom/issues/new?template=demo-feedback.yml">Share showroom feedback</a></p>
 <p>Feedback is public. Use synthetic examples and sanitized errors. Credentials, private cluster URLs, account identifiers, and customer data must stay out of the issue.</p>
+<h2 id="website-acceptance">Website acceptance<a class="headerlink" href="#website-acceptance" title="Permanent link">&para;</a></h2>
+<p>The published guide was inspected on desktop after the September 22 release. Its keyboard skip link moves focus to the content, and Tab/Enter reaches and opens the presentation action. The requested 390-pixel browser override did not change the measured viewport; mobile testing is therefore <strong>not yet verified</strong>, rather than assumed from responsive CSS. The override was reset after the check.</p>
 
 
 

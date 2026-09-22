@@ -290,7 +290,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../mcp/" class="md-tabs__link">
+        <a href="../playground/" class="md-tabs__link">
           
   
   
@@ -981,6 +981,8 @@
       
         
       
+        
+      
     
     
     
@@ -1028,6 +1030,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../playground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native Playground
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2077,6 +2107,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>scripts/science.py<span class="w"> </span>trainer-export<span class="w"> </span>--result<span class="w"> </span>/path/to/training-result.json
 </code></pre></div>
 <p>This is an explicit export of measured results. It is not automatic Trainer instrumentation, and it does not register or deploy the candidate.</p>
+<p>The native Jobs browser rehearsal confirmed the completed job, two workers, per-worker resources, both pods, and measured log output. The Details view currently leaves instrumented epoch/progress fields blank because this script does not emit the Trainer progress protocol. Show the actual logs and MLflow record; do not infer a progress metric from job completion.</p>
 
 
 

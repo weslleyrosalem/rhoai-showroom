@@ -290,7 +290,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../labs/mcp/" class="md-tabs__link">
+        <a href="../../labs/playground/" class="md-tabs__link">
           
   
   
@@ -1075,6 +1075,8 @@
       
         
       
+        
+      
     
     
     
@@ -1119,6 +1121,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/playground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native Playground
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2098,7 +2128,7 @@
 </tr>
 <tr>
 <td>10–15 min</td>
-<td>Playground or Aurora Supply</td>
+<td>Aurora Supply or the Llama path in Playground</td>
 <td>A valid standard credential receives a model response. The sustained benchmark uses a separate subscription and credential.</td>
 </tr>
 <tr>
@@ -2126,6 +2156,7 @@
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.metadata.annotations.showroom\.openshift\.ai/expires-at}{"\n"}'</span>
 </code></pre></div>
 <p>Never use <code>oc get secret -o yaml</code>, decode a Secret on a shared terminal, paste a key into slides, or display browser network headers during the demo. Use the <a href="../../labs/maas/">MaaS lab</a> for guarded credential provisioning and the current subscription model reference. The installed existing-cluster overlay reuses the existing Llama endpoint; the fresh-cluster base points at the showroom Qwen model.</p>
+<p>The native Qwen tool-and-knowledge Playground is a separate path using the current user’s Kubernetes authorization. It does not consume a MaaS key or the <code>showroom-standard</code> subscription; use Llama or Aurora Supply for this MaaS quota demonstration.</p>
 <h2 id="what-was-tested">What was tested<a class="headerlink" href="#what-was-tested" title="Permanent link">&para;</a></h2>
 <p>The initial rehearsal observed anonymous <strong>401</strong>, standard <strong>200</strong>, first test-drive <strong>200</strong>, exhausted test-drive <strong>429</strong>, standard control <strong>200</strong>, and test-drive <strong>200</strong> after the quota window. This demonstrates per-subscription governance for the tested keys. It does not establish a universal latency or throughput guarantee.</p>
 <p>The current standard quota is 200,000 tokens/hour. The deliberately small test-drive quota is 100 tokens/minute. The sustained GuideLLM class has 1,500,000 tokens/hour and an independently expiring credential. Confirm the live values before presenting because policies can change through GitOps.</p>

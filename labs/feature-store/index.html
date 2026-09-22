@@ -290,7 +290,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../mcp/" class="md-tabs__link">
+        <a href="../playground/" class="md-tabs__link">
           
   
   
@@ -981,6 +981,8 @@
       
         
       
+        
+      
     
     
     
@@ -1028,6 +1030,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../playground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native Playground
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1318,6 +1348,17 @@
     <span class="md-ellipsis">
       
         Evidence and limits
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historical-dataset-and-connected-workbench" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Historical dataset and connected workbench
       
     </span>
   </a>
@@ -2032,6 +2073,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#historical-dataset-and-connected-workbench" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Historical dataset and connected workbench
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2067,13 +2119,18 @@
 <h2 id="bootstrap-and-refresh">Bootstrap and refresh<a class="headerlink" href="#bootstrap-and-refresh" title="Permanent link">&para;</a></h2>
 <p>The GitOps component creates the native feature store and role bindings. After its two containers are Ready, materialize the historical snapshot once:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>ai-showroom<span class="w"> </span>deploy/feast-aurora-features<span class="w"> </span>-c<span class="w"> </span>online<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>feast<span class="w"> </span>materialize<span class="w"> </span><span class="m">2025</span>-12-31T00:00:00<span class="w"> </span><span class="m">2026</span>-01-01T00:00:00
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>python<span class="w"> </span>/feast-data/aurora_supply/data/feast/materialize.py
 </code></pre></div>
 <p>The operator runs <code>feast apply</code> on initialization. Materialization is an explicit data operation, not an invented readiness condition. It writes the actual eight-product snapshot to the persistent SQLite online store. Updating features requires reviewing the public definitions, applying them, and materializing the corresponding time range. The demo does not run an unbounded refresh job.</p>
 <p>The workbench uses the injected service CA and its own short-lived service-account token. It never prints or stores that token. Read-only users can inspect and query features; only the separately bound writer identity can change definitions or materialize data.</p>
 <h2 id="evidence-and-limits">Evidence and limits<a class="headerlink" href="#evidence-and-limits" title="Permanent link">&para;</a></h2>
 <p>Runtime acceptance on September 22, 2026: native resource Ready, materialization successful, authenticated query <strong>200</strong> with the values above, anonymous query <strong>401</strong>. Dashboard presentation is verified separately in the showroom screen checklist. Persistence uses one replica and SQLite for a compact showroom; this is not a production high-availability design. The 730-day feature-view TTL keeps the explicitly historical dataset queryable during the demonstration.</p>
 <p>Sources: <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/technology-preview-features_relnotes">Red Hat OpenShift AI Technology Preview features</a>, <a href="https://github.com/feast-dev/feast/tree/master/infra/feast-operator">official Feast operator</a>, <a href="https://github.com/feast-dev/feast/blob/master/infra/feast-operator/docs/api/markdown/ref.md">native API reference</a>.</p>
+<h2 id="historical-dataset-and-connected-workbench">Historical dataset and connected workbench<a class="headerlink" href="#historical-dataset-and-connected-workbench" title="Permanent link">&para;</a></h2>
+<p>The native <strong>Saved datasets</strong> tab contains <code>aurora_replenishment_contract_2025_12_31</code>. It is a real point-in-time join for all eight SKUs at the end of December 31, 2025, associated with <code>aurora_replenishment_features</code>. The saved Parquet data is retained on the registry PVC and was read back successfully. Its five features contain no missing values. This is a feature-contract validation dataset, <strong>not a labeled model-training dataset</strong>; no target labels or training accuracy are invented.</p>
+<p>Select the dataset to review its event-time boundaries and feature references. Then open <strong>Connected workbenches → Aurora Supply — Data Science Lab</strong> and run Notebook 06. The <code>opendatahub.io/feast-config: aurora_supply</code> annotation and <code>opendatahub.io/feast-integration: true</code> label register that actual, tested connection for native discovery. The project may also show Feast's internal dummy entity; it is not a ninth Aurora product.</p>
+<p>The saved-dataset API is experimental in the installed Feast release. The repeatable preparation script validates eight complete rows before retaining the result and overwrites only this specifically named synthetic snapshot on subsequent runs.</p>
+<p>Observed native UI limitation: the generated saved-dataset snippet contains unquoted feature references, and the generated feature-view snippet omits the <code>timedelta</code> import. Those snippets are not executable as shown. Use the checked-in definitions and preparation script for a repeatable test drive; the actual dataset details and feature references are valid.</p>
 
 
 

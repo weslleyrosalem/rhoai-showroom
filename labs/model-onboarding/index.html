@@ -290,7 +290,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../mcp/" class="md-tabs__link">
+        <a href="../playground/" class="md-tabs__link">
           
   
   
@@ -981,6 +981,8 @@
       
         
       
+        
+      
     
     
     
@@ -1028,6 +1030,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../playground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native Playground
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1598,6 +1628,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#update-the-runtime-evidence-after-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update the runtime evidence after testing
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2076,6 +2117,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#update-the-runtime-evidence-after-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update the runtime evidence after testing
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2206,7 +2258,7 @@
 </tr>
 </tbody>
 </table>
-<p>The artifact location is <code>hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554</code>. Version metadata includes the runtime image digest, Apache 2.0 license, catalog source, hardware profile, and deployment manifest. Its lifecycle is <code>candidate</code>; runtime, safety, and performance validation are <code>NOT_RUN</code>. IDs are local to this registry and can differ on a fresh installation.</p>
+<p>The artifact location is <code>hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554</code>. Version metadata includes the runtime image digest, Apache 2.0 license, catalog source, hardware profile, and deployment manifest. Its lifecycle remains <code>candidate</code>. The September 22 runtime recorder later measured native inference, structured tool calling, and endpoint-picker processing, updating runtime status to <code>PASSED_PROTOCOL_TOOL_AND_ROUTING</code>. Safety and performance remain <code>NOT_RUN</code>; fresh registrations still initialize all checks as <code>NOT_RUN</code>. IDs are local to this registry and can differ on a fresh installation.</p>
 <p>Run the read-only onboarding plan from the repository root. Replace the guarded server and identity with values that you have intentionally selected.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oc<span class="w"> </span>get<span class="w"> </span>modelregistries.modelregistry.opendatahub.io<span class="w"> </span>-A
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>python3<span class="w"> </span>gitops/components/models/register_model.py<span class="w"> </span><span class="se">\</span>
@@ -2218,6 +2270,16 @@
 <p>The registry is protected by kube-rbac-proxy with verified TLS. The generated registry role is granted to showroom platform administrators and data scientists. Visitors are not granted editing access. The demo PostgreSQL database has a Bound 5Gi persistent volume. Preserve the registry and its database during resets; the generated database is intended for nonproduction use.</p>
 <p>The access rehearsal returned <strong>401</strong> without a token, <strong>403</strong> for an unbound short-lived ServiceAccount token, and <strong>200</strong> for the same identity after granting the generated registry role. Separate SubjectAccessReviews confirmed the data scientist group grant and visitor denial. This tests group authorization and equivalent-role API access; it does not claim a separate human login was exercised. The temporary ServiceAccount and binding were deleted after the test. Allow for the authorization cache to expire when testing a newly granted role.</p>
 <p>A direct TCP connection from the RAG pod to the registry pod's REST port 8080 timed out while the authenticated Route's port 443 remained reachable. The backend cannot be used from that application pod to bypass the registry proxy. This is a scoped network test, not a claim about cluster-administrator port forwarding or every possible source namespace.</p>
+<h2 id="update-the-runtime-evidence-after-testing">Update the runtime evidence after testing<a class="headerlink" href="#update-the-runtime-evidence-after-testing" title="Permanent link">&para;</a></h2>
+<p>After the native Qwen deployment is Ready, the separate runtime recorder can measure one bounded automatic tool call and its endpoint-picker counter, then attach the report hash and timestamp to the owned registry version. It checks the live pinned model URI, requested runtime digest, and resolved container digest. The latter can differ for an OCI platform image; both are retained in the report.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python3<span class="w"> </span>gitops/components/models/record_runtime.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>--expected-server<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_SERVER</span><span class="s2">"</span><span class="w"> </span>--expected-user<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_USER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--evidence<span class="w"> </span>/private/directory/qwen-runtime-NEW-DATE.json
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Review the PLAN, then repeat with --apply.</span>
+</code></pre></div>
+<p>Expected identity values must come from the independently approved environment record. The report path must be new and outside the repository. PLAN is read-only; APPLY performs a native-auth request for <code>get_stock({"sku":"AS-001"})</code>, verifies a successful structured response and picker activity, writes the private report, and updates runtime evidence only. It preserves candidate lifecycle, immutable provenance, safety status, and performance status. A failed runtime check never updates the registry. Existing failures must not be replaced with a green overall score.</p>
+<p>Use a single editor window for this version. The helper re-reads metadata immediately before the PATCH and aborts if it changed during measurement; the registry API does not provide a Kubernetes resourceVersion compare-and-swap transaction. Keep concurrent promotion/evaluation writers paused for this short update.</p>
+<p>On September 22, 2026, version 2 recorded <code>PASSED_PROTOCOL_TOOL_AND_ROUTING</code> with a timestamp and SHA-256 evidence reference. Its lifecycle remained <code>candidate</code>; safety and performance remained <code>NOT_RUN</code>. Fresh registrations still initialize all three checks as <code>NOT_RUN</code>. This is acceptance of the native serving protocol, not model quality, a benchmark result, or promotion.</p>
 
 
 

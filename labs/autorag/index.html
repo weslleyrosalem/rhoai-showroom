@@ -290,7 +290,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../mcp/" class="md-tabs__link">
+        <a href="../playground/" class="md-tabs__link">
           
   
   
@@ -981,6 +981,8 @@
       
         
       
+        
+      
     
     
     
@@ -1028,6 +1030,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../playground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native Playground
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2081,7 +2111,7 @@
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>python3<span class="w"> </span>scripts/science.py<span class="w"> </span>native-status<span class="w"> </span>--run-id<span class="w"> </span>&lt;run-id&gt;
 </code></pre></div>
 <p>The launcher resolves the current generation model from the showroom MaaS Secret. <code>notebooks/native-autorag-parameters.json</code> requests four patterns, <code>answer_correctness</code>, and the <code>speed</code> preset. Document IDs in the ground truth match the Markdown filenames.</p>
-<p>Open <strong>Develop &amp; train → AutoRAG</strong>, select <strong>ai-showroom</strong>, and open the completed optimization. The native results page displays the four-pattern leaderboard and generated indexing/inference notebook actions. Use the project Playground to compare model behavior. The lexical Aurora application remains a separately labeled baseline; adding OGX does not silently turn that application's TF-IDF into vector retrieval.</p>
+<p>Open <strong>Gen AI studio → AutoRAG</strong>, select <strong>ai-showroom</strong>, and open the completed optimization. The native results page displays the four-pattern leaderboard and generated indexing/inference notebook actions. Use the project Playground to compare model behavior. The lexical Aurora application remains a separately labeled baseline; adding OGX does not silently turn that application's TF-IDF into vector retrieval.</p>
 <p>Acceptance: completed optimization, ranked patterns and real metrics, followed by indexing/deployment of a chosen pattern and a semantic retrieval test. Model registration or an OGX Ready condition alone does not prove AutoRAG optimization succeeded.</p>
 <p><a href="https://github.com/red-hat-data-services/pipelines-components/tree/main/pipelines/training/autorag/documents_rag_optimization_pipeline">Official pipeline source</a>.</p>
 <h2 id="versioned-inputs-and-preserved-results">Versioned inputs and preserved results<a class="headerlink" href="#versioned-inputs-and-preserved-results" title="Permanent link">&para;</a></h2>
@@ -2091,7 +2121,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>scripts/science.py<span class="w"> </span>native-export<span class="w"> </span>--pipeline<span class="w"> </span>autorag<span class="w"> </span>--run-id<span class="w"> </span>&lt;run-id&gt;
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>python<span class="w"> </span>scripts/science.py<span class="w"> </span>native-infer<span class="w"> </span>--run-id<span class="w"> </span>&lt;run-id&gt;<span class="w"> </span>--question<span class="w"> </span><span class="s2">"What is the return deadline?"</span>
 </code></pre></div>
-<p>The helper selects the highest measured optimization score, queries OGX <code>vector-io/query</code>, and sends the retrieved context to its <code>chat/completions</code> API. These are real embedding and pgvector operations. The optional <code>--use-responses</code> exercises the generated Responses API template; it returned an upstream incomplete-stream HTTP 500 in this cluster, so it is not the default acceptance path. Review all quality metrics before promotion. <code>optimization_max_rag_patterns=4</code> is an upper bound; the optimization can stop after fewer patterns.</p>
+<p>The helper selects the highest measured optimization score, queries OGX <code>vector-io/query</code>, and sends the retrieved context to its <code>chat/completions</code> API. These are real embedding and pgvector operations. The optional <code>--use-responses</code> exercises the generated template against the optimization's original Llama model. That original runtime does not enable automatic tool calling: vLLM returns HTTP 400, which the OGX streaming path surfaced as HTTP 500. Use the <a href="../playground/">native Playground lab</a> and the separate tool-capable Qwen model for Responses file search and MCP. Qwen passed both paths; changing the generation model does not transfer the original optimization score to Qwen. Review all quality metrics before promotion. <code>optimization_max_rag_patterns=4</code> is an upper bound; the optimization can stop after fewer patterns.</p>
 <h2 id="measured-english-result">Measured English result<a class="headerlink" href="#measured-english-result" title="Permanent link">&para;</a></h2>
 <p>Run <code>cd14a959-02cf-428c-8bcb-9ac6a660b16c</code> succeeded on September 22, 2026, using content prefix <code>corpus/d7897df084530cf0</code>, 12 English questions, four patterns, and 36 S3 artifacts. Pattern3 led on answer correctness. The native dashboard showed the same four patterns and scores:</p>
 <table>
