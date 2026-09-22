@@ -1452,6 +1452,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#current-test-drive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current test drive
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-measured-acceptance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current measured acceptance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#human-review-test-drive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Human review test drive
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-span-export-correction-and-measured-acceptance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native span export: correction and measured acceptance
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2138,6 +2182,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#current-test-drive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current test drive
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-measured-acceptance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current measured acceptance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#human-review-test-drive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Human review test drive
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-span-export-correction-and-measured-acceptance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native span export: correction and measured acceptance
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2162,12 +2250,66 @@
 <p>The platform singleton runs in <code>redhat-ods-applications</code>; the workspace is <code>ai-showroom</code>. Workbench and workload identities use namespace-scoped Kubernetes authorization.</p>
 <p>Open <code>notebooks/01-demand.ipynb</code>. Generate the synthetic dataset, inspect the chronological holdout, and publish the measured result. The model artifact is also uploaded to <code>s3://aurora-artifacts/models/forecast/latest.json</code> for the MCP backend.</p>
 <p>The internal tracking endpoint is <code>https://mlflow.redhat-ods-applications.svc:8443/mlflow</code> with the injected service CA. <code>AURORA_MLFLOW_TRACKING_URI</code> selects this internal endpoint when the notebook webhook injects a public dashboard URI. Do not disable TLS verification.</p>
-<p>The application records retrieval, MCP Gateway calls, and MaaS inference spans after input safety checks. It checks generated output before storing that output in a trace. MLflow workspace artifacts use S3, so this client image includes boto3 and receives credentials from a Kubernetes Secret.</p>
+<p>The application sends current English test drives to <strong>aurora-assistant-demo</strong>, described as “Current English showroom test drive.” The original <strong>aurora-assistant</strong> experiment is preserved as a historical setup record; it includes earlier language/formula examples and initialization errors. Use the current experiment for the customer walkthrough. Historical traces are not renamed or deleted.</p>
+<p>The application records explicit <code>CHAIN</code>, <code>RETRIEVER</code>, <code>TOOL</code>, <code>LLM</code>, and output <code>GUARDRAIL</code> spans after input policy checks. Each of the two actual MCP calls has its own tool span with the approved SKU and protocol status; arbitrary tool payloads, authorization headers, and credentials are not captured. It checks generated output before storing that output in any span. Blocked input creates no trace, and an unavailable output guardrail fails closed without recording the generated answer.</p>
+<p>The LLM span converts the provider's actual <code>prompt_tokens</code>, <code>completion_tokens</code>, and <code>total_tokens</code> into the standard <code>mlflow.chat.tokenUsage</code> attributes <code>input_tokens</code>, <code>output_tokens</code>, and <code>total_tokens</code>. Only nonnegative integer counts with a consistent total are accepted, and the usage attribute appears once to avoid double counting. No prices or cost estimates are fabricated. Missing or invalid provider usage remains unreported. The model name and provider are recorded using the native MLflow attributes. The Overview token panel reflects new real requests, not retroactive edits to historical traces. The native Tool calls aggregate was verified after the export correction described below. It covers requests indexed by the corrected path; older trace artifacts remain separate evidence and were not backfilled. MLflow workspace artifacts use S3, so this client image includes boto3 and receives credentials from a Kubernetes Secret.</p>
 <p>Acceptance: real parent/child runs, measured metrics, a downloadable model artifact, and a trace that can be retrieved after the request completes. An experiment appearing in the UI alone does not prove artifact upload succeeded.</p>
 <p><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_mlflow/installing-and-authenticating-mlflow-sdk_mlflow">Official MLflow integration documentation</a>.</p>
 <h2 id="verified-records">Verified records<a class="headerlink" href="#verified-records" title="Permanent link">&para;</a></h2>
-<p>The distributed forecast parent run is <code>36ff7fb1b995454f9c6ff840ce211520</code>; its eight child runs and S3 model artifact were verified. Assistant trace <code>tr-79086e46512f7aae798803c5c358d0f0</code> was retrieved with <code>aurora_replenishment</code>, <code>retrieve_tfidf</code>, <code>mcp_gateway_tools</code>, and <code>maas_inference</code> spans and saved output. These are real records from the September 22, 2026 validation.</p>
+<p>The distributed forecast parent run is <code>36ff7fb1b995454f9c6ff840ce211520</code>; its eight child runs and S3 model artifact were verified. Historical setup trace <code>tr-79086e46512f7aae798803c5c358d0f0</code> was retrieved with <code>aurora_replenishment</code>, <code>retrieve_tfidf</code>, <code>mcp_gateway_tools</code>, and <code>maas_inference</code> spans and saved output. These are real records from the September 22, 2026 validation.</p>
 <p>Native pipeline automatic tracking emitted a missing nested run-ID warning. The documented <code>native-export</code> helper logs the real S3 artifact index and measured metrics explicitly. EvalHub's <code>eval-export</code> helper similarly preserves the actual evaluation result; neither workaround is presented as a fix to the automatic integration.</p>
+<h2 id="current-test-drive">Current test drive<a class="headerlink" href="#current-test-drive" title="Permanent link">&para;</a></h2>
+<p>Open <strong>MLflow → Experiments → aurora-assistant-demo</strong>. Ask “Should I replenish AS-001? Explain the policy and required approval.” In the resulting trace, inspect the retrieval span, two named tool spans, the LLM usage, and the successful configured policy check. Compare the recorded proposal with the app's deterministic business card. Ask an unsupported policy question to demonstrate uncertainty, then verify that an explicitly blocked input produces no new trace containing that input.</p>
+<p>The inventory rule distinguishes target stock from additional quantity: <code>target_stock = max(reorder_point, ceil(forecast_7d_units * 21 / 7))</code>; <code>recommended_quantity = max(0, target_stock - stock)</code>. The tool calculates these values. The model explains them without recomputing the proposal. No policy check is presented as factual truth verification.</p>
+<h2 id="current-measured-acceptance">Current measured acceptance<a class="headerlink" href="#current-measured-acceptance" title="Permanent link">&para;</a></h2>
+<p>Validated on 2026-09-22 06:42 UTC using app source <code>6888e2f</code>. Provider-reported usage and persisted trace-level usage matched exactly. These records belong to the current English experiment; historical setup traces were retained.</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th style="text-align: right;">Total tokens</th>
+<th>Expected result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AS-001</td>
+<td style="text-align: right;">1,762</td>
+<td>Target 391; proposal 346 units; total 14,532; Operations manager</td>
+</tr>
+<tr>
+<td>AS-002</td>
+<td style="text-align: right;">1,827</td>
+<td>Target 165; proposal 45 units; total 5,625; Operations manager</td>
+</tr>
+<tr>
+<td>Unsupported bank account</td>
+<td style="text-align: right;">876</td>
+<td>Unavailable in the sources; no inventory tools</td>
+</tr>
+</tbody>
+</table>
+<p>Proposal totals use demo currency units; token totals are provider-reported usage. Exact persisted records:</p>
+<ul>
+<li>AS-001: <code>tr-5732c21d448c07449dddaac3945e47b1</code>; 1,417 input and 345 output tokens.</li>
+<li>AS-002: <code>tr-1ff4b801d3a9b9daee013f5af3f6da1d</code>; 1,418 input and 409 output tokens.</li>
+<li>Unsupported question: <code>tr-c175b6592f0da9011a0cfcc06492092f</code>; 855 input and 21 output tokens.</li>
+</ul>
+<p>Each SKU request persisted seven spans: two <code>CHAIN</code>, one <code>RETRIEVER</code>, two <code>TOOL</code>, one <code>LLM</code>, and one <code>GUARDRAIL</code>. The non-SKU question persisted four spans without tool calls. Recorded model: <code>redhataillama-31-8b-instruct</code>; recorded provider: <strong>OpenShift AI MaaS</strong>. Total measured usage across these three requests was 4,465 tokens. The application recorded no cost.</p>
+<p>A synthetic email plus automatic-purchase request returned HTTP 422. The current experiment contained three traces before and three after that request; the blocked input marker was absent from all three persisted traces. This demonstrates the configured policy and trace-capture boundary, not general factual or safety certification.</p>
+<p>AS-002 changes the quantity and total, but <strong>does not change the approver</strong>: its total of 5,625 still exceeds the 5,000 threshold. The app's deterministic card and typed trace decision remain the authoritative numeric proposal.</p>
+<p>The current inventory policy is revision 1.1 and its source-addressed S3 corpus is <code>corpus/90f7574ec40ae483</code>. Earlier AutoRAG run artifacts and corpus prefixes are preserved as historical evaluation evidence; changing the source does not retroactively change those measured results.</p>
+<h2 id="human-review-test-drive">Human review test drive<a class="headerlink" href="#human-review-test-drive" title="Permanent link">&para;</a></h2>
+<p>Open <strong>MLflow → Experiments → aurora-assistant-demo → Review</strong> and select <strong>Aurora — proposal evidence review</strong>. The prepared queue contains two actual English AS-001 traces, with <strong>All (2)</strong>, <strong>Needs review (2)</strong>, and <strong>Completed (0)</strong>. One has the correct approval explanation; the other is the factual-comparison counterexample documented below. The question <strong>Tool evidence and human approval</strong> asks the reviewer to assess the proposal against the tool evidence and human-approval policy.</p>
+<p>Choose <strong>Start review</strong>, then <strong>View full trace</strong> before deciding: the queue's response preview is truncated. Inspect the complete answer, stock/forecast tool evidence, deterministic proposal, and policy citations. Select <strong>Pass</strong> or <strong>Fail</strong> based on that evidence, write a rationale, and submit only your own review. A pass should require the supported quantity, correct approval requirement, explicit synthetic/historical limits, and no executed purchase. A fluent answer alone is insufficient.</p>
+<p>The prepared state has neither verdict selected, an empty rationale, disabled Submit, and <strong>0 of 2 reviewed (0%)</strong>. No customer feedback or review score was fabricated. The assigned traces are <code>tr-b212bc59aa6c8c3fa670e460035e7b52</code> and <code>tr-bb711365fcde120b0dd4eb5f6302278c</code>. Both remain pending; no verdict has been submitted.</p>
+<h2 id="native-span-export-correction-and-measured-acceptance">Native span export: correction and measured acceptance<a class="headerlink" href="#native-span-export-correction-and-measured-acceptance" title="Permanent link">&para;</a></h2>
+<p>The installed MLflow layout serves REST/artifact APIs below <code>/mlflow</code>, while native OpenTelemetry ingestion is <code>/v1/traces</code> on the same HTTPS service. The app adds a standard HTTP OTLP exporter to the existing provider. It uses a new export copy with MLflow 3.14's SDK attributes decoded, preserving the original trace/span IDs, events, and artifact spans. Nine focused tests passed in the pinned app image, including an actual exporter-protobuf → native-parser round trip for <code>TOOL</code>, integer token usage, and unchanged originals. <a href="https://github.com/mlflow/mlflow/blob/v3.14.0/mlflow/tracing/provider.py">MLflow 3.14 provider configuration</a>, <a href="https://github.com/mlflow/mlflow/blob/v3.14.0/mlflow/server/js/src/experiment-tracking/pages/experiment-overview/hooks/useToolCallStatisticsData.ts">native tool-count query</a>.</p>
+<p>The exporter verifies the service CA, accepts only the exact same-origin endpoint, rejects redirects, and rereads the projected workload token for every export. Workspace and experiment authorization remain in force; credentials never become span attributes. It initializes once under a lock, creates no second trace tree, and never skips NeMo checks if export fails. The shared MLflow server is unchanged.</p>
+<p><strong>Historical first attempt, before the conversion correction:</strong> <code>tr-bb711365fcde120b0dd4eb5f6302278c</code> persisted seven unique artifact spans and 1,881 tokens (1,580 input, 301 output). The native index received seven spans, but double-encoded attributes left the exact <code>span.type = 'TOOL'</code> filter and Tool calls panel empty. That partial result is retained as evidence; it is not the current outcome, and its index entries were not rewritten.</p>
+<p><strong>Corrected path, validated 2026-09-22 07:16 UTC:</strong> one authenticated browser request produced <code>tr-c966e381abfbfeb0d90f5c0dc0ac541f</code>, seven unique spans, two <code>TOOL</code> spans, and <strong>1,823 tokens</strong> (1,414 input, 409 output) recorded once. The exact native tool filter returned one successful stock call and one successful replenishment call. <strong>Overview → Tool calls</strong> showed <strong>2 calls</strong>, <strong>100% success</strong>, <strong>0 failures</strong>, and <strong>101 ms</strong> average latency; tool-usage and latency charts rendered.</p>
+<p>The count of two covers <strong>that one request through the corrected export path</strong>, not the complete six-trace history. All six trace-level records totaled <strong>9,950 tokens</strong> (8,098 input, 1,852 output), matching the native Usage panel without duplication. Historical artifact traces and the earlier malformed index remain unchanged. The UI explicitly reported <strong>No cost data available</strong>; its zero-dollar headline does not establish zero monetary cost.</p>
+<p>The app now displays the deterministic proposal before the generated explanation and explicitly requires factual review. The final request correctly explained 346 units × 42 = 14,532 demo currency units, Operations manager approval, and no created order. Export conversion fixes observability, not model reasoning: in the preserved earlier <code>tr-bb711365fcde120b0dd4eb5f6302278c</code> answer, one sentence incorrectly compared the <strong>346-unit quantity</strong> with the <strong>5,000-currency-unit threshold</strong>, even though its deterministic card was correct. The configured safety check does not verify that arithmetic or factual comparison. Use the two pending review cases to examine this difference; do not erase the counterexample, claim general factual accuracy, or manufacture a passing assessment.</p>
 
 
 

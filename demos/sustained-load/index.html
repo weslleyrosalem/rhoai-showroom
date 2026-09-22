@@ -797,6 +797,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#readiness-snapshot-september-22-0640-utc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Readiness snapshot — September 22, 06:40 UTC
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2204,6 +2215,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#readiness-snapshot-september-22-0640-utc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Readiness snapshot — September 22, 06:40 UTC
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2322,6 +2344,9 @@
 <p>The absolute deadline ends load without a running laptop or an active chat. To stop early, delete only <code>job/showroom-guidellm-20260922</code> in <code>ai-showroom</code>; leave the PVC for evidence. Do not delete the original model, shared subscriptions, or an operator. Revoke the dedicated key through the MaaS API/UI after collecting evidence if early termination is required. Keep the PVC until reports have been exported and checked.</p>
 <p>Do not add ROSA or OCM polling to the load runner, dashboards, or a monitor. In this environment, the user explicitly prohibits frequent control-plane API requests. Inspect Kubernetes nodes and workloads with <code>oc</code> only; cloud operations remain a separate, bounded activity.</p>
 <p>Primary sources: <a href="https://github.com/vllm-project/guidellm/releases/tag/v0.7.4">GuideLLM v0.7.4 release</a>, <a href="https://github.com/vllm-project/guidellm/blob/v0.7.4/README.md">pinned CLI and profile documentation</a>, <a href="https://github.com/vllm-project/guidellm/blob/v0.7.4/docs/guides/outputs.md">output and sampling options</a>, and <a href="https://github.com/vllm-project/guidellm/blob/v0.7.4/docs/examples/custom-jsonl-dataset.md">local tokenizer setup</a>.</p>
+<h2 id="readiness-snapshot-september-22-0640-utc">Readiness snapshot — September 22, 06:40 UTC<a class="headerlink" href="#readiness-snapshot-september-22-0640-utc" title="Permanent link">&para;</a></h2>
+<p>The existing Job was active with no load-container restarts. Its latest completed 10-minute block recorded <strong>60 successful requests, zero errors, and zero incomplete requests</strong> at 0.1 requests/s, with 7,680 output tokens and 2.787-second mean latency. The next block was running at 0.25 requests/s and concurrency two. This is a dated observation, not a promise about future blocks.</p>
+<p>The retained history contained 1,394 successful requests, 17 errors, and six incomplete requests, including earlier failed qualification attempts. Keep those failures visible when summarizing the full run. The latest clean block does not make the entire history error-free. The 5Gi results claim remained Bound and mounted, with 19 segment directories and 13 JSON reports available at that check. The protected presentation window and absolute stop time above were verified against the live runner configuration.</p>
 
 
 

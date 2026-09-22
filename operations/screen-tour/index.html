@@ -2301,8 +2301,8 @@
 </tr>
 <tr>
 <td>Hardware profiles</td>
-<td>What does a team request? Compare the CPU, single-GPU, four-GPU, and MIG-oriented profiles.</td>
-<td>A profile describes a request. Only the observed physical hardware and completed runtime tests prove availability. L40S cannot provide MIG.</td>
+<td>What does a team request? Open the Qwen deployment’s <strong>Showroom L40S · 1 GPU / 48 GB</strong> popover.</td>
+<td>Its <strong>Project-scoped</strong> profile declares 4 CPU cores, 24 GiB host RAM, and one L40S per replica; 48 GB is GPU memory. Global Settings lists cluster-wide profiles. Optional four-GPU/MIG manifests are not proof of available hardware; L40S cannot provide MIG.</td>
 </tr>
 <tr>
 <td>Gen AI studio → API keys</td>
@@ -2489,6 +2489,11 @@
 <td>MLflow traces</td>
 <td>What happened during a recommendation? Follow retrieval, tool use, model call, and output checks.</td>
 <td>Inspect a real trace and distinguish shared service-account attribution from individual visitor identity.</td>
+</tr>
+<tr>
+<td>MLflow → Review</td>
+<td>Can a reviewer challenge the answer before trusting it? Open <strong>Aurora — proposal evidence review</strong> and select <strong>Start review</strong>.</td>
+<td>Two actual AS-001 traces await feedback; one contains an incorrect units-versus-currency comparison in its prose. Use <strong>View full trace</strong> to inspect the complete evidence, then enter a verdict and rationale. No human verdict was prefilled. See the <a href="../../labs/mlflow/">MLflow lab</a>.</td>
 </tr>
 <tr>
 <td>Private OpenShell walkthrough</td>
