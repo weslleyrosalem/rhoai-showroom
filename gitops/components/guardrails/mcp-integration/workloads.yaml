@@ -95,7 +95,7 @@ spec:
       containers:
         - name: ipp
           image: registry.redhat.io/rhoai/odh-ai-gateway-payload-processing-rhel9@sha256:83091d245d7ae9275ba27db0aed50bfc0b80b78b6ef28b77db7f62c175b14fe2
-          args: [--config-file, /config/ipp-config.yaml, '--v=0', '--tracing=false']
+          args: [--config-file, /config/ipp-config.yaml, '--v=0', '--tracing=false', '--secure-serving=false', '--enable-pprof=false']
           env:
             - {name: DISABLE_EXTERNAL_MODEL_CONTROLLER, value: 'true'}
             - {name: NAMESPACE, value: ai-showroom}

@@ -43,7 +43,7 @@ def get_stock(sku: Annotated[str, Field(min_length=1, max_length=160)]) -> dict:
 
 @mcp.tool(annotations=annotations)
 def get_replenishment_recommendation(sku: Annotated[str, Field(min_length=1, max_length=160)]) -> dict:
-    """Propose replenishment from versioned inventory and optional seven-day forecast. The response identifies its source. No order is created."""
+    """Propose replenishment from versioned inventory and a seven-day forecast extrapolated to 21-day coverage. The response includes price, total, approver, and model provenance. No order is created."""
     return catalog.get_replenishment_recommendation(sku)
 
 

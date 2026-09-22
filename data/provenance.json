@@ -4,6 +4,6 @@
   "seed": 351,
   "rows": 2920,
   "days": 365,
-  "sha256": "466aec9bbff2225c26a31d7eff2348bcd8724f3ae14fb58b60c572ee8c8d7ba5",
+  "sha256": "53fb3abfe7628c7d2b2d8527ee7a2365666f5685f5d342a865f032de958924da",
   "split": "chronological; last 28 days held out; target is next-day units"
 }

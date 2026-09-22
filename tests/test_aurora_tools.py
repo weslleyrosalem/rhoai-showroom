@@ -91,3 +91,19 @@ def test_real_showroom_forecast_connected():
     assert proposal["recommended_quantity"] >= 0
     assert proposal["order_created"] is False
     assert proposal["recommendation_type"] == "forecast-informed inventory proposal"
+
+
+def test_forecast_policy_uses_21_days_and_deterministic_approval(tmp_path):
+    products = tmp_path / "products.json"
+    forecast = tmp_path / "forecast.json"
+    products.write_text(json.dumps([{"sku":"A","name":"Filter","category":"Filters","stock":45,"reorder_point":80,"unit_price":42}]))
+    forecast.write_text(json.dumps({"synthetic":True,"horizon_days":7,"model_version":"test","mlflow_run_id":"run-123","forecasts":[{"sku":"A","forecast_7d_units":130.26}]}))
+    proposal = Catalog(str(products), str(forecast)).get_replenishment_recommendation("A")
+    assert proposal["target_stock"] == 391
+    assert proposal["recommended_quantity"] == 346
+    assert proposal["estimated_total"] == 14532
+    assert proposal["approval_role"] == "operations_manager"
+    assert proposal["coverage_days"] == 21
+    assert proposal["mlflow_run_id"] == "run-123"
+    products.write_text(json.dumps([{"sku":"A","name":"Filter","category":"Filters","stock":0,"reorder_point":10,"unit_price":500}]))
+    assert Catalog(str(products)).get_replenishment_recommendation("A")["approval_role"] == "assigned_buyer"

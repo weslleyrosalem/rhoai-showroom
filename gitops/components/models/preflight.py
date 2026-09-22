@@ -18,8 +18,8 @@ def get(resource):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--model',required=True,choices=['qwen-4b','qwen-32b-tp4','qwen-32b-multinode','qwen-72b-opt-in'])
-    p.add_argument('--profile',required=True,choices=['interactive','active-l40s-9','full-l40s-13','mig-13'])
+    p.add_argument('--model',required=True,choices=['qwen-4b','qwen-32b-tp4','qwen-32b-multinode','qwen-72b-opt-in','qwen-06b-mig-h100'])
+    p.add_argument('--profile',required=True,choices=['interactive','active-l40s-9','mig-h100-single','full-l40s-13','mig-13'])
     p.add_argument('--inventory',type=Path,required=True)
     p.add_argument('--expected-server',required=True)
     args=p.parse_args()
@@ -28,7 +28,7 @@ def main():
         if actual!=args.expected_server:raise ValueError('Unexpected oc server')
         nodes=get('nodes');pods=get('pods')
         profile=json.loads((ROOT/'gitops/profiles'/args.profile/'capacity.json').read_text())
-        result=capacity.assess(profile,nodes,json.loads(args.inventory.read_text()))
+        result=capacity.assess(profile,nodes,json.loads(args.inventory.read_text()),expected_server=args.expected_server)
         problems=list(result['reasons'])
         model=json.loads((Path(__file__).parent/args.model/'model.yaml').read_text())
         required=int(model['spec']['template']['containers'][0]['resources']['requests']['nvidia.com/gpu'])
@@ -44,17 +44,18 @@ def main():
         free=[]
         for node in nodes['items']:
             labels=node['metadata'].get('labels',{})
-            if labels.get('showroom.openshift.ai/gpu-pool')!='true' or labels.get('nvidia.com/gpu.product')!='NVIDIA-L40S':continue
+            if any(labels.get(k)!=v for k,v in model['spec']['template'].get('nodeSelector',{}).items()):continue
             if node['spec'].get('unschedulable'):continue
             if not any(c['type']=='Ready' and c['status']=='True' for c in node['status'].get('conditions',[])):continue
             amount=int(node['status'].get('allocatable',{}).get('nvidia.com/gpu',0))-allocated.get(node['metadata']['name'],0)
             free.append(amount)
-        if replicas>1:
+        separate_nodes=bool(model['spec']['template'].get('affinity',{}).get('podAntiAffinity',{}).get('requiredDuringSchedulingIgnoredDuringExecution'))
+        if replicas>1 and separate_nodes:
             fit=sum(1 for value in free if value>=required)
         else:
             fit=sum(value//required for value in free)
         if fit<replicas:
-            problems.append(f'Need {replicas} ready placement(s) with {required} free L40S each; found {fit}. Multiple replicas require different nodes.')
+            problems.append(f'Need {replicas} ready placement(s) with {required} free matching GPU resources each; found {fit}. Distinct nodes required: {separate_nodes}.')
         result.update(status='BLOCKED' if problems else 'PASS_CAPACITY_ONLY',reasons=problems,
                       model=args.model,required_replicas=replicas,gpus_per_replica=required,
                       runtime_validation='NOT_RUN',next_step='Server dry-run, review/apply, then verify image pull, Ready, exact model revision, MaaS and inference.')

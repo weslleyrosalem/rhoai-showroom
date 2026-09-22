@@ -44,14 +44,25 @@ class ScienceTest(unittest.TestCase):
 
     def test_retrieval_citations_are_existing_files(self):
         retriever = rag.Retriever(ROOT / "data/documents")
-        cases = [("Qual o prazo de devolução após recebimento?", "returns-policy.md"),
-                 ("Aprovação de proposta de compras superior a 5000", "purchasing-policy.md"),
-                 ("cobertura alvo de estoque dias", "inventory-playbook.md")]
+        cases = [("What is the return deadline after receiving a product?", "returns-policy.md"),
+                 ("Approval of a purchase proposal above 5000", "purchasing-policy.md"),
+                 ("target inventory coverage days", "inventory-playbook.md")]
         for question, expected in cases:
             found = retriever.retrieve(question)
             self.assertEqual(found[0]["document_id"], expected)
             self.assertTrue(all((ROOT / "data/documents" / x["document_id"]).exists() for x in found))
         self.assertEqual(retriever.retrieve("xyzunrelatedtoken"), [])
+
+    def test_corpus_version_changes_when_policy_or_answers_change(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as directory:
+            copied = Path(directory) / "data"
+            shutil.copytree(ROOT / "data", copied)
+            original = science.corpus_prefix(copied)
+            self.assertEqual(original, science.corpus_prefix(ROOT / "data"))
+            policy = copied / "documents/purchasing-policy.md"
+            policy.write_text(policy.read_text() + "\nUpdated policy.\n")
+            self.assertNotEqual(original, science.corpus_prefix(copied))
 
     def test_autorag_ground_truth_references_valid_documents(self):
         for case in json.loads((ROOT / "data/eval/autorag.json").read_text()):

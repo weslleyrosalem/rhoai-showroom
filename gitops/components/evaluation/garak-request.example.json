@@ -5,6 +5,6 @@
     "name": "REPLACE_WITH_MODEL_ID",
     "auth": {"secret_ref": "showroom-maas-key"}
   },
-  "benchmarks": [{"provider_id": "garak", "benchmark_id": "quick"}],
+  "benchmarks": [{"provider_id": "garak", "id": "quick"}],
   "experiment": {"name": "aurora-model-safety"}
 }

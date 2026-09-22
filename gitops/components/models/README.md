@@ -8,6 +8,7 @@ These components are opt-in workloads, not proof of performance. `models.lock.js
 |qwen-32b-tp4|One complete model, TP4|ai-showroom-bench|4|
 |qwen-32b-multinode|Two complete model replicas, TP4 each, separate hosts|ai-showroom-bench|8|
 |qwen-72b-opt-in|Two Qwen72B replicas, TP4 each, separate hosts|ai-showroom-bench|8|
+|qwen-06b-mig-h100|Two Qwen0.6B replicas on distinct H100 MIG slices|ai-showroom-bench|2 logical slices, one physical H100|
 
 The two32B directories own the same service name and are **alternatives**, never two Applications managing it.72B is an alternative workload after removing/scaling down the32B benchmark, not an addition to all existing GPU work. It uses the Qwen-specific license, not Apache2. The full profile enables4B+32B replicas only.
 
@@ -29,3 +30,5 @@ Every model uses `maas-default-gateway` in `openshift-ingress`. The installation
 Acceptance: exact SHA loaded; image pulled; service and MaaSModelRef Ready;200 for authorized calls;401/403 for unauthorized access; successful bounded inference; correct GPU/node placement; EPP traffic for cache-aware claims. Store results privately and publish only sanitized measurements.
 
 PP2×TP4, prefill/decode and hierarchical KV offloading are distinct future experiments. They are not silently represented by the two-replica deployment. P/D needs validated RDMA; hierarchical offloading is Developer Preview.
+
+The H100 MIG component is a separate opt-in after the dedicated node has successful `all-1g.10gb` geometry under single strategy. Its two replicas may share one physical host, unlike the TP4 scale-out experiment. Use the `mig-h100-single` capacity plan and the same-named hardware guide; no global GPU Operator change is included.

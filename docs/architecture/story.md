@@ -1,55 +1,55 @@
-# Aurora Supply: uma única história
+# Aurora Supply: one connected story
 
-A Aurora Supply é uma distribuidora fictícia de equipamentos de escritório. Seu catálogo, estoque, documentos, histórico de demanda e casos de avaliação são sintéticos e versionados neste repositório.
+Aurora Supply is a fictional office equipment distributor. Its catalog, inventory, policies, demand history, and evaluation cases are synthetic and versioned in this repository.
 
-O problema apresentado ao cliente é concreto: uma pessoa precisa escolher produtos, verificar disponibilidade, entender a política aplicável e preparar uma proposta de reposição. A proposta não executa pedidos ou pagamentos.
+The customer scenario is concrete: select products, check availability, understand the applicable policy, and prepare a replenishment proposal. The proposal never creates an order or payment.
 
-## O caminho da pergunta
+## Follow a question
 
-| Etapa | Componente | Evidência que precisa aparecer |
+| Step | Component | Evidence to show |
 |---|---|---|
-| A pessoa faz uma pergunta | Playground ou aplicação Aurora | Prompt, modelo e assinatura selecionados |
-| Recupera a política relevante | RAG | IDs de documentos e trechos usados |
-| Consulta catálogo e estoque | MCP Gateway + Aurora Tools | `tools/list`, chamada real e valores do dataset |
-| Consulta a previsão | Modelo treinado com Ray | Versão, horizonte, métricas de teste e run MLflow |
-| Produz a explicação | Modelo local ou externo via MaaS | Resposta e consumo; provider identificado |
-| Aplica controles | AuthPolicy, quota e NeMo | Testes positivos/negativos, status e motivo observável |
-| Investiga o resultado | MLflow, métricas e Tempo | Trace nova ou série atual, com origem e intervalo |
-| Evolui a experiência | Prompt, dados ou manifesto em Git | Diff, sync Argo CD, repetição e rollback |
+| Ask a question | Playground or Aurora application | Prompt, model, and selected subscription |
+| Retrieve the relevant policy | RAG | Document IDs and retrieved excerpts |
+| Check catalog and inventory | MCP Gateway and Aurora Tools | Actual tool calls and dataset values |
+| Check the forecast | Model trained with Ray | Version, horizon, test metrics, and MLflow run |
+| Generate an explanation | Local or external model through MaaS | Response, usage, and provider identity |
+| Apply controls | AuthPolicy, quota, and NeMo | Positive/negative tests, status, and observable reason |
+| Investigate the result | MLflow, metrics, and Tempo | A new trace or current time series with source and time range |
+| Improve the experience | Prompt, data, or manifest in Git | Diff, Argo CD sync, repeated test, and rollback |
 
-As ferramentas retornam dados estruturados. O modelo não é a fonte de verdade para estoque, quota, preço ou previsão. Os testes comparam esses valores com os artefatos sintéticos.
+Tools return structured data. The language model is not the source of truth for inventory, quotas, prices, or forecasts. Tests compare these values with the synthetic source artifacts.
 
-## Contratos e nomes
+## Names and contracts
 
-| Nome | Finalidade |
+| Name | Purpose |
 |---|---|
-| `rhoai-showroom` | Repositório e documentação pública |
-| `ai-showroom` | Projeto principal exibido na interface |
-| `ai-showroom-bench` | Cargas de benchmark que precisam de isolamento de agendamento |
-| `aurora-tools` | Ferramentas MCP somente de consulta e proposta |
-| `showroom-mcp` | Gateway e extensão MCP |
-| `aurora-rag` | Aplicação que integra recuperação, ferramentas, LLM e traces |
-| `aurora-lab` | Workbench para a jornada de ciência de dados |
-| `showroom-s3` | Armazenamento compatível com S3 para dados e artefatos da demo |
-| `mlflow` | Instância compartilhada gerenciada pela plataforma |
-| `showroom-visitors` | Leitura e experiência de demonstração autorizada |
-| `showroom-data-scientists` | Trabalho no projeto e execução dos laboratórios |
-| `showroom-platform-admins` | Administração do projeto do showroom |
+| `rhoai-showroom` | Public repository and guide |
+| `ai-showroom` | Primary project shown in the UI |
+| `ai-showroom-bench` | Benchmarks requiring separate scheduling |
+| `aurora-tools` | Read-only MCP tools and proposal calculations |
+| `showroom-mcp` | MCP gateway and extension |
+| `aurora-rag` | Retrieval, tools, LLM, and tracing application |
+| `aurora-lab` | Data science Workbench |
+| `showroom-s3` | S3-compatible demonstration data and artifact storage |
+| `mlflow` | Shared platform-managed MLflow instance |
+| `showroom-visitors` | Read access and authorized test drives |
+| `showroom-data-scientists` | Project work and lab execution |
+| `showroom-platform-admins` | Showroom project administration |
 
-Operadores e serviços de plataforma permanecem em seus namespaces próprios. MLflow é um recurso singleton do cluster nesta versão; não há uma instância arbitrária por projeto. O projeto novo concentra a experiência, sem copiar componentes globais desnecessariamente.
+Operators and shared platform services stay in their own namespaces. MLflow is a cluster singleton in this version; the experience does not create an arbitrary server per project.
 
-## Perfis de capacidade
+## Capacity profiles
 
-O núcleo usa CPU para ferramentas, recuperação, controle, experimentos e treinamento pequeno; a inferência pode reutilizar um endpoint MaaS existente. Os perfis GPU adicionam modelos e experimentos de serving.
+The core uses CPUs for tools, retrieval, control services, experiments, and small training jobs. Inference can reuse an existing MaaS endpoint. GPU profiles add models and serving experiments.
 
-O limite desta instalação é **16 GPUs físicas, incluindo pools existentes e capacidade temporária de upgrade**. Réplicas virtuais de time-slicing e partições MIG não aumentam esse número. O [préflight de capacidade](../labs/hardware.md) precisa passar antes de ativar um perfil.
+This installation has a ceiling of **16 physical GPUs, including existing pools and temporary upgrade capacity**. MIG slices and time-slicing replicas do not increase physical GPU counts. The [capacity preflight](../labs/hardware.md) must pass before enabling a profile.
 
-L40S atende à demonstração de inferência e tensor parallelism. MIG exige hardware compatível, como A100/H100, e fica em um perfil alternativo. Os laboratórios não transformam time-slicing em MIG nem inferem eficiência apenas pelo número de GPUs.
+L40S supports the inference and tensor parallelism demonstrations. MIG requires compatible hardware such as A100 or H100 and its own validated profile. The labs distinguish MIG from time-slicing and measure efficiency instead of inferring it from GPU count.
 
-## Três conversas sobre o mesmo ambiente
+## Three conversations about the same environment
 
-- **Segurança:** “Como eu limito o que um agente consegue consultar ou fazer, e como investigo uma decisão?”
-- **Plataforma:** “Como eu publico, compartilho, dimensiono e acompanho modelos como serviços?”
-- **Ciência de dados:** “Como eu provo uma hipótese, treino, avalio e transformo o resultado numa experiência útil?”
+- **Security:** “How do I limit what an agent can access or do, and investigate a decision?”
+- **Platform:** “How do I publish, share, scale, and operate models as services?”
+- **Data science:** “How do I test a hypothesis, train, evaluate, and turn the result into a useful experience?”
 
-Ao mudar de jornada, mantenha a mesma pergunta de negócio. Isso permite mostrar como o dado treinado pelo cientista chega à ferramenta, como a plataforma atende à inferência e como a equipe de segurança verifica o fluxo.
+Keep the same business question when changing journeys. Show how the scientist's forecast reaches a tool, how the platform serves inference, and how security controls protect the flow. Application traces currently use a shared backend service account; do not present them as end-user attribution without implementing that mapping.

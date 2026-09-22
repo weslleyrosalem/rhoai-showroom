@@ -1,22 +1,18 @@
----
-title: AutoRAG nativo
----
-# Otimizar o corpus de políticas
+# Native AutoRAG with OGX and pgvector
 
-AutoRAG é Technology Preview. Ele é distinto do pequeno aplicativo TF-IDF do showroom. O fluxo nativo requer OGX configurado com modelos de geração e embedding, um provedor pgvector/Milvus, conexão S3 e pipeline server com managed pipelines.
+The showroom provides its own OGX server, PostgreSQL with pgvector, and a CPU embedding model: [paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2), Apache-2.0, 384 dimensions. The model is an external ecosystem asset, not a claim of Red Hat model certification.
 
-Os documentos estão em `data/documents/`; o conjunto de12 perguntas está em `data/eval/autorag.json`. Os document IDs são basenames exatos. Faça upload com `scripts/science.py upload` e use o bucket `aurora-data`.
+The same Aurora policies and 12 ground-truth questions are uploaded to `aurora-data`. A dedicated `aurora-ogx-connection` Secret supplies `OGX_CLIENT_BASE_URL` and `OGX_CLIENT_API_KEY` for the internal OGX connection. The native 3.5.1 pipeline uses OGX; newer upstream MaaS-direct examples have a different contract.
 
-Na página Gen AI studio → AutoRAG:
+```bash
+python3 scripts/science.py native-submit --pipeline autorag
+python3 scripts/science.py native-status --run-id <run-id>
+```
 
-1. Selecione `ai-showroom` e a conexão OGX validada.
-2. Selecione os quatro documentos e o JSON de avaliação.
-3. Escolha Faster, quatro padrões e Answer faithfulness.
-4. Use Llama MaaS validado e embedding multilíngue CPU, quando disponíveis no OGX.
-5. Execute, abra leaderboard e baixe o notebook do padrão vencedor.
+The launcher resolves the current generation model from the showroom MaaS Secret. `notebooks/native-autorag-parameters.json` requests four patterns, `answer_correctness`, and the `speed` preset. Document IDs in the ground truth match the Markdown filenames.
 
-Faster requer4vCPU/16Gi; Better quality8vCPU/32Gi. Modelos vLLM precisam de tool calling habilitado com parser correto para a família. Não altere o modelo legado sem revisar o impacto; prefira um modelo dedicado no perfil expandido.
+Use the project Playground to compare the model and retrieval behavior. The lexical Aurora application remains a separately labeled baseline; adding OGX does not silently turn that application's TF-IDF into vector retrieval.
 
-Aceite: quatro padrões executados, scores medidos, notebook que responde às perguntas e preserva IDs de fontes. Se OGX/embedding/vector provider ainda não estiver validado, o laboratório permanece pendente; a UI habilitada não conta como demonstração concluída.
+Acceptance: completed optimization, ranked patterns and real metrics, followed by indexing/deployment of a chosen pattern and a semantic retrieval test. Model registration or an OGX Ready condition alone does not prove AutoRAG optimization succeeded.
 
-[Pré-requisitos e configuração](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_autorag/creating-autorag-optimization-run_autorag), [parâmetros](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_autorag/autorag-configuration-parameters_autorag).
+[Official pipeline source](https://github.com/red-hat-data-services/pipelines-components/tree/main/pipelines/training/autorag/documents_rag_optimization_pipeline).

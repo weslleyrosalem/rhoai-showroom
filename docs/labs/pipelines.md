@@ -1,21 +1,20 @@
----
-title: Pipeline de dados a modelo
----
-# Um DAG com quality gate
+# AI Pipelines
 
-`notebooks/aurora_pipeline.py` define três componentes KFP: preparar dados, treinar e aprovar o artefato. O treinamento usa o mesmo código do laboratório Ray, mas este DAG executa a variante CPU local; não atribua paralelismo Ray ao pipeline sem adaptar sua etapa de treino.
+`showroom-pipelines` uses the showroom S3 service and enables native managed pipelines for AutoML and AutoRAG. Inspect its Ready condition before submitting work:
 
-Compile na raiz do repositório:
+```bash
+oc get dspa showroom-pipelines -n ai-showroom
+```
+
+The repository also includes `notebooks/aurora_pipeline.py` and its compiled YAML: generate data → train the CPU baseline → enforce the quality gate. This lightweight example demonstrates artifacts and dependencies. It is distinct from the two-worker Ray job and from native AutoML.
+
+Compile with the pinned SDK:
 
 ```bash
 pip install kfp==2.15.2
 python notebooks/aurora_pipeline.py
 ```
 
-Importe `notebooks/aurora_pipeline.yaml` no pipeline server `showroom-pipelines` de `ai-showroom`. Crie um run com `source_ref` apontando para o SHA do commit que deseja reproduzir. O padrão `main` facilita o primeiro test drive; SHA imutável é preferível para comparação.
+For reproducible execution, pass a reviewed Git commit as `source_ref`. The default `main` is convenient for a live workshop but changes over time. The compiled component uses an operator-compatible Python runtime image.
 
-O DAG gera dados CC0, mede modelos e só produz o artefato aprovado se o gate passar. O DSPA foi configurado com MLflow AUTODETECT e injeção de variáveis; confira os runs pai/filhos no workspace e o armazenamento de artefatos S3.
-
-Não há deploy automático de modelos neste exemplo: publicar um artefato aprovado e atualizar o serviço consumidor são passos distintos. Mostre a promoção GitOps como mudança revisável quando o contrato de serving estiver validado.
-
-Aceite: DAG Succeeded, artefatos baixáveis, métricas medidas e gate que realmente falha para um artefato reprovado. [Pipelines e MLflow](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_ai_pipelines/tracking-pipeline-experiments-with-mlflow_ai-pipelines).
+Acceptance: a real completed pipeline run, preserved artifacts, visible task dependencies, and a quality gate failure when deliberately given an unacceptable candidate. Native AutoML/AutoRAG runs have their own capacity and validation requirements.

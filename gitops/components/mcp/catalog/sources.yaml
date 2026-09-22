@@ -1,0 +1,8 @@
+mcp_catalogs:
+  - name: Aurora Supply showroom
+    id: aurora_showroom
+    type: yaml
+    enabled: true
+    properties:
+      yamlCatalogPath: aurora-showroom.yaml
+    labels: [Aurora Supply, Showroom, Read-only]

@@ -1,87 +1,102 @@
-# Laboratório — capacidade, topologia e MIG
+# Lab — capacity, topology, and MIG
 
-O teto do showroom é **16 GPUs físicas no total**, incluindo a GPU existente, todos os pools, máquinas em criação e sobreposição de upgrades. Quotas de Kubernetes, MIG e time-slicing contam recursos lógicos; não substituem esse controle de infraestrutura.
+The showroom has a fixed ceiling of **16 physical GPUs total**, including existing pools, pending machines, and upgrade overlap. Kubernetes quotas, MIG devices, and time-slicing replicas count logical resources; they do not replace infrastructure accounting.
 
-## Plano ativo: active-l40s-9
+## Active plan: active-l40s-9
 
-O plano configurado no ROSA em 22/09/2026 preserva `aiml-node` e adiciona `showroom-l40s4`. O nome do preset descreve a experiência com uma GPU preservada e até oito novas GPUs. O teto real considera também o autoscaling do pool existente.
+The ROSA plan preserves `aiml-node` and adds `showroom-l40s4`. The preset name describes one preserved GPU plus up to eight new GPUs; the full ceiling also includes autoscaling on the existing pool.
 
-| Pool | Tipo | Mínimo / máximo de nós | GPUs por nó | Surge de nós | Máximo físico incluindo surge |
+| Pool | Instance type | Minimum / maximum nodes | GPUs/node | Surge nodes | Physical maximum including surge |
 |---|---|---|---|---|---|
 | aiml-node | g6e.4xlarge | 1 / 3 | 1 | 1 | 4 |
-| showroom-l40s4 | g6e.12xlarge | 0 / 2 | 4 | 1 | 12 |
-| workers | m8i.2xlarge | 1 / 4 | 0 | sem impacto GPU | 0 |
+| showroom-l40s4 | g6e.12xlarge | 1 / 2 | 4 | 1 | 12 |
+| workers | m8i.2xlarge | 1 / 4 | 0 | No GPU impact | 0 |
 
-**3 + 8 + 1 + 4 = 16 GPUs físicas**, com no máximo 11 fora da sobreposição de upgrades. Não aumente nenhum máximo nem adicione um pool GPU sem recalcular o conjunto. O pool novo exige IMDSv2, o label `showroom.openshift.ai/gpu-pool=true` e a taint `nvidia.com/gpu=true:NoSchedule`.
+**3 + 8 + 1 + 4 = 16 physical GPUs**, with at most 11 outside upgrade overlap. Recalculate before increasing a maximum or adding a GPU pool. The new pool requires IMDSv2, `showroom.openshift.ai/gpu-pool=true`, `nvidia.com/gpu.product=NVIDIA-L40S`, and the taint `nvidia.com/gpu=true:NoSchedule`.
 
-A primeira etapa executa Qwen4B/TP1 e uma única réplica Qwen32B/TP4, mantendo o Llama existente. Para comparar duas réplicas Qwen32B em dois nós de quatro GPUs, desative primeiro o Qwen4B: oito GPUs novas ocupadas pelo benchmark não deixam uma nona GPU no pool. GPU workloads ficam fora do sincronismo automático padrão do Argo até passar o preflight.
+The minimum was raised from 0 to 1 for initial warmup because the autoscaler recognized the pool but did not initiate scale-from-zero. Returning to 0 is an explicit cloud operation after verifying that behavior; this guide does not assume it happened.
 
-## Perfis alternativos
+The first stage runs Qwen4B/TP1 and one Qwen32B/TP4 replica while preserving Llama. Before comparing two Qwen32B replicas on two four-GPU nodes, stop Qwen4B. GPU workloads remain outside default automatic Argo synchronization until the capacity guard passes.
 
-| Perfil | Infraestrutura nominal incluindo uma GPU existente | Uso e condição |
+## Alternative plans
+
+| Profile | Nominal infrastructure including one existing GPU | Constraint |
 |---|---|---|
-| Core | 1 L40S existente | CPU + serviços compartilhados |
-| Interactive | 1 existente + 1 L40S = 2 | Outro cluster ou plano próprio; não adicionar automaticamente ao plano ativo |
-| Full L40S13 | 1 existente + 3 nós de 4 L40S = 13 | Desenho alternativo; **não cabe no plano ativo com seus máximos e surge** |
-| MIG9 | 1 existente + 1 nó de 8 A100 = 9 | Alternativa após remover/reduzir pools incompatíveis com o teto |
-| MIG13 | 1 existente + 8 A100 + 4 L40S = 13 | Alternativa que também exige revisar sobreposição de upgrades |
+| Core | One existing L40S | CPU workloads and shared inference |
+| Interactive | Existing GPU + one L40S = 2 | A separate plan; do not automatically add it to the active pools |
+| Full L40S13 | Existing GPU + three four-L40S nodes = 13 | Does not fit the active pool maxima and surge policies |
+| MIG9 | Existing GPU + eight A100 GPUs = 9 | Alternative after removing/reducing incompatible pools |
+| MIG13 | Existing GPU + eight A100 + four L40S = 13 | Also requires an upgrade-overlap review |
+| MIG H100 single | Active pools plus one H100 | Planned option below; requires a verified change to the new L40S pool's surge policy |
 
-Esses perfis não se somam. Full13 com um nó de surge de quatro GPUs chegaria a 17 mesmo com somente uma GPU existente. Um A100 de oito GPUs com surge de um nó acrescenta mais oito; manter o L40S existente já excederia 16. O preflight bloqueia esses casos até a política real de manutenção e a capacidade restante caberem no teto. Não configure surge zero fictício no inventário para obter PASS.
+These plans are not additive. Full13 plus one four-GPU surge node reaches 17. An eight-GPU A100 node with one surge node plus the existing L40S also exceeds 16. Do not invent a zero-surge value to make a plan pass.
 
-AWS confirma quatro L40S no `g6e.12xlarge` e oito A100 no `p4d.24xlarge`. Ainda é necessário verificar região, oferta ROSA, quota AWS, disponibilidade e o custo da conta. [G6e](https://aws.amazon.com/ec2/instance-types/g6e/), [P4](https://aws.amazon.com/ec2/instance-types/p4/).
+AWS documents four L40S GPUs in `g6e.12xlarge`, eight A100 GPUs in `p4d.24xlarge`, and one H100 with 80GB HBM3 in `p5.4xlarge`. Region, ROSA offerings, account quotas, capacity, and pricing require independent verification. P5.4xlarge does not support GPUDirect RDMA. [G6e](https://aws.amazon.com/ec2/instance-types/g6e/), [P4](https://aws.amazon.com/ec2/instance-types/p4/), [P5](https://aws.amazon.com/ec2/instance-types/p5/).
 
-## Preflight físico
+## Physical capacity preflight
 
-`scripts/capacity.py` faz somente leituras. Sem inventário cloud completo e recente retorna **BLOCKED**, pois `oc get nodes` não enxerga todas as máquinas pendentes, máximos de autoscaling e surge de ROSA HCP. O inventário precisa vir da consulta atual a ROSA/OCM, com todas as machinepools do cluster.
+`scripts/capacity.py` is read-only. Without a complete, fresh cloud inventory it returns **BLOCKED**: `oc get nodes` cannot see every pending machine, autoscaling maximum, or HCP upgrade surge.
 
-Formato de inventário privado — valores ilustrativos, não copiar como evidência:
+Private inventory format — illustrative values, not evidence:
 
 ```json
 {
   "schema_version": 1,
   "complete": true,
-  "observed_at": "TIMESTAMP_UTC_DA_CONSULTA",
+  "cluster_server": "https://api.YOURCLUSTER:6443",
+  "observed_at": "ACTUAL_QUERY_TIME_IN_UTC",
+  "count_semantics": "exact",
   "pools": [
     {
-      "id": "ID_REAL_DO_POOL",
+      "id": "ACTUAL_POOL_ID",
       "instance_type": "g6e.4xlarge",
       "current_nodes": 1,
       "desired_nodes": 1,
       "max_nodes": 1,
       "upgrade_surge_nodes": 0,
-      "node_names": ["NOME_REAL_DO_NODE"]
+      "node_names": ["ACTUAL_NODE_NAME"]
     }
   ]
 }
 ```
 
-Inclua também pools CPU com `gpus_per_node: 0`. Um tipo GPU desconhecido precisa ser adicionado à tabela de tipos após verificação oficial; não marque GPU desconhecida como CPU. `complete: true` só é legítimo depois de consultar todas as páginas da API cloud ou todos os pools na interface OCM. Quando a interface não fornecer current/desired exatos, use `count_semantics: "upper-bound"` e conte conservadoramente cada um como o máximo do pool. O relatório mostra explicitamente esse limite, sem apresentá-lo como número de GPUs atualmente ligadas. Registre fonte e horário reais da observação; não renove um timestamp sem consultar o estado. `upgrade_surge_nodes: 0` exige confirmação da política real, não é uma sugestão para omitir capacidade de upgrade.
+Include CPU pools with `gpus_per_node: 0`. Unknown GPU types require a verified mapping, not a CPU declaration. Unmapped AWS g*/p* GPU families are rejected even before their device plugin publishes GPU labels. Set `complete: true` only after inspecting every cloud API page or OCM pool. If current/desired counts are unavailable, use `count_semantics: "upper-bound"` and conservatively set them to verified pool maxima. Record the source and actual observation time; never refresh a timestamp without observing state. Zero surge requires a verified maintenance policy.
 
 ```bash
 python3 scripts/capacity.py --profile active-l40s-9 \
   --expected-server "$EXPECTED_OPENSHIFT_SERVER" \
-  --inventory /caminho/privado/rosa-inventory.json \
-  --output /caminho/privado/capacity-result.json
+  --inventory /private/directory/rosa-inventory.json \
+  --output /private/directory/capacity-result.json
 ```
 
-A validade máxima é15 minutos. Um PASS significa somente que a contagem calculada cabe no teto; não prova quota cloud, preço ou runtime pronto. O script não cria, altera ou apaga machinepools. Prefira o autoscaling gerenciado do ROSA para nós; HPA/WVA/Ray controlam outro nível, o dos workloads. [Autoscaling ROSA HCP](https://docs.redhat.com/en/documentation/red_hat_openshift_service_on_aws/4/epub/cluster_administration/rosa-enable-cluster-autoscale-cli-interactive_after_rosa-cluster-autoscaling).
+`cluster_server` must match `--expected-server`. Inventory older than 15 minutes is blocked. PASS confirms only accounting; it does not prove quota, price, availability, or runtime readiness. The script never changes machinepools. ROSA controls node autoscaling; HPA/WVA/Ray govern workload scaling. [ROSA HCP autoscaling](https://docs.redhat.com/en/documentation/red_hat_openshift_service_on_aws/4/epub/cluster_administration/rosa-enable-cluster-autoscale-cli-interactive_after_rosa-cluster-autoscaling).
 
-## Profiles e placement
+## Hardware profiles and placement
 
-`showroom-cpu-small` oferece CPU/RAM. `showroom-l40s-1` pede uma L40S. `showroom-l40s-4` pede quatro dispositivos para tensor parallelism. Ambos exigem o label `showroom.openshift.ai/gpu-pool=true`, além de NVIDIA-L40S. Configure esse label somente nos novos pools do showroom. Assim os novos modelos não disputam o GPU reservado para a demonstração anterior.
+`showroom-cpu-small` offers CPU/RAM; `showroom-l40s-1` requests one L40S; `showroom-l40s-4` requests four devices for tensor parallelism. L40S profiles require both the product label and `showroom.openshift.ai/gpu-pool=true`, avoiding the preserved GPU node.
 
-O profile informa RAM do host separadamente da VRAM. Criar um profile não cria um node. No scale-from-zero, confirme que os labels exigidos pelo seletor estão presentes também no template da machinepool; um label produzido somente depois pelo GPU Feature Discovery pode impedir o autoscaler de reconhecer o pool. Confirme nodes Ready, dispositivos alocáveis, taints/tolerations, PVCs e pull-secret antes de oferecer a opção de deploy ao visitante.
+Host RAM and VRAM are separate. Creating a hardware profile does not create a node. For scale-from-zero, selectors must also exist on the machinepool template; labels produced only after GPU Feature Discovery starts may prevent the autoscaler from identifying that pool. Confirm Ready nodes, allocatable devices, tolerations, storage, and registry access before presenting deployment options.
 
-O módulo `qwen-32b-multinode` cria duas réplicas, cada uma TP4, com anti-affinity obrigatória em hostnames diferentes. São dois servidores completos de um mesmo modelo. **Não** é um único modelo dividido por pipeline parallelism entre nós. Um ensaio PP2×TP4 permanece separado até validar presets, LeaderWorkerSet e transporte na instalação real.
+`qwen-32b-multinode` runs two complete TP4 model replicas with mandatory placement on different hosts. It does not split one model across nodes. A PP2×TP4 experiment requires separate LeaderWorkerSet, preset, and transport validation.
 
-## MIG real
+## Dedicated H100 MIG option
 
-L40S não suporta MIG. O profile alternativo usa A10040GB; o exemplo customizado particiona somente GPU0 em sete instâncias `1g.5gb`, mantendo os outros sete dispositivos sem MIG. A geometria não serve para A10080GB ou H100. [GPUs suportadas](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-gpus.html).
+The `mig-h100-single` plan proposes `showroom-h100-mig`, one `p5.4xlarge` node, maximum 1 and surge 1. It requires the **owned** L40S pool to have an observed surge 0/maxUnavailable 1 maintenance policy. The preserved pool remains unchanged. The resulting bound is **3 + 8 + 1 + 1 + 1 = 14**. With the current L40S surge 1, the guard calculates 18 and blocks this addition. A plan file cannot override the live inventory's higher surge value.
 
-Em `gitops/components/platform/mig-opt-in`, o HardwareProfile está desabilitado e o ConfigMap de geometria **não está** no kustomization. Para ativar o laboratório, siga uma janela de manutenção do **novo** nó A100: confirme `mig.capable=true`, inventário físico≤16, nenhum workload usuário no alvo, estratégia mixed revisada no GPU Operator e o ConfigMap apropriado. Após reconciliar, exija `mig.config.state=success` e o recurso `nvidia.com/mig-1g.5gb` alocável antes de habilitar o profile. MIG Manager pode reiniciar pods ou o nó. [NVIDIA GPU Operator MIG](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-operator-mig.html).
+The inspected GPU Operator 26.7.0 already has MIG Manager enabled and strategy `single`. Keep that strategy for the first H100 experiment. On a dedicated, empty H100 node, the `all-1g.10gb` configuration creates seven equal slices. Single strategy advertises them as `nvidia.com/gpu`; the hardware profile must identify each request as a slice. Mixed strategy uses resource names such as `nvidia.com/mig-1g.10gb` and needs a separate operator configuration review. [NVIDIA MIG profiles](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-mig-profiles.html), [OpenShift MIG strategies](https://docs.nvidia.com/datacenter/cloud-native/openshift/26.3/mig-ocp.html).
 
-Os labels GFD podem contar instâncias MIG, não placas físicas. Para tipos EC2 conhecidos, o preflight usa a quantidade física documentada do tipo de instância. Time-slicing continua sendo compartilhamento temporal, não isolamento de memória equivalente a MIG.
+Use only the new H100 node. Require `nvidia.com/mig.capable=true`, `showroom.openshift.ai/mig-pool=true`, and a dedicated `showroom.openshift.ai/mig=true:NoSchedule` taint. The existing Llama must not tolerate that dedicated taint. Confirm no user GPU workloads occupy the node before setting its MIG geometry. MIG Manager can stop GPU components and may require a reboot; do not repartition an occupied node. GPU Operator versions 26.3+ generate supported geometry configurations from detected hardware. [GPU Operator MIG](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/26.3/gpu-operator-mig.html).
 
-## Aceite
+`gitops/components/platform/mig-h100-single` contains a disabled hardware profile. `gitops/components/models/qwen-06b-mig-h100` contains two optional Qwen0.6B replicas, each requesting one slice. Neither changes ClusterPolicy or labels nodes. Before enabling the profile or applying the model, require `mig.config.state=success`, strategy `single`, seven allocatable logical devices, and a fresh physical capacity PASS. Selectors enforce the dedicated H100 pool and geometry.
 
-Registre inventário cloud, contagem antes/depois, topologia e evidência de scheduling. Nenhum recurso GPU novo deve cair no nó preservado. Um ensaio de duas réplicas deve mostrar os dois pods TP4 em nós diferentes, após liberar o Qwen4B no plano ativo. MIG só recebe status demonstrável depois de um workload usar uma partição real. Não substitua essas evidências pelo sucesso de um `oc apply`.
+Acceptance requires two ready workloads with distinct MIG device UUIDs on the same physical H100, successful CUDA execution and inference, observed memory per slice, and continued Llama health. Seven slices count as **one physical GPU** in the guard. A successful apply or a disabled profile is not an executed MIG demonstration.
+
+## A100 alternative
+
+L40S cannot use MIG. The older A100 40GB option in `platform/mig-opt-in` partitions only GPU 0 into seven `1g.5gb` slices, leaving seven GPUs whole. It requires mixed strategy; that geometry does not fit A100 80GB or H100. Its ConfigMap is excluded from Kustomize and its hardware profile is disabled until actual allocation is verified. [Supported GPUs](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-gpus.html).
+
+GFD labels can count MIG instances rather than cards. For verified EC2 types the guard uses physical instance specifications. Time-slicing is temporal sharing and does not provide MIG's memory partitioning.
+
+## Acceptance
+
+Record cloud inventory, before/after counts, topology, and scheduling evidence. New L40S workloads must avoid the preserved node. A two-replica TP4 experiment must show distinct hosts after freeing Qwen4B. Mark MIG demonstrated only after workloads use actual partitions. Never substitute successful YAML application for those results.

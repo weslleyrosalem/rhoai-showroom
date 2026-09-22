@@ -1,20 +1,41 @@
-# Contract for the optional gateway enforcement integration
+# MCP → IPP → NeMo integration contract
 
-This folder does not install IPP. Apply only after the prerequisites below are actually deployed. Source inspected at `opendatahub-io/ai-gateway-payload-processing` commit `07727563b63153c410434a20b62f3ebc5f24ed01` on 2026-09-22; select a tested compatible image digest before deploying. Do not silently replace the existing MaaS payload processor.
+This overlay deploys the IPP plugins, a private HTTPS authentication adapter, NetworkPolicies, and the TrustyAI Gateway reference. It does not change the existing MaaS processor. All resources are limited to `ai-showroom`; NeMo keeps its authenticated public Route.
 
-[Official IPP NeMo example](https://github.com/opendatahub-io/ai-gateway-payload-processing/blob/07727563b63153c410434a20b62f3ebc5f24ed01/examples/nemo/README.md) documents these plugin flags (replace the endpoint with the actual authenticated or private TLS endpoint of the showroom NeMo instance):
-
-```text
---plugin
-nemo-request-guard:nemo-input:{"nemoURL":"https://showroom-rails.ai-showroom.svc:8443/v1/guardrail/checks","timeoutSeconds":10}
---plugin
-nemo-response-guard:nemo-output:{"nemoURL":"https://showroom-rails.ai-showroom.svc:8443/v1/guardrail/checks","timeoutSeconds":10}
+```
+MCP client → TLS Route → Gateway [MCP routing, Authorino, IPP, SSE stripping]
+                                            ↓ gRPC9004, NetworkPolicy
+                                      showroom-mcp-ipp
+                                            ↓ verified HTTPS9443
+                                    showroom-rails-private
+                                            ↓ verified HTTPS443 + projected SA token
+                                     managed showroom-rails
 ```
 
-The sample URL above is a contract, not evidence that port8443 exists. Discover the service ports/certificates produced by TrustyAI, validate the trust chain, and configure authentication before use. This upstream plugin schema has URL/timeout and no bearer-token option; it cannot automatically call a protected OAuth Route simply because an application can. A private TLS service/proxy compatible with the plugin and restricted by NetworkPolicy, or a supported token-forwarding integration, must be validated. Do not disable the existing public NeMo authentication as a workaround.
+The adapter is showroom integration code, not a Red Hat product feature. Its service has an OpenShift serving certificate, no Route, and an ingress policy permitting only the IPP pod. It accepts only POST `/v1/guardrail/checks`, selects a fixed upstream and fixed `showroom-safety` configuration, rejects redirects, and reads the rotating SA token for each call. Its SA can only `get services` in this namespace. The RHOAI3.5 RBAC proxy's observed SubjectAccessReview omits the service name, so a Role restricted by `resourceNames` returns403; no Secret, write, list or watch rights are granted.
 
-Required Envoy settings: filter named `envoy.filters.http.ext_proc.bbr`, correct insertion after gateway authentication, `response_body_mode: FULL_DUPLEX_STREAMED` and `response_header_mode: SEND`. The official chart must be installed in the namespace of the target Gateway. Set explicit processing timeouts and verify fail-closed behavior. A policy applied to a different Gateway does not protect this showroom.
+The Gateway→IPP gRPC hop is plaintext inside the cluster and isolated by NetworkPolicy. The pinned IPP has only automatic self-signed secure serving, not a serving-cert-file flag. This demo deliberately does not disable TLS certificate verification to accommodate that mode. Do not describe the deployment as end-to-end mTLS. IPP→adapter and adapter→NeMo both verify certificate trust and hostname.
 
-NeMo returns `success`, `blocked`, `error` or `modified`. This IPP example maps `blocked` to403 and `error` to503. **It currently forwards the original content for `modified`**; do not claim that masking/redaction is effective through this plugin. The showroom config therefore blocks patterns rather than claiming redaction.
+## Version-specific compatibility
 
-The integration is ready only when both `status.mcpGateway.mcpGatewayFound` and `status.bbrPlugin.bbrPluginFound` are true, `mcp-sse-strip` exists, a legitimate MCP call succeeds, a matching string in MCP arguments is blocked before backend execution, and a NeMo outage fails closed. Test real payloads and response paths; a created CR is insufficient.
+The pinned RHOAI3.5 IPP digest is `sha256:83091d245d7ae9275ba27db0aed50bfc0b80b78b6ef28b77db7f62c175b14fe2`, observed in the installed platform. Its plugin expects `passed`, while the managed `/v1/guardrail/checks` endpoint returns `success`. This mismatch was reproduced as500 on a legitimate tool call. Upstream fixed the mismatch in [commit d32e434 / PR434](https://github.com/opendatahub-io/ai-gateway-payload-processing/commit/d32e434009ae5b1a3077945ec9d620a9f49dc532). The adapter explicitly translates only `success`→`passed` for this pinned image; `blocked` stays blocked, all unknown/error/modified outcomes fail closed. Revalidate and remove that translation when adopting an image containing the upstream fix.
+
+The current [official NeMo plugin example](https://github.com/opendatahub-io/ai-gateway-payload-processing/blob/07727563b63153c410434a20b62f3ebc5f24ed01/examples/nemo/README.md) defines `nemoURL` and `timeoutSeconds` only. It provides no bearer-token injection field. The private adapter closes this gap without disabling authentication on NeMo. Never send a real user token to an arbitrary plugin URL.
+
+## Envoy contract
+
+The filter name must be `envoy.filters.http.ext_proc.bbr`. Real active Envoy configuration must show Authorino's `envoy.filters.http.wasm` before that filter, then `mcp-sse-strip`'s Lua filter before the router. The overlay sets both body directions to `FULL_DUPLEX_STREAMED`, headers/trailers to `SEND`, and `failure_mode_allow:false`. Envoy rejects FULL_DUPLEX_STREAMED with trailer mode SKIP, keeping an older active listener; therefore a created EnvoyFilter and CR Ready status do not prove enforcement.
+
+The TrustyAI CR Gateway reference causes creation of `mcp-sse-strip`. Applying the base while this overlay is active removes the reference; Argo must own this complete overlay to prevent competing configuration. It must not self-heal the base over the integration.
+
+## Acceptance gates
+
+- Active listener includes authentication, IPP and SSE filters in the verified order.
+- `mcpGatewayFound` and `bbrPluginFound` are true, with current spec still containing the Gateway reference.
+- Anonymous initialization401, valid but unlisted SA403, listed identities200.
+- Valid stock tool call200; synthetic email or `DEMO_SECRET_AURORA` in tool arguments403 before tool execution.
+- A genuinely unavailable bridge/checker fails closed; wait for termination, since existing keep-alive connections may finish while a pod drains.
+- A dedicated output challenge is required before claiming MCP output enforcement. Merely configuring the response plugin or checking NeMo directly is insufficient.
+- No pod without the allowed network labels reaches backend, broker, private listener or adapter.
+
+Use only synthetic challenges and record status/result metadata, never tokens or full request logs. The MCP Gateway itself can log session JWTs at INFO in this version; do not publish raw pod logs, and configure log handling/retention before a production use case.

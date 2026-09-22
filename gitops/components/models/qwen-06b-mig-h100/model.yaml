@@ -1,0 +1,87 @@
+{
+  "apiVersion": "serving.kserve.io/v1alpha2",
+  "kind": "LLMInferenceService",
+  "metadata": {
+    "name": "aurora-qwen-06b-mig",
+    "namespace": "ai-showroom-bench",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "opendatahub.io/dashboard": "true"
+    },
+    "annotations": {
+      "opendatahub.io/display-name": "Aurora Qwen0.6B \u00b7 H100 MIG slices",
+      "showroom.openshift.ai/model-revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+      "showroom.openshift.ai/license": "apache-2.0",
+      "showroom.openshift.ai/validation": "manifest-only-until-runtime-acceptance"
+    }
+  },
+  "spec": {
+    "model": {
+      "name": "aurora-qwen-06b-mig",
+      "uri": "hf://Qwen/Qwen3-0.6B:c1899de289a04d12100db370d81485cdf75e47ca"
+    },
+    "replicas": 2,
+    "parallelism": {
+      "tensor": 1
+    },
+    "router": {
+      "gateway": {
+        "refs": [
+          {
+            "name": "maas-default-gateway",
+            "namespace": "openshift-ingress"
+          }
+        ]
+      },
+      "route": {},
+      "scheduler": {}
+    },
+    "template": {
+      "nodeSelector": {
+        "node.kubernetes.io/instance-type": "p5.4xlarge",
+        "showroom.openshift.ai/mig-pool": "true",
+        "nvidia.com/mig.config": "all-1g.10gb",
+        "nvidia.com/mig.config.state": "success",
+        "nvidia.com/mig.strategy": "single"
+      },
+      "tolerations": [
+        {
+          "key": "nvidia.com/gpu",
+          "operator": "Equal",
+          "value": "true",
+          "effect": "NoSchedule"
+        },
+        {
+          "key": "showroom.openshift.ai/mig",
+          "operator": "Equal",
+          "value": "true",
+          "effect": "NoSchedule"
+        }
+      ],
+      "containers": [
+        {
+          "name": "main",
+          "image": "registry.redhat.io/rhaii/vllm-cuda-rhel9@sha256:c056e61672b6aea489ad5dde0bd2f8497230f5333e87f7cf6c494eba3bfdc808",
+          "env": [
+            {
+              "name": "VLLM_ADDITIONAL_ARGS",
+              "value": "--dtype bfloat16 --max-model-len 2048 --max-num-seqs 4 --gpu-memory-utilization 0.8 --enable-prefix-caching"
+            }
+          ],
+          "resources": {
+            "requests": {
+              "cpu": "2",
+              "memory": "8Gi",
+              "nvidia.com/gpu": "1"
+            },
+            "limits": {
+              "cpu": "2",
+              "memory": "8Gi",
+              "nvidia.com/gpu": "1"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -29,6 +29,17 @@ rules:
   resources:
   - evalhubs
   verbs: *id001
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - networkpolicies
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -153,3 +164,57 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: showroom-gitops-shared
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: showroom-gitops-custom
+  namespace: ai-showroom
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - resourcequotas
+  - limitranges
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - patch
+  - update
+- apiGroups:
+  - gateway.networking.k8s.io
+  - kuadrant.io
+  - mcp.kuadrant.io
+  - mcp.x-k8s.io
+  - networking.istio.io
+  - trustyai.opendatahub.io
+  - mlflow.kubeflow.org
+  - ogx.io
+  - infrastructure.opendatahub.io
+  - kubeflow.org
+  - datasciencepipelinesapplications.opendatahub.io
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-gitops-custom
+  namespace: ai-showroom
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: showroom-gitops-custom

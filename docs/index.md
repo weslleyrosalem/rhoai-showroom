@@ -1,61 +1,60 @@
 <div class="showroom-hero" markdown>
 <div class="showroom-eyebrow">Aurora Supply · OpenShift AI 3.5.1</div>
 
-# Veja a IA trabalhando. Depois, assuma o controle.
+# See AI at work. Then take the controls.
 
-Uma empresa fictícia. Documentos, estoque e demanda conectados. Três maneiras de explorar a mesma plataforma — com demonstrações, experimentos e um test drive que você pode reproduzir no seu cluster.
+One fictional company. Connected documents, inventory, and demand. Three ways to explore the same platform through demonstrations, experiments, and a test drive you can reproduce in your own cluster.
 
-<div class="showroom-tags"><span>ROSA</span><span>GitOps</span><span>Dados sintéticos</span><span>Até 16 GPUs físicas</span><span>GA · TP · Developer Preview · Ecossistema</span></div>
-
+<div class="showroom-tags"><span>ROSA</span><span>GitOps</span><span>Synthetic data</span><span>Up to 16 physical GPUs</span><span>GA · TP · Developer Preview · Ecosystem</span></div>
 </div>
 
-## Escolha a sua jornada
+## Choose your journey
 
 <div class="showroom-cards" markdown>
 <div class="showroom-card" markdown>
-<span class="number">01 / SEGURANÇA E AGENTES</span>
+<span class="number">01 / SECURITY AND AGENTS</span>
 
-### Confiança antes da ação
+### Trust before action
 
-O assistente consulta ferramentas e documentos. Você acompanha a identidade, testa os limites, inspeciona traces e compara avaliações.
+The assistant uses tools and documents. Follow authentication, test boundaries, inspect traces, and compare evaluations.
 
-[Explorar segurança →](journeys/security.md)
+[Explore security →](journeys/security.md)
 </div>
 <div class="showroom-card" markdown>
-<span class="number">02 / PLATAFORMA DE IA</span>
+<span class="number">02 / AI PLATFORM</span>
 
-### Do modelo ao serviço
+### From model to service
 
-Publique modelos, escolha capacidade, governe consumo e meça inferência. Entenda o que muda com vLLM e llm-d em condições comparáveis.
+Publish models, select capacity, govern consumption, and measure inference. Compare vLLM and llm-d under controlled conditions.
 
-[Explorar plataforma →](journeys/platform.md)
+[Explore the platform →](journeys/platform.md)
 </div>
 <div class="showroom-card" markdown>
-<span class="number">03 / CIÊNCIA DE DADOS E ML</span>
+<span class="number">03 / DATA SCIENCE AND ML</span>
 
-### Da hipótese à experiência
+### From hypothesis to experience
 
-Treine com Ray, acompanhe experimentos no MLflow e faça uma previsão alimentar o assistente. Teste RAG, avaliação e automação.
+Train with Ray, track experiments in MLflow, and feed a forecast into the assistant. Explore RAG, evaluation, and automation.
 
-[Explorar ciência de dados →](journeys/science.md)
+[Explore data science →](journeys/science.md)
 </div>
 </div>
 
-## Uma história que conecta as peças
+## One story connects the components
 
-A Aurora Supply precisa responder: **“O que devemos repor para a próxima semana, em qual quantidade e segundo qual política?”**
+Aurora Supply needs to answer: **“What should we replenish next week, how much, and under which policy?”**
 
-O estoque vem de uma ferramenta MCP; a demanda vem de um modelo treinado; a política vem de documentos recuperados por RAG. Um LLM explica a proposta. MaaS controla acesso e quota. Guardrails e avaliações verificam comportamentos definidos, e traces permitem investigar o caminho percorrido. A proposta é sintética e não executa compras.
+Inventory comes from an MCP tool. Demand comes from a trained model. Policy comes from documents retrieved by RAG. An LLM explains the proposal. MaaS governs access and quotas. Guardrails and evaluations test defined behaviors, while traces help investigate the flow. The proposal is synthetic and never places an order.
 
-<div class="showroom-flow"><div><b>Pergunte</b><span>Playground e documentos</span></div><div><b>Observe</b><span>MCP, modelos e traces</span></div><div><b>Experimente</b><span>Uma mudança pequena, um resultado visível</span></div><div><b>Reproduza</b><span>Git, Argo CD e critérios de aceite</span></div></div>
+<div class="showroom-flow"><div><b>Ask</b><span>Playground and documents</span></div><div><b>Observe</b><span>MCP, models, and traces</span></div><div><b>Experiment</b><span>One small change, one visible result</span></div><div><b>Reproduce</b><span>Git, Argo CD, and acceptance criteria</span></div></div>
 
-[Começar o test drive](operations/test-drive.md){ .md-button .md-button--primary }
-[Instalar em outro cluster](operations/install.md){ .md-button }
+[Start the test drive](operations/test-drive.md){ .md-button .md-button--primary }
+[Install in another cluster](operations/install.md){ .md-button }
 
-## Para apresentar ou aprender sozinho
+## Present it or explore on your own
 
-Cada jornada traz a história, o que mostrar, uma interação do visitante e o que observar. Cada laboratório informa os pré-requisitos, comandos, resultado esperado, maturidade e como recuperar a demonstração.
+Each journey includes a story, what to show, a visitor interaction, and what to observe. Each lab identifies prerequisites, commands, expected results, maturity, and recovery steps.
 
-O **estado de validação é separado da maturidade do produto**. Um recurso GA ainda precisa passar no ensaio deste ambiente; um recurso TP pode ter um laboratório funcional sem se tornar suportado para produção. Consulte [a matriz e as evidências](operations/validation.md) antes de apresentar.
+**Validation status is separate from product maturity.** A GA feature still needs a rehearsal in this environment. A working TP lab does not make the feature supported for production. Review the [validation record](operations/validation.md) before presenting.
 
-Este é um projeto comunitário de demonstração. As configurações reduzidas de armazenamento e serviços auxiliares são adequadas ao showroom e devem ser revistas para uso de produção.
+This is a community demonstration project. Its compact storage and supporting services are suitable for a showroom and require review before production use.

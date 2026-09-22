@@ -1,0 +1,11 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-tools-lifecycle-isolation
+spec:
+  podSelector:
+    matchLabels:
+      showroom.aurora/component: lifecycle-test-drive
+  policyTypes: [Ingress, Egress]
+  ingress: []
+  egress: []

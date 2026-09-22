@@ -39,6 +39,15 @@
       "source": "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct",
       "runtime_validation": "NOT_RUN",
       "manifest": "qwen-72b-opt-in"
+    },
+    {
+      "model": "Qwen/Qwen3-0.6B",
+      "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+      "license": "apache-2.0",
+      "gated": false,
+      "source": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "runtime_validation": "NOT_RUN",
+      "manifest": "qwen-06b-mig-h100"
     }
   ]
 }

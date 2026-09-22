@@ -1,23 +1,20 @@
----
-title: EvalHub e Garak
----
-# Avaliar antes de promover
+# EvalHub and Garak
 
-O EvalHub compartilhado reside em `redhat-ods-applications`; `ai-showroom` é o tenant. PostgreSQL preserva seu histórico em PVC. Criar MLflow antes do EvalHub evita o problema conhecido de workspace desabilitado.
+EvalHub is deployed in the platform namespace after MLflow. PostgreSQL credentials stay outside Git. The showroom namespace is labeled as an EvalHub tenant. TrustyAI must use its full RHOAI mode: `mcpGuardrailsMode=false` includes both NeMo and EvalHub; `true` enables only the NeMo controller.
 
-Providers descobertos no operador instalado: `garak`, `ragas` e `lm_evaluation_harness`. O nome de configuração Kubernetes do último usa hífens; o ID da API usa underscores. O benchmark Garak `quick` existe nesse provider e executa um teste curto de segurança. Isso não certifica um modelo.
-
-No terminal autenticado, configure `EVALHUB_URL` com a Route real do serviço, `MAAS_BASE_URL` com a URL do gateway e `MAAS_MODEL_ID` com o modelo publicado. Essas variáveis não contêm a API key. A key é referenciada pelo Secret `showroom-maas-key` no tenant.
+Set `EVALHUB_URL` to the discovered EvalHub Route, and set `MAAS_BASE_URL` and `MAAS_MODEL_ID` from your model connection. The evaluation references `showroom-maas-key`; do not paste an API key into a notebook or request file.
 
 ```bash
 python3 scripts/science.py eval-submit
-python3 scripts/science.py eval-status --job-id ID_RETORNADO
+python3 scripts/science.py eval-status --job-id <job-id>
 ```
 
-O script descobre o provider antes de enviar a requisição. O exemplo JSON fica em `gitops/components/evaluation/garak-request.example.json`; os placeholders precisam de configuração antes do uso. A submissão passa por `/api/v1/evaluations/jobs`, com `X-Tenant: ai-showroom` e identidade autenticada.
+The installed Garak provider exposes benchmark `quick`. The API request uses `benchmarks[].id`, not `benchmark_id`. The smoke test runs one DAN probe against the local LLM and records measured metrics in MLflow.
 
-Aceite: job `completed`, métricas reais, experimento `aurora-model-safety` e `evalcard.json`. Criar o CR ou ver a página não é aceite. Se o cartão faltar, investigue mesmo que o job esteja concluído. Compare o mesmo conjunto antes/depois de guardrails, com o mesmo modelo e parâmetros.
+## Interpretation and observed release limitations
 
-Para RAG, use os casos de `data/eval/autorag.json` e o provider RAGAS, conferindo primeiro o formato esperado pelo adapter. Não enviar o JSON AutoRAG a qualquer adapter sem conversão de esquema.
+Lower attack success rate is better. A measured rate of 1.0 means the single probe succeeded; this is a failed security benchmark, not a successful safety certification. Inspect each benchmark's `test.pass`; the observed aggregate pass flag was inconsistent with that benchmark.
 
-As notas3.5 ainda distinguem core Evaluation Stack DP de UI/SDK/CLI/MCP TP. A página de validação registra o que foi realmente executado nesta instalação. [EvalHub oficial](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/evaluating_ai_systems/evaluating-llms-with-evalhub_evaluate).
+The adapter reported HTML/JSONL artifact upload success while its MLflow PUT requests returned HTTP 307 and the S3 prefix was empty. Metrics and EvalHub results were present. Do not claim reports were persisted without checking the artifact store. MLflow with workspaces rejects a client-specified `artifact_location`, so disabling workspace isolation is not used as a workaround.
+
+[EvalHub API source](https://github.com/eval-hub/eval-hub) and [TrustyAI operator](https://github.com/opendatahub-io/trustyai-service-operator).

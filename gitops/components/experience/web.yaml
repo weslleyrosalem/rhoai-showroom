@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: showroom-web
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"aurora"}}'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: showroom-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: showroom-web}
+  template:
+    metadata:
+      labels: {app: showroom-web, app.kubernetes.io/part-of: rhoai-showroom}
+    spec:
+      serviceAccountName: showroom-web
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: oauth-proxy
+          # OAuth proxy resolved from the OpenShift 4.22.14 release payload.
+          image: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:c1b77e5d09514955014fdea72271e5db53fec265fd7717d4e92fc89d08f93579
+          args:
+            - --provider=openshift
+            - --openshift-service-account=showroom-web
+            - '--openshift-sar={"namespace":"ai-showroom","resource":"services","resourceName":"aurora-rag","verb":"get"}'
+            - --upstream=http://aurora-rag:8080
+            - --http-address=
+            - --https-address=:8443
+            - --tls-cert=/etc/tls/tls.crt
+            - --tls-key=/etc/tls/tls.key
+            - --cookie-secret-file=/etc/cookie/cookie-secret
+            - --cookie-secure=true
+            - --cookie-expire=4h
+            - --cookie-samesite=lax
+            - --pass-access-token=false
+            - --pass-user-bearer-token=false
+            - --skip-provider-button=true
+            - --openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            - --openshift-ca=/etc/service-ca/service-ca.crt
+          ports:
+            - {name: https, containerPort: 8443}
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+          readinessProbe:
+            httpGet: {path: /oauth/healthz, port: https, scheme: HTTPS}
+            initialDelaySeconds: 5
+          volumeMounts:
+            - {name: tls, mountPath: /etc/tls, readOnly: true}
+            - {name: cookie, mountPath: /etc/cookie, readOnly: true}
+            - {name: service-ca, mountPath: /etc/service-ca, readOnly: true}
+      volumes:
+        - {name: tls, secret: {secretName: showroom-web-tls}}
+        - {name: cookie, secret: {secretName: showroom-web-cookie}}
+        - {name: service-ca, configMap: {name: showroom-service-ca}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: showroom-web
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: showroom-web-tls
+spec:
+  selector: {app: showroom-web}
+  ports:
+    - {name: https, port: 8443, targetPort: https}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: aurora
+spec:
+  to: {kind: Service, name: showroom-web}
+  port: {targetPort: https}
+  tls:
+    termination: reencrypt
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-rag-private
+spec:
+  podSelector:
+    matchLabels: {app: aurora-rag}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app: showroom-web}}
+        - podSelector: {matchLabels: {notebook-name: aurora-lab}}
+      ports:
+        - {port: 8080, protocol: TCP}

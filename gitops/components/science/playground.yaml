@@ -165,20 +165,20 @@ data:
     \    metadata:\n      backend: kv_default\n      namespace: registry\n    prompts:\n\
     \      backend: sql_default\n      table_name: prompts\nvector_stores:\n  default_provider_id:\
     \ pgvector\n  default_embedding_model:\n    provider_id: sentence-transformers\n\
-    \    model_id: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2\n \
-    \ annotation_prompt_params:\n    enable_annotations: true\n  file_ingestion_params:\n\
-    \    default_chunk_overlap_tokens: 128\n    default_chunk_size_tokens: 512\n \
-    \ chunk_retrieval_params:\n    chunk_multiplier: 5\n    default_reranker_strategy:\
-    \ rrf\n    default_search_mode: vector\n    max_tokens_in_context: 4000\n    rrf_impact_factor:\
-    \ 60\n    weighted_search_alpha: 0.5\n  file_batch_params:\n    cleanup_interval_seconds:\
-    \ 86400\n    file_batch_chunk_size: 10\n    max_concurrent_files_per_batch: 3\n\
-    registered_resources:\n  models:\n  - provider_id: sentence-transformers\n   \
-    \ model_id: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2\n    provider_model_id:\
-    \ sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2\n    model_type:\
-    \ embedding\n    metadata:\n      embedding_dimension: 384\n  - provider_id: aurora-maas\n\
-    \    model_id: ${env.MAAS_MODEL_ID}\n    model_type: llm\n    metadata:\n    \
-    \  display_name: Aurora local LLM via MaaS\n  vector_stores: []\nexternal_providers_dir:\
-    \ /opt/app-root/.llama/providers.d\nserver:\n  port: 8321\n"
+    \    model_id: paraphrase-multilingual-MiniLM-L12-v2\n  annotation_prompt_params:\n\
+    \    enable_annotations: true\n  file_ingestion_params:\n    default_chunk_overlap_tokens:\
+    \ 128\n    default_chunk_size_tokens: 512\n  chunk_retrieval_params:\n    chunk_multiplier:\
+    \ 5\n    default_reranker_strategy: rrf\n    default_search_mode: vector\n   \
+    \ max_tokens_in_context: 4000\n    rrf_impact_factor: 60\n    weighted_search_alpha:\
+    \ 0.5\n  file_batch_params:\n    cleanup_interval_seconds: 86400\n    file_batch_chunk_size:\
+    \ 10\n    max_concurrent_files_per_batch: 3\nregistered_resources:\n  models:\n\
+    \  - provider_id: sentence-transformers\n    model_id: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2\n\
+    \    provider_model_id: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2\n\
+    \    model_type: embedding\n    metadata:\n      embedding_dimension: 384\n  -\
+    \ provider_id: aurora-maas\n    model_id: ${env.MAAS_MODEL_ID}\n    model_type:\
+    \ llm\n    metadata:\n      display_name: Aurora local LLM via MaaS\n  vector_stores:\
+    \ []\nexternal_providers_dir: /opt/app-root/.llama/providers.d\nserver:\n  port:\
+    \ 8321\n"
 ---
 apiVersion: ogx.io/v1beta1
 kind: OGXServer

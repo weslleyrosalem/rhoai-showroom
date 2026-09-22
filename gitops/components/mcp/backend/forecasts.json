@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "dataset": "Aurora Supply synthetic demand; 2025 calendar year",
-  "model_version": "ca4c373b7d35",
+  "model_version": "395399423837",
   "horizon_days": 7,
   "forecast_origin": "2025-12-31",
   "forecasts": [
@@ -17,6 +17,8 @@
       ],
       "mae": 0.8099637851965975,
       "baseline_mae": 1.5892857142857142,
+      "candidate_mae": 0.8099637851965975,
+      "candidate_passed_quality_gate": true,
       "wape": 0.044555964608064304,
       "train_end": "2025-12-03",
       "test_start": "2025-12-04",
@@ -52,7 +54,7 @@
         }
       ],
       "forecast_7d_units": 130.26,
-      "worker": "Weslleys-MacBook-Air.local",
+      "worker": "aurora-demand-train-52skj-cpu-workers-worker-z8wzf",
       "passed_quality_gate": true
     },
     {
@@ -67,6 +69,8 @@
       ],
       "mae": 0.4319126604427708,
       "baseline_mae": 0.5714285714285714,
+      "candidate_mae": 0.4319126604427708,
+      "candidate_passed_quality_gate": true,
       "wape": 0.054231186064563154,
       "train_end": "2025-12-03",
       "test_start": "2025-12-04",
@@ -102,7 +106,7 @@
         }
       ],
       "forecast_7d_units": 54.75,
-      "worker": "Weslleys-MacBook-Air.local",
+      "worker": "aurora-demand-train-52skj-cpu-workers-worker-zfnbd",
       "passed_quality_gate": true
     },
     {
@@ -117,6 +121,8 @@
       ],
       "mae": 0.3829713250789813,
       "baseline_mae": 0.5,
+      "candidate_mae": 0.3829713250789813,
+      "candidate_passed_quality_gate": true,
       "wape": 0.06345087042728684,
       "train_end": "2025-12-03",
       "test_start": "2025-12-04",
@@ -152,7 +158,7 @@
         }
       ],
       "forecast_7d_units": 43.47,
-      "worker": "Weslleys-MacBook-Air.local",
+      "worker": "aurora-demand-train-52skj-cpu-workers-worker-z8wzf",
       "passed_quality_gate": true
     },
     {
@@ -167,6 +173,8 @@
       ],
       "mae": 1.050956227369595,
       "baseline_mae": 2.0,
+      "candidate_mae": 1.050956227369595,
+      "candidate_passed_quality_gate": true,
       "wape": 0.049456763640922115,
       "train_end": "2025-12-03",
       "test_start": "2025-12-04",
@@ -202,7 +210,7 @@
         }
       ],
       "forecast_7d_units": 152.82,
-      "worker": "Weslleys-MacBook-Air.local",
+      "worker": "aurora-demand-train-52skj-cpu-workers-worker-zfnbd",
       "passed_quality_gate": true
     },
     {
@@ -217,6 +225,8 @@
       ],
       "mae": 1.6336216211203216,
       "baseline_mae": 2.4642857142857144,
+      "candidate_mae": 1.6336216211203216,
+      "candidate_passed_quality_gate": true,
       "wape": 0.05337386860136407,
       "train_end": "2025-12-03",
       "test_start": "2025-12-04",
@@ -252,7 +262,7 @@
         }
       ],
       "forecast_7d_units": 216.83,
-      "worker": "Weslleys-MacBook-Air.local",
+      "worker": "aurora-demand-train-52skj-cpu-workers-worker-z8wzf",
       "passed_quality_gate": true
     },
     {
@@ -267,6 +277,8 @@
       ],
       "mae": 0.7174154253178205,
       "baseline_mae": 1.125,
+      "candidate_mae": 0.7174154253178205,
+      "candidate_passed_quality_gate": true,
       "wape": 0.05244812508850907,
       "train_end": "2025-12-03",
       "test_start": "2025-12-04",
@@ -302,12 +314,12 @@
         }
       ],
       "forecast_7d_units": 97.47,
-      "worker": "Weslleys-MacBook-Air.local",
+      "worker": "aurora-demand-train-52skj-cpu-workers-worker-zfnbd",
       "passed_quality_gate": true
     },
     {
       "sku": "AS-007",
-      "model_type": "ridge-seasonal-trend",
+      "model_type": "seasonal-baseline",
       "weights": [
         2.069549767909928,
         0.8896765847724772,
@@ -315,45 +327,47 @@
         -0.0028137404373455143,
         0.7928603604179731
       ],
-      "mae": 0.3828458127131348,
+      "mae": 0.32142857142857145,
       "baseline_mae": 0.32142857142857145,
-      "wape": 0.12915280428876835,
+      "candidate_mae": 0.3828458127131348,
+      "candidate_passed_quality_gate": false,
+      "wape": 0.10843373493975904,
       "train_end": "2025-12-03",
       "test_start": "2025-12-04",
       "test_end": "2025-12-31",
       "forecast": [
         {
           "date": "2026-01-01",
-          "units": 3.19
+          "units": 3.5
         },
         {
           "date": "2026-01-02",
-          "units": 2.74
+          "units": 3.0
         },
         {
           "date": "2026-01-03",
-          "units": 2.45
+          "units": 2.25
         },
         {
           "date": "2026-01-04",
-          "units": 2.55
+          "units": 2.5
         },
         {
           "date": "2026-01-05",
-          "units": 2.97
+          "units": 3.5
         },
         {
           "date": "2026-01-06",
-          "units": 3.38
+          "units": 3.75
         },
         {
           "date": "2026-01-07",
-          "units": 3.49
+          "units": 4.0
         }
       ],
-      "forecast_7d_units": 20.77,
-      "worker": "Weslleys-MacBook-Air.local",
-      "passed_quality_gate": false
+      "forecast_7d_units": 22.5,
+      "worker": "aurora-demand-train-52skj-cpu-workers-worker-z8wzf",
+      "passed_quality_gate": true
     },
     {
       "sku": "AS-008",
@@ -367,6 +381,8 @@
       ],
       "mae": 0.3113495009569322,
       "baseline_mae": 0.42857142857142855,
+      "candidate_mae": 0.3113495009569322,
+      "candidate_passed_quality_gate": true,
       "wape": 0.06757973664181474,
       "train_end": "2025-12-03",
       "test_start": "2025-12-04",
@@ -402,9 +418,10 @@
         }
       ],
       "forecast_7d_units": 32.12,
-      "worker": "Weslleys-MacBook-Air.local",
+      "worker": "aurora-demand-train-52skj-cpu-workers-worker-zfnbd",
       "passed_quality_gate": true
     }
   ],
-  "synthetic": true
+  "synthetic": true,
+  "mlflow_run_id": "36ff7fb1b995454f9c6ff840ce211520"
 }

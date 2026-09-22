@@ -18,4 +18,21 @@ metadata:
   namespace: ai-showroom
 subjects:
   - {kind: ServiceAccount, name: aurora-science, namespace: ai-showroom}
+  - {kind: ServiceAccount, name: aurora-lab, namespace: ai-showroom}
 roleRef: {apiGroup: rbac.authorization.k8s.io, kind: Role, name: aurora-evaluator}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-evalhub-clients
+  namespace: redhat-ods-applications
+spec:
+  podSelector:
+    matchLabels: {app: eval-hub, instance: evalhub}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: ai-showroom}
+      ports:
+        - {protocol: TCP, port: 8443}

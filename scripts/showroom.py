@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Bootstrap and inspect Aurora Supply. Credentials are never printed or committed."""
-import argparse, base64, json, os, secrets, subprocess, sys
+import argparse, base64, hashlib, json, os, secrets, subprocess, sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -25,9 +25,17 @@ def apply(obj,server):
     guard(server)
     oc('apply','--server-side','--field-manager=showroom-bootstrap','-f','-',data=json.dumps(obj))
 
-def secret(name,namespace,values,server):
+def secret(name,namespace,values,server,match_keys=()):
     existing=get('secret',name,namespace,True)
-    if existing:return existing['data']
+    if existing:
+        if existing['metadata'].get('labels',{}).get('app.kubernetes.io/part-of')!='rhoai-showroom':
+            raise RuntimeError(f'{namespace}/{name} already exists without showroom ownership; inspect before adoption.')
+        if not set(values)<=set(existing.get('data',{})):
+            raise RuntimeError(f'{namespace}/{name} lacks required credential keys.')
+        for key in match_keys:
+            if base64.b64decode(existing['data'][key]).decode()!=values[key]:
+                raise RuntimeError(f'{namespace}/{name} diverges from the primary S3 connection; reconcile without exposing credentials.')
+        return existing['data']
     obj={'apiVersion':'v1','kind':'Secret','metadata':{'name':name,'namespace':namespace,'labels':{'app.kubernetes.io/part-of':'rhoai-showroom'}},'type':'Opaque','data':{k:base64.b64encode(v.encode()).decode() for k,v in values.items()}}
     apply(obj,server)
     return obj['data']
@@ -45,10 +53,11 @@ def preflight(server):
 def bootstrap(server):
     preflight(server)
     guard(server);oc('apply','-k',str(ROOT/'gitops/components/foundation'))
+    secret('showroom-web-cookie','ai-showroom',{'cookie-secret':secrets.token_urlsafe(24)},server)
     s3data=secret('showroom-s3-credentials','ai-showroom',{'AWS_ACCESS_KEY_ID':'aurora-'+secrets.token_hex(8),'AWS_SECRET_ACCESS_KEY':secrets.token_urlsafe(36)},server)
     values={k:base64.b64decode(v).decode() for k,v in s3data.items()}
-    secret('showroom-s3-credentials','redhat-ods-applications',values,server)
-    secret('mlflow-artifact-connection','ai-showroom',{**values,'AWS_S3_BUCKET':'aurora-artifacts','AWS_S3_ENDPOINT':'http://showroom-s3.ai-showroom.svc:8333','AWS_DEFAULT_REGION':'us-east-1'},server)
+    secret('showroom-s3-credentials','redhat-ods-applications',values,server,match_keys=tuple(values))
+    secret('mlflow-artifact-connection','ai-showroom',{**values,'AWS_S3_BUCKET':'aurora-artifacts','AWS_S3_ENDPOINT':'http://showroom-s3.ai-showroom.svc:8333','AWS_DEFAULT_REGION':'us-east-1'},server,match_keys=tuple(values))
     secret('aurora-pgvector-credentials','ai-showroom',{'POSTGRESQL_USER':'vectoruser','POSTGRESQL_DATABASE':'vectordb','POSTGRESQL_PASSWORD':secrets.token_urlsafe(36)},server)
     password=secrets.token_urlsafe(36)
     secret('aurora-evaldb-credentials','redhat-ods-applications',{'POSTGRESQL_USER':'evalhub','POSTGRESQL_DATABASE':'evalhub','POSTGRESQL_PASSWORD':password,'db-url':f'postgres://evalhub:{password}@aurora-evaldb.redhat-ods-applications.svc:5432/evalhub?sslmode=disable'},server)
@@ -56,7 +65,8 @@ def bootstrap(server):
         items=get(kind)['items']
         if len(items)!=1:raise RuntimeError(f'Expected exactly one {kind}; review existing platform first.')
         current=items[0]
-        backup=ROOT/'local/backups'/f'{kind}-before.json';backup.parent.mkdir(parents=True,exist_ok=True)
+        cluster_key=hashlib.sha256(server.encode()).hexdigest()[:16]
+        backup=ROOT/'local/backups'/cluster_key/f"{kind}-{current['metadata']['uid']}-before.json";backup.parent.mkdir(parents=True,exist_ok=True)
         if not backup.exists():
             fd=os.open(backup,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
             with os.fdopen(fd,'w') as f:json.dump(current,f,indent=2)

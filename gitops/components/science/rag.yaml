@@ -48,6 +48,7 @@ spec:
           imagePullPolicy: Always
           envFrom:
             - configMapRef: {name: aurora-science-config}
+            - secretRef: {name: showroom-s3-credentials}
           env:
             - name: MAAS_API_KEY
               valueFrom: {secretKeyRef: {name: showroom-maas-key, key: api-key}}

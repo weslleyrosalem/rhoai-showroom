@@ -6,8 +6,9 @@ resources:
   - ../../components/mlflow
   - ../../components/evaluation
   - ../../components/mcp
-  - ../../components/guardrails
+  - ../../components/guardrails/mcp-integration
   - ../../components/science
+  - ../../components/experience
   - ../../profiles/existing-cluster
 # GPU models, public MCP ingress and one-shot Ray jobs have explicit run gates.
 # Secrets and shared operator patches are bootstrapped separately.

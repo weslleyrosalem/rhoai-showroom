@@ -1,4 +1,7 @@
 import copy
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import threading
+from types import SimpleNamespace
 import importlib.util
 import json
 from pathlib import Path
@@ -63,5 +66,66 @@ class BenchmarkTests(unittest.TestCase):
     def test_metadata_requires_pins(self):
         meta=run_fixture()['metadata'];meta['model_revision']='main'
         with self.assertRaises(ValueError):m.validate_metadata(meta)
+
+class BenchmarkHTTPTests(unittest.TestCase):
+    """Transport fixtures only: never publish these rows as model performance."""
+    def exercise(self, redirect=False):
+        observed={'target_hit':False}
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self,*args):pass
+            def do_POST(self):
+                observed['body']=json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+                if redirect:
+                    self.send_response(302)
+                    self.send_header('Location','http://127.0.0.1:'+str(self.server.server_port)+'/target')
+                    self.end_headers();return
+                self.send_response(200);self.send_header('Content-Type','text/event-stream');self.end_headers()
+                chunks=[{'choices':[{'delta':{'role':'assistant'}}]},
+                        {'choices':[{'delta':{'content':'fixture'}}]},
+                        {'choices':[],'usage':{'prompt_tokens':3,'completion_tokens':1,'total_tokens':4}}]
+                for chunk in chunks:self.wfile.write((event(chunk)+'\n').encode());self.wfile.flush()
+                self.wfile.write(b'data: [DONE]\n\n')
+            def do_GET(self):
+                observed['target_hit']=True
+                self.send_response(200);self.end_headers()
+        server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
+        worker=threading.Thread(target=server.serve_forever,daemon=True);worker.start()
+        try:
+            args=SimpleNamespace(prefix_mode='repeated-prefix',max_tokens=8,timeout=2)
+            result=m.request_once('http://127.0.0.1:'+str(server.server_port)+'/test','test-fixture','test-only-key',0,args)
+        finally:
+            server.shutdown();server.server_close();worker.join(timeout=2)
+        return result,observed
+    def test_real_http_sse_transport_records_usage_without_credentials(self):
+        row,observed=self.exercise()
+        self.assertTrue(row['ok']);self.assertEqual(row['completion_tokens'],1)
+        self.assertEqual(row['http_status'],200);self.assertGreaterEqual(row['ttft_ms'],0)
+        self.assertTrue(observed['body']['stream_options']['include_usage'])
+        self.assertNotIn('test-only-key',json.dumps(row))
+        self.assertNotIn('fixture',json.dumps(row))
+    def test_redirect_is_not_followed_with_bearer(self):
+        row,observed=self.exercise(redirect=True)
+        self.assertFalse(row['ok']);self.assertEqual(row['http_status'],302)
+        self.assertFalse(observed['target_hit'])
+
+class BenchmarkStreamBoundsTests(unittest.TestCase):
+    def test_unterminated_trickle_cannot_evade_deadline(self):
+        class Trickle:
+            now=0
+            def read1(self,size):self.now+=1;return b'x'
+        response=Trickle()
+        with self.assertRaises(TimeoutError):
+            list(m.bounded_sse_lines(response,3,clock=lambda:response.now))
+        self.assertLessEqual(response.now,3)
+    def test_unterminated_line_has_a_memory_bound(self):
+        class Response:
+            def read1(self,size):return b'x'*10
+        with self.assertRaises(ValueError):
+            list(m.bounded_sse_lines(Response(),100,clock=lambda:0,max_line_bytes=16))
+    def test_many_short_lines_have_a_total_byte_bound(self):
+        class Response:
+            def read1(self,size):return b'data: x\n'
+        with self.assertRaises(ValueError):
+            list(m.bounded_sse_lines(Response(),100,clock=lambda:0,max_bytes=16))
 
 if __name__=='__main__':unittest.main()

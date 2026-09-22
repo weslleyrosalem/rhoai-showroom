@@ -1,10 +1,10 @@
 # Aurora Supply MCP tools
 
-Servidor MCP real para dados inteiramente sintéticos. Expõe três ferramentas, todas de leitura: `list_products`, `get_stock` e `get_replenishment_recommendation`. A recomendação usa a previsão de sete dias quando há arquivo configurado; sem previsão usa a regra explícita de ponto de reposição. A resposta identifica método, versão dos dados e `order_created:false`. Não há endpoint de compra ou atualização do estoque.
+A real MCP server backed entirely by synthetic data. Three read-only tools expose the product catalog, inventory, and replenishment proposals. With a forecast, the proposal extrapolates seven days of demand to 21-day coverage and keeps the reorder point as a minimum target. It returns quantity, unit price, total, approval role, model provenance, and `order_created:false`. There is no purchase or inventory-update endpoint.
 
-## Executar e testar localmente
+## Run locally
 
-Python3.12 é a versão testada. Execute na raiz do repositório:
+Python 3.12 is the tested runtime. From the repository root:
 
 ```sh
 python3.12 -m venv .venv
@@ -15,22 +15,20 @@ AURORA_FORECASTS_PATH="$PWD/data/forecasts.json" \
 .venv/bin/python apps/aurora-tools/server.py
 ```
 
-Endpoint `http://localhost:8000/mcp`, Streamable HTTP; `GET /health` não contém dados privados. O servidor local não faz autenticação de usuário: no cluster esta é responsabilidade do Gateway/Authorino e das NetworkPolicies. Não exponha o backend diretamente.
+The Streamable HTTP endpoint is `http://localhost:8000/mcp`; `/health` contains no private data. User authentication belongs to Gateway/Authorino. Keep this backend private behind NetworkPolicy.
 
-Foi fixado o [SDK oficial MCP1.27.2](https://github.com/modelcontextprotocol/python-sdk/tree/v1.27.2), API `FastMCP`, para compatibilidade com o gateway0.7.1 e protocolo2025. O SDK2 muda APIs/protocolo e exige novo ensaio. Todas as dependências resolvidas estão fixadas em `requirements.txt`. As mensagens de depreciação observadas no ambiente de teste não impediram as chamadas MCP; a validação real de Gateway permanece separada.
+The [official MCP SDK 1.27.2](https://github.com/modelcontextprotocol/python-sdk/tree/v1.27.2) and all resolved dependencies are pinned. SDK 2 requires a new compatibility test. The UBI 9/Python 3.12 container supports an arbitrary non-root UID, a read-only root filesystem, no Kubernetes token, and no egress. Configured invalid data fails startup; the small fallback dataset is used only when no product file is configured.
 
-`Containerfile` usa UBI9/Python3.12 com digest do índice multiarquitetura. O app suporta UID arbitrário, filesystem somente leitura, sem token Kubernetes e sem egress. O backend não busca dados da internet. `AURORA_PRODUCTS_PATH`/`AURORA_FORECASTS_PATH` são parâmetros administrativos de arquivo; não podem ser controlados por argumentos MCP. Se um arquivo configurado for inválido, o processo falha; o fallback só vale quando não há arquivo de produtos configurado.
-
-## Dados compartilhados e GitOps
+## Data and builds
 
 ```sh
 .venv/bin/python apps/aurora-tools/sync_data.py
 oc apply --dry-run=server -k gitops/components/mcp/backend
 ```
 
-O script valida o contrato e copia as fixtures canônicas `data/` para o diretório Kustomize. A cópia evita `--load-restrictor=LoadRestrictionsNone`. O nome com hash do ConfigMap muda quando os dados mudam e o Deployment referencia a nova versão. O processo carrega o snapshot ao iniciar. Depois do treinamento, importe a previsão aprovada em `data/forecasts.json`, rode `sync_data.py` e revise o diff antes de sincronizar.
+The script validates and copies canonical `data/` snapshots into the backend and lifecycle Kustomize roots. The backend ConfigMap hash triggers a rollout when data changes. The lifecycle ConfigMap has a stable name; restart its managed Deployment after updating the snapshot. After training, import the approved forecast into `data/forecasts.json`, synchronize, and review the diff.
 
-Para construir a imagem via BuildConfig binário, envie somente os quatro arquivos do contexto:
+Send only these four reviewed files to the binary build:
 
 ```sh
 oc apply -k gitops/components/mcp/backend
@@ -40,13 +38,15 @@ cp apps/aurora-tools/Containerfile apps/aurora-tools/requirements.txt \
 oc start-build aurora-tools -n ai-showroom --from-dir="$build_context" --follow
 ```
 
-O BuildConfig não inicia automaticamente; isso evita build com contexto incompleto. Para promoção por GitOps, publique a imagem em registry acessível e fixe seu digest no overlay do cluster. Não inclua `.venv`, tokens ou arquivos locais no contexto.
+The BuildConfig does not start automatically. Do not upload `.venv`, credentials, or local files. Pin the promoted image digest in a cluster overlay.
 
-## Verificar integração
+## Validate
 
 ```sh
-.venv/bin/python apps/aurora-tools/smoke_mcp.py --url "https://SEU_HOST_MCP/mcp"
-.venv/bin/python apps/aurora-tools/check_guardrails.py --url "https://SEU_HOST_NEMO"
+.venv/bin/python apps/aurora-tools/smoke_mcp.py --url "https://MCP_HOST/mcp"
+.venv/bin/python apps/aurora-tools/check_guardrails.py --url "https://NEMO_HOST"
 ```
 
-Os scripts usam `MCP_TOKEN`/`NEMO_TOKEN` quando presentes, caso contrário obtêm o token da sessão `oc` em memória. Não imprimem credenciais. A validação TLS fica ativa; uma CA privada pode ser informada ao script NeMo por `--ca-file`.
+Helpers use `MCP_TOKEN`/`NEMO_TOKEN`, or the current `oc` token in memory; they never print credentials. HTTPS verification stays enabled and redirects are rejected. NeMo accepts a private CA through `--ca-file`. Read the [MCP lab](https://weslleyrosalem.github.io/rhoai-showroom/labs/mcp/) for observed version-specific limitations.
+
+The catalog helper additionally requires `PyYAML==6.0.2`; it merges only the Aurora source into the shared ConfigMap and preserves unrelated entries. It checks the expected API server and user before applying.

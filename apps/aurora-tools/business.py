@@ -9,9 +9,9 @@ from pathlib import Path
 from typing import Any
 
 FALLBACK_PRODUCTS = [
-    {"sku": "AUR-001", "name": "Monitor Aurora 27", "category": "displays", "stock": 7, "reorder_point": 20},
-    {"sku": "AUR-002", "name": "Dock Aurora USB-C", "category": "accessories", "stock": 24, "reorder_point": 15},
-    {"sku": "AUR-003", "name": "Teclado Aurora", "category": "accessories", "stock": 0, "reorder_point": 12},
+    {"sku": "AUR-001", "name": "Aurora 27-inch Monitor", "category": "displays", "stock": 7, "reorder_point": 20},
+    {"sku": "AUR-002", "name": "Aurora USB-C Dock", "category": "accessories", "stock": 24, "reorder_point": 15},
+    {"sku": "AUR-003", "name": "Aurora Keyboard", "category": "accessories", "stock": 0, "reorder_point": 12},
 ]
 
 
@@ -40,6 +40,16 @@ def load_products(path: str | None = None) -> tuple[list[dict[str, Any]], str]:
             if type(value) is not int or not 0 <= value <= 1_000_000:
                 raise ValueError(f"invalid product {field}")
             clean[field] = value
+        price = item.get("unit_price")
+        if price is not None:
+            if type(price) not in (int, float) or not math.isfinite(price) or not 0 <= price <= 1_000_000:
+                raise ValueError("invalid product unit_price")
+            clean["unit_price"] = price
+        if "lead_time_days" in item:
+            days = item["lead_time_days"]
+            if type(days) is not int or not 0 <= days <= 365:
+                raise ValueError("invalid product lead_time_days")
+            clean["lead_time_days"] = days
         result.append(clean)
     result.sort(key=lambda p: p["sku"])
     revision = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()[:12]
@@ -91,11 +101,17 @@ class Catalog:
     def get_replenishment_recommendation(self, sku: str) -> dict[str, Any]:
         product = self.get_stock(sku)["product"]
         forecast = self._forecasts.get(sku)
-        target = max(product["reorder_point"], math.ceil(forecast["forecast_7d_units"])) if forecast else product["reorder_point"]
+        target = max(product["reorder_point"], math.ceil(forecast["forecast_7d_units"] * 21 / 7)) if forecast else product["reorder_point"]
         quantity = max(0, target - product["stock"])
+        price = product.get("unit_price")
+        total = round(quantity * price, 2) if price is not None else None
+        approval_role = ("operations_manager" if total > 5000 else "assigned_buyer") if total is not None else "human_review_required"
         return self._envelope(sku=sku, stock=product["stock"], reorder_point=product["reorder_point"],
+                              coverage_days=21, unit_price=price, estimated_total=total,
+                              currency="demo currency units", approval_role=approval_role,
+                              mlflow_run_id=self._forecast_meta.get("mlflow_run_id"),
                               target_stock=target, recommended_quantity=quantity,
-                              rule="max(0, max(reorder_point, ceil(forecast_7d_units)) - stock)" if forecast else "max(0, reorder_point - stock)",
+                              rule="max(0, max(reorder_point, ceil(forecast_7d_units * 21 / 7)) - stock)" if forecast else "max(0, reorder_point - stock)",
                               forecast=dict(forecast) if forecast else None,
                               recommendation_type="forecast-informed inventory proposal" if forecast else "deterministic inventory policy, not a trained forecast",
                               order_created=False, requires_human_approval=True,

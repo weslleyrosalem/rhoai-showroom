@@ -1,0 +1,83 @@
+source: Aurora Supply showroom
+mcp_servers:
+  - name: aurora-supply
+    provider: Aurora Supply showroom
+    license: apache-2.0
+    license_link: https://github.com/weslleyrosalem/rhoai-showroom/blob/main/LICENSE
+    description: Read-only synthetic inventory, demand forecasts, and 21-day replenishment proposals. Never creates orders.
+    readme: |
+      # Aurora Supply
+      This showroom server connects product inventory to synthetic demand forecasts.
+      Its three tools list products, read stock, and propose replenishment with a
+      deterministic total and approval role. No external purchases or writes exist.
+
+      Build aurora-tools in ai-showroom first. For the prepared test drive, apply
+      gitops/components/mcp/lifecycle. The operator-managed server is isolated and
+      has no public Route; inspect it through an administrator port-forward.
+      The main application uses the separately authenticated showroom-mcp Gateway.
+      Lifecycle management does not provide Gateway authorization automatically.
+
+      https://weslleyrosalem.github.io/rhoai-showroom/labs/mcp/
+    version: 1.0.0
+    transports: [http]
+    documentationUrl: https://weslleyrosalem.github.io/rhoai-showroom/labs/mcp/
+    repositoryUrl: https://github.com/weslleyrosalem/rhoai-showroom
+    sourceCode: weslleyrosalem/rhoai-showroom
+    publishedDate: '2026-09-22T00:00:00Z'
+    tools:
+      - name: list_products
+        description: List the synthetic product catalog; filter by category and limit.
+        accessType: read_only
+        parameters:
+          - {name: category, type: string, description: Exact category filter, required: false}
+          - {name: limit, type: integer, description: Maximum 100 products, required: false}
+      - name: get_stock
+        description: Read current synthetic stock, reorder point, and unit price.
+        accessType: read_only
+        parameters:
+          - {name: sku, type: string, description: Exact SKU returned by list_products, required: true}
+      - name: get_replenishment_recommendation
+        description: Propose 21-day coverage using the forecast, with total and approval role. No order is created.
+        accessType: read_only
+        parameters:
+          - {name: sku, type: string, description: Exact SKU returned by list_products, required: true}
+    artifacts:
+      - uri: oci://image-registry.openshift-image-registry.svc:5000/ai-showroom/aurora-tools:1.0.0
+    runtimeMetadata:
+      defaultPort: 8000
+      mcpPath: /mcp
+      healthEndpoints:
+        liveness: /health
+        readiness: /health
+      capabilities:
+        requiresNetwork: false
+        requiresFileSystem: false
+        requiresGPU: false
+      prerequisites:
+        serviceAccount:
+          required: true
+          hint: Use the existing token-free aurora-tools service account in ai-showroom.
+          suggestedName: aurora-tools
+        environmentVariables:
+          - name: AURORA_PRODUCTS_PATH
+            description: Mounted canonical synthetic product data.
+            required: true
+            defaultValue: /data/products.json
+          - name: AURORA_FORECASTS_PATH
+            description: Mounted synthetic forecast data with MLflow provenance.
+            required: true
+            defaultValue: /data/forecasts.json
+        configMaps:
+          - name: aurora-tools-lifecycle-data
+            description: Created by the lifecycle overlay; contains canonical synthetic products and forecasts.
+            mountAsFile: true
+            mountPath: /data
+            keys:
+              - {key: products.json, description: Product catalog JSON, required: true}
+              - {key: forecasts.json, description: Seven-day forecast JSON, required: true}
+    securityIndicators:
+      readOnlyTools: true
+    customProperties:
+      supportTier:
+        metadataType: MetadataStringValue
+        string_value: community

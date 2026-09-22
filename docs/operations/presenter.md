@@ -1,30 +1,30 @@
-# Preparar a apresentação
+# Prepare a presentation
 
-A pergunta de abertura é: **“Como a Aurora transforma documentos, estoque e previsão em uma decisão de reposição que pode ser explicada e operada?”** Escolha uma jornada conforme a audiência e deixe a arquitetura comum visível.
+Open with one question: **“How does Aurora turn documents, inventory, and forecasts into a replenishment decision we can explain and operate?”** Choose the journey that fits the audience and keep the shared architecture visible.
 
-## Na véspera
+## Before the session
 
-- Confirme [validação](validation.md), validade da chave MaaS, operadores e endpoints.
-- Aqueça modelo/GPU necessários; download de pesos e escala de nós acontecem antes do cliente.
-- Execute uma pergunta RAG, chamada MCP, teste de segurança, avaliação curta e previsão Ray.
-- Verifique acesso do participante com identidade restrita. A sessão admin do apresentador não demonstra RBAC do visitante.
-- Abra guia, OpenShift AI, MLflow, observabilidade e Argo CD. Limpe dados de entrada de ensaios que contenham informações reais.
-- Tenha artefatos medidos de benchmark identificados por data/configuração. Se o laboratório ao vivo falhar, mostre o resultado anterior como resultado anterior.
+- Check the [validation record](validation.md), MaaS key expiration, operators, and endpoints.
+- Warm up the models and GPU capacity you will use. Download weights and provision nodes before the session.
+- Run a RAG question, MCP tool call, safety check, short evaluation, and Ray forecast.
+- Test the participant's restricted identity. The presenter's admin session does not demonstrate visitor RBAC.
+- Open the guide, OpenShift AI, MLflow, observability, and Argo CD. Use synthetic inputs throughout.
+- Keep measured benchmark artifacts with their date and configuration. If a live experiment fails, identify earlier results as earlier results.
 
-## Três formas de contar
+## Three ways to tell the story
 
-| Audiência | Começo | Clímax | Test drive |
+| Audience | Opening | Main demonstration | Test drive |
 |---|---|---|---|
-| Segurança | Proposta com fontes e ferramentas | Pedido permitido, pedido bloqueado e trace explicável | Alterar prompt e inspecionar decisão |
-| Plataforma | Consumidor com chave e quota | Mesmo endpoint, política diferente; nós/GPUs e métricas | Esgotar orçamento curto e restaurar |
-| DS/MLE | Histórico de demanda e baseline | Ray, quality gate, MLflow e RAG usando previsão | Mudar cenário e comparar resultado |
+| Security | Proposal with sources and tools | Allowed request, blocked request, and trace | Change the prompt and inspect the decision |
+| Platform | Consumer with a key and quota | Governed endpoint, capacity, and metrics | Exhaust a short quota and observe recovery |
+| DS/MLE | Demand history and baseline | Ray, quality gate, MLflow, and forecast-backed RAG | Change a hypothesis and compare results |
 
-Para20min, use o caminho principal de uma jornada. Para45min, acrescente comparação controlada e exploração no Workbench. Não tente passar por todas as telas sem uma decisão comercial comum.
+For 20 minutes, follow one journey's main path. For 45 minutes, add a controlled comparison and Workbench exploration. Keep a business decision at the center instead of visiting every screen.
 
-## Frases que preservam precisão
+## Use precise claims
 
-“Este resultado foi medido neste hardware e workload.” “Esse recurso é Technology Preview na linha3.5.” “Duas réplicas distribuem requisições; tensor/pipeline parallel divide o trabalho de um modelo.” “O filtro de descoberta MCP não substitui autorização.” “L40S não faz MIG; o laboratório MIG requer hardware compatível.”
+“This result was measured on this hardware and workload.” “This capability is Technology Preview in 3.5.” “Replicas distribute requests; tensor or pipeline parallelism divides a model's work.” “MCP discovery filtering does not replace authorization.” “L40S does not support MIG; that lab requires compatible hardware.”
 
-## Encerramento com o cliente
+## Give the customer a repeatable experience
 
-Entregue o link deste guia e um perfil de acesso com prazo adequado. O cliente pode repetir perguntas e labs autorizados, consultar os critérios de sucesso e instalar seu próprio fork. A página pública contém somente dados sintéticos e documentação; o acesso ao cluster continua autenticado.
+Share this guide and an appropriately scoped, time-limited identity. Participants can repeat authorized labs, inspect acceptance criteria, and deploy their own fork. The public site contains only synthetic examples and documentation; cluster access remains authenticated.

@@ -1,20 +1,20 @@
----
-title: AutoML de demanda
----
-# Outro caminho para o mesmo modelo de negócio
+# Native AutoML for demand forecasting
 
-AutoML é Technology Preview no RHOAI3.5. O pipeline server do showroom habilita managed pipelines. Para iniciar a experiência nativa, a flag `spec.dashboardConfig.automl` deve estar ativa e o dataset deve existir em uma conexão S3 do projeto.
+This lab uses the operator-managed `autogluon-timeseries-training-pipeline`, version 3.5.1. It is a separate native AutoML experiment; the transparent ridge/seasonal baseline in the Ray lab is not labeled AutoML.
 
-No Workbench, após instalar boto3:
+The same synthetic `demand.csv` contains SKU, date, units, promotion, price, and lead time. The native run uses `sku` as series ID, `date` as timestamp, `units` as target, a seven-day prediction horizon, one selected model, and the `speed` preset.
+
+Upload the dataset from the configured workbench, then submit from an authenticated terminal:
 
 ```bash
-python scripts/science.py upload
+python3 scripts/science.py native-submit --pipeline automl
+python3 scripts/science.py native-status --run-id <run-id>
 ```
 
-Abra Develop and train → AutoML → `ai-showroom` → Create optimization run. Use `aurora-data/demand.csv`, tarefa Time series forecasting, timestamp `date`, ID `sku`, target `units`, prediction length `7`. Selecione até três modelos no primeiro ensaio. Não use informação futura desconhecida como covariável conhecida.
+The reusable parameters are in `notebooks/native-automl-parameters.json`. The launcher discovers the pipeline and version instead of copying cluster-specific IDs. Do not force a generic `pipeline-runner` account: RHOAI uses its DSPA-specific allowed account by default.
 
-Acompanhe o run e abra um resultado concluído: leaderboard, validação temporal e notebook gerado. Compare com a baseline do Ray usando a mesma janela de teste antes de afirmar ganho. O vencedor pode futuramente publicar o mesmo contrato JSON consumido pela ferramenta MCP; não há conversão automática implícita nesta entrega.
+The training step requests 4 CPUs and 16 GiB, plus workflow overhead. Ensure a worker has that much free allocatable capacity. A Pending pod is not an AutoML result.
 
-Recursos mínimos documentados: 4 CPUs e16Gi disponíveis. Execute sequencialmente com AutoRAG no perfil compacto. A presença da página ou do DSPA não significa que uma otimização já concluiu.
+Acceptance: completed native run, ranked leaderboard, measured holdout metrics, and actual model artifacts. Compare the selected forecast with the Ray baseline before changing the MCP model source.
 
-[Criação de AutoML](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_automl/creating-automl-optimization-run_automl).
+[Upstream AutoGluon pipeline source](https://github.com/red-hat-data-services/pipelines-components/tree/main/pipelines/training/automl/autogluon_timeseries_training_pipeline). Installed 3.5.1 parameter schemas take precedence over newer upstream examples.

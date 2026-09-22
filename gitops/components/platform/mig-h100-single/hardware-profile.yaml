@@ -1,0 +1,71 @@
+{
+  "apiVersion": "infrastructure.opendatahub.io/v1",
+  "kind": "HardwareProfile",
+  "metadata": {
+    "name": "showroom-h100-mig-1g10gb",
+    "namespace": "ai-showroom",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "app.kubernetes.io/managed-by": "gitops"
+    },
+    "annotations": {
+      "opendatahub.io/display-name": "Showroom H100 MIG \u00b7 1g.10gb (single)",
+      "opendatahub.io/disabled": "true",
+      "opendatahub.io/description": "One 10GB MIG slice, not one whole H100. Enable only after all-1g.10gb succeeds on the dedicated H100 pool; single strategy uses nvidia.com/gpu."
+    }
+  },
+  "spec": {
+    "identifiers": [
+      {
+        "identifier": "cpu",
+        "displayName": "CPU",
+        "resourceType": "CPU",
+        "minCount": 1,
+        "defaultCount": 2,
+        "maxCount": 4
+      },
+      {
+        "identifier": "memory",
+        "displayName": "Memory",
+        "resourceType": "Memory",
+        "minCount": "4Gi",
+        "defaultCount": "8Gi",
+        "maxCount": "16Gi"
+      },
+      {
+        "identifier": "nvidia.com/gpu",
+        "displayName": "H100 MIG 1g.10gb slice",
+        "resourceType": "Accelerator",
+        "minCount": 1,
+        "defaultCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "scheduling": {
+      "type": "Node",
+      "node": {
+        "nodeSelector": {
+          "node.kubernetes.io/instance-type": "p5.4xlarge",
+          "showroom.openshift.ai/mig-pool": "true",
+          "nvidia.com/mig.config": "all-1g.10gb",
+          "nvidia.com/mig.config.state": "success",
+          "nvidia.com/mig.strategy": "single"
+        },
+        "tolerations": [
+          {
+            "key": "nvidia.com/gpu",
+            "operator": "Equal",
+            "value": "true",
+            "effect": "NoSchedule"
+          },
+          {
+            "key": "showroom.openshift.ai/mig",
+            "operator": "Equal",
+            "value": "true",
+            "effect": "NoSchedule"
+          }
+        ]
+      }
+    }
+  }
+}

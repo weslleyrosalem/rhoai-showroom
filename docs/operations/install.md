@@ -1,16 +1,16 @@
-# Instalar em outro cluster
+# Install in another cluster
 
-O caminho abaixo instala a experiência Aurora em um ROSA compatível. A infraestrutura, os operadores e as credenciais são pré-requisitos explícitos; o repositório não possui acesso à conta AWS de quem o clona.
+This procedure deploys the Aurora experience on a compatible ROSA cluster. Infrastructure, operators, and credentials are explicit prerequisites. Cloning this repository does not grant access to an AWS account.
 
-## 1. Preparar plataforma
+## 1. Prepare the platform
 
-Use OpenShift AI **3.5.1**, OpenShift **4.22+** para MCP Lifecycle, NVIDIA GPU Operator, Node Feature Discovery, OpenShift Service Mesh 3, Red Hat Connectivity Link 1.4.3/MaaS, MCP Gateway Operator 0.7.1, OpenShift GitOps 1.21, Tempo e OpenTelemetry. Confirme as combinações suportadas na documentação da sua assinatura. Um cluster ROSA com GPU, sozinho, ainda não fornece esses operadores.
+Use OpenShift AI **3.5.1**, OpenShift **4.22+** for MCP Lifecycle, NVIDIA GPU Operator, Node Feature Discovery, OpenShift Service Mesh 3, Red Hat Connectivity Link 1.4.3/MaaS, MCP Gateway Operator 0.7.1, OpenShift GitOps 1.21, Tempo, and OpenTelemetry. Verify supported combinations against your subscription documentation. A ROSA cluster with GPUs does not include all these operators automatically.
 
-O [chart oficial de instalação RHOAI](https://developers.redhat.com/articles/2026/08/26/automating-red-hat-openshift-ai-installations-with-helm-and-gitops) pode estabelecer a plataforma em clusters novos. Fixe a versão `v3.5`, leia os valores e a lógica de dependências antes de usar. Em um cluster compartilhado, preserve os operadores existentes; não substitua o DSC inteiro por um exemplo.
+The [official RHOAI installation chart](https://developers.redhat.com/articles/2026/08/26/automating-red-hat-openshift-ai-installations-with-helm-and-gitops) can establish the platform in a new cluster. The article documents version `v3.5`; authenticate to the registry and verify the chart artifact and its current values before using it. This showroom has not yet validated that chart as a complete fresh-cluster installer. Preserve existing operators in shared clusters. Do not replace an entire DSC with an example manifest.
 
-Pré-requisitos operacionais: `oc` autenticado como administrador de instalação, Git, Python 3.12, pull-secret com acesso a `registry.redhat.io`, StorageClass padrão e saída para registries/GitHub/Hugging Face. DNS e TLS devem funcionar. Os datasets não requerem dados privados nem chaves GPT.
+You need an installation administrator's authenticated `oc`, Git, Python 3.12, credentials for `registry.redhat.io`, a default StorageClass, working DNS/TLS, and network access to the registries, GitHub, and Hugging Face. These labs use synthetic data and do not require GPT credentials.
 
-## 2. Clonar e verificar
+## 2. Clone and check
 
 ```bash
 git clone https://github.com/weslleyrosalem/rhoai-showroom.git
@@ -18,14 +18,14 @@ cd rhoai-showroom
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -r requirements-docs.txt
-# Digite o endereço do cluster que você pretende alterar, após conferir oc whoami.
-export SHOWROOM_SERVER=https://api.SEUCUSTER:6443
+# Enter the intended cluster's API address after checking oc whoami.
+export SHOWROOM_SERVER=https://api.YOURCLUSTER:6443
 python scripts/showroom.py preflight --expected-server "$SHOWROOM_SERVER"
 ```
 
-O preflight é somente leitura. Ele confirma a versão e APIs necessárias; não atesta que há capacidade GPU livre. Para isso, execute também o [guard de capacidade](../labs/hardware.md), com inventário recente de todos os pools ROSA.
+The preflight is read-only. It verifies the release and required APIs; it does not prove GPU availability. Also run the [capacity guard](../labs/hardware.md) with a fresh inventory of every ROSA pool.
 
-## 3. Inicializar namespace, segredos e recursos compartilhados
+## 3. Bootstrap the namespace, secrets, and shared services
 
 ```bash
 python scripts/showroom.py bootstrap --expected-server "$SHOWROOM_SERVER"
@@ -36,29 +36,30 @@ oc wait mlflow/mlflow --for=condition=Available --timeout=300s
 oc apply -k gitops/components/evaluation
 ```
 
-O bootstrap gera credenciais aleatórias somente no Kubernetes, reaproveita os Secrets existentes e mantém cópias locais privadas do DSC/DSCI antes dos patches. O S3 de demonstração usa PVC de20Gi; MLflow usa SQLite/PVC de5Gi, uma réplica; EvalHub usa PostgreSQL/PVC de5Gi. São escolhas de showroom, sem promessa de alta disponibilidade ou recuperação de desastre.
+Bootstrap generates random credentials in Kubernetes, reuses owned Secrets, rejects conflicting credentials, and saves private per-cluster DSC/DSCI snapshots before applying partial patches. The demonstration S3 server uses a 20 Gi PVC. MLflow uses a single replica and a 5 Gi SQLite PVC. EvalHub uses PostgreSQL with a 5 Gi PVC. These are showroom choices without high-availability or disaster-recovery guarantees.
 
-Se o cluster já tiver MLflow ou EvalHub compartilhado, revise o storage e os clientes existentes antes de aplicar os exemplos. Os serviços são compartilhados: duplicar um singleton não isola tenants. Os patches DSC preservam os outros componentes. `mcpGuardrailsMode` precisa permanecer `false` para habilitar EvalHub junto com NeMo.
+If the cluster already has shared MLflow or EvalHub instances, review their storage and existing consumers before adopting these manifests. Creating another singleton is not tenant isolation. DSC patches preserve other components. Keep `mcpGuardrailsMode: false` to enable EvalHub alongside NeMo.
 
-## 4. Escolher modelo e acesso
+## 4. Select a model and access policy
 
-Cluster novo: use o perfil portátil e implante Qwen4B após a capacidade estar autorizada. Cluster com endpoint pré-existente: adapte os refs do overlay `existing-cluster` para seu modelo. O nome Llama desse overlay é o do ambiente de validação, não uma dependência universal.
+For a new cluster, use the portable profile and deploy Qwen4B after capacity is authorized. To reuse an existing model, adapt the model references in `existing-cluster` before synchronization. That overlay's Llama name belongs to the validation environment and is not a universal prerequisite.
 
-Siga [MaaS](../labs/maas.md) para grupos, subscriptions e chave com duração limitada. Crie o Secret `ai-showroom/showroom-maas-key` com `api-key`, `base-url` terminando em `/v1`, e `model-id`. Nunca salve a chave no Git, em notebook ou screenshot.
+Follow [MaaS](../labs/maas.md) to configure groups, subscriptions, and a time-limited key. The `ai-showroom/showroom-maas-key` Secret requires `api-key`, `base-url` ending in `/v1`, and `model-id`. Never store credentials in Git, notebooks, or screenshots.
 
-## 5. Conectar serviços e GitOps
+## 5. Connect the services and adopt GitOps
 
-Siga [MCP](../labs/mcp.md) para build, audiência TokenReview, TLS Authorino e smoke test autenticado. O backend permanece privado. Não aplique o overlay público antes de confirmar anônimo negado e chamada autorizada funcionando.
+Follow [MCP](../labs/mcp.md) for the build, TokenReview audience, Authorino TLS, and authenticated smoke tests. The backend stays private. Apply public MCP ingress only after anonymous access is denied and an authorized tool call succeeds.
 
 ```bash
-oc apply -k gitops/components/guardrails
+oc apply -k gitops/components/guardrails/mcp-integration
 oc apply -k gitops/components/science
+oc apply -k gitops/components/experience
 ```
 
-O BuildConfig RAG clona o repositório e o Workbench inicializa uma cópia. Em um fork, altere ambos os URLs, além do AppProject e Application. Para submeter o job Ray e carregar dados, siga [Ray](../labs/ray.md) e [pipelines](../labs/pipelines.md). Jobs são ações explícitas e não são recriados continuamente pelo GitOps.
+The RAG BuildConfig and Workbench clone this repository. In a fork, update both URLs and the AppProject/Application repository references. Follow [Ray](../labs/ray.md) and [pipelines](../labs/pipelines.md) to upload data and submit experiments. Jobs are explicit actions and are not continuously recreated by GitOps.
 
-Finalize a adoção declarativa com [GitOps](gitops.md), execute os [test drives](test-drive.md) e registre o resultado em sua própria matriz de validação. O hardware opcional/MIG exige mudança coordenada dos limites de pools; não é iniciado pelo overlay padrão.
+Complete [GitOps adoption](gitops.md), run the [test drives](test-drive.md), and maintain a validation record for your installation. GPU and MIG profiles require coordinated cloud capacity changes; the default overlay does not provision them.
 
-## Critério de instalação concluída
+## Installation acceptance
 
-Um visitante autorizado obtém resposta do modelo, fontes RAG e ferramentas MCP; um visitante não autorizado recebe negação. Experimento Ray, artefatos MLflow e avaliação têm IDs reais. Argo mostra Synced/Healthy e um pequeno drift é corrigido. Os modelos de GPU escolhidos ficam Ready e respondem. Recursos extras só recebem selo validado quando seus testes específicos passaram.
+An authorized participant receives a model response, RAG sources, and MCP tool results; an unauthorized participant is denied. Ray experiments, MLflow artifacts, and evaluations have actual run IDs and results. Argo reaches Synced/Healthy and corrects a harmless drift. Selected GPU models become Ready and respond. Optional capabilities are marked validated only after their specific tests pass.

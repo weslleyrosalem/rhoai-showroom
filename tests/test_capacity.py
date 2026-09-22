@@ -78,4 +78,34 @@ class CapacityTests(unittest.TestCase):
         pools=[pool('aiml-node','g6e.4xlarge',3,3,1,['existing']),pool('showroom-l40s4','g6e.12xlarge',2,2,1),pool('extra','g6e.12xlarge',0,1,0)]
         self.assertEqual(m.assess(profile(),{'items':[node()]},inventory(pools),NOW)['status'],'BLOCKED')
 
+    def test_inventory_from_another_cluster_is_blocked(self):
+        i=inventory();i['cluster_server']='https://api.another.example:443'
+        r=m.assess(profile(),{'items':[]},i,NOW,expected_server='https://api.intended.example:443')
+        self.assertEqual(r['status'],'BLOCKED')
+    def test_inventory_must_identify_live_cluster(self):
+        r=m.assess(profile(),{'items':[]},inventory(),NOW,expected_server='https://api.intended.example:443')
+        self.assertEqual(r['status'],'BLOCKED')
+
+    def test_h100_single_counts_one_physical_gpu_not_seven_slices(self):
+        n=node(instance='p5.4xlarge',count='7',alloc='7')
+        n['metadata']['labels']['nvidia.com/mig.config']='all-1g.10gb'
+        self.assertEqual(m.physical_gpus(n),1)
+    def test_h100_requires_observed_l40s_surge_reduction(self):
+        p=json.loads((ROOT/'gitops/profiles/mig-h100-single/capacity.json').read_text())
+        i=inventory([pool('aiml-node','g6e.4xlarge',1,3,1,['existing']),pool('showroom-l40s4','g6e.12xlarge',1,2,1)])
+        r=m.assess(p,{'items':[node()]},i,NOW)
+        self.assertEqual(r['combined_physical_gpu_ceiling'],18)
+        self.assertEqual(r['status'],'BLOCKED')
+        i['pools'][1]['upgrade_surge_nodes']=0
+        r=m.assess(p,{'items':[node()]},i,NOW)
+        self.assertEqual(r['combined_physical_gpu_ceiling'],14)
+        self.assertEqual(r['status'],'PASS')
+
+    def test_unmapped_gpu_family_cannot_hide_before_driver_discovery(self):
+        n={'metadata':{'name':'new','labels':{'node.kubernetes.io/instance-type':'g5.12xlarge'}},'status':{'allocatable':{}}}
+        with self.assertRaises(ValueError):m.physical_gpus(n)
+    def test_unmapped_gpu_pool_cannot_be_declared_cpu_only(self):
+        p=pool('other','g5.12xlarge');p['gpus_per_node']=0
+        with self.assertRaises(ValueError):m.assess(profile(),{'items':[]},inventory([p]),NOW)
+
 if __name__=='__main__':unittest.main()

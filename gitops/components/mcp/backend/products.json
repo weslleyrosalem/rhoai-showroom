@@ -1,8 +1,8 @@
 [
   {
     "sku": "AS-001",
-    "name": "Filtro hidráulico H20",
-    "category": "Filtros",
+    "name": "H20 Hydraulic Filter",
+    "category": "Filters",
     "stock": 45,
     "reorder_point": 80,
     "unit_price": 42.0,
@@ -10,8 +10,8 @@
   },
   {
     "sku": "AS-002",
-    "name": "Sensor de pressão P10",
-    "category": "Sensores",
+    "name": "P10 Pressure Sensor",
+    "category": "Sensors",
     "stock": 120,
     "reorder_point": 35,
     "unit_price": 125.0,
@@ -19,8 +19,8 @@
   },
   {
     "sku": "AS-003",
-    "name": "Válvula de controle V30",
-    "category": "Válvulas",
+    "name": "V30 Control Valve",
+    "category": "Valves",
     "stock": 18,
     "reorder_point": 30,
     "unit_price": 210.0,
@@ -28,8 +28,8 @@
   },
   {
     "sku": "AS-004",
-    "name": "Mangueira industrial M15",
-    "category": "Mangueiras",
+    "name": "M15 Industrial Hose",
+    "category": "Hoses",
     "stock": 240,
     "reorder_point": 70,
     "unit_price": 32.0,
@@ -37,8 +37,8 @@
   },
   {
     "sku": "AS-005",
-    "name": "Vedação circular O25",
-    "category": "Vedações",
+    "name": "O25 O-ring Seal",
+    "category": "Seals",
     "stock": 75,
     "reorder_point": 100,
     "unit_price": 8.5,
@@ -46,8 +46,8 @@
   },
   {
     "sku": "AS-006",
-    "name": "Conector rápido C40",
-    "category": "Conectores",
+    "name": "C40 Quick Connector",
+    "category": "Connectors",
     "stock": 90,
     "reorder_point": 50,
     "unit_price": 18.0,
@@ -55,8 +55,8 @@
   },
   {
     "sku": "AS-007",
-    "name": "Bomba compacta B50",
-    "category": "Bombas",
+    "name": "B50 Compact Pump",
+    "category": "Pumps",
     "stock": 8,
     "reorder_point": 12,
     "unit_price": 650.0,
@@ -64,8 +64,8 @@
   },
   {
     "sku": "AS-008",
-    "name": "Medidor de vazão F60",
-    "category": "Medidores",
+    "name": "F60 Flow Meter",
+    "category": "Meters",
     "stock": 35,
     "reorder_point": 15,
     "unit_price": 290.0,

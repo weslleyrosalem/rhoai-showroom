@@ -1,0 +1,18 @@
+{
+  "apiVersion": "maas.opendatahub.io/v1alpha1",
+  "kind": "MaaSModelRef",
+  "metadata": {
+    "name": "aurora-qwen-06b-mig",
+    "namespace": "ai-showroom-bench",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "opendatahub.io/dashboard": "true"
+    }
+  },
+  "spec": {
+    "modelRef": {
+      "kind": "LLMInferenceService",
+      "name": "aurora-qwen-06b-mig"
+    }
+  }
+}

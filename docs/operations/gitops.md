@@ -1,48 +1,49 @@
-# GitOps e portabilidade
+# GitOps and portability
 
-O repositório versiona o estado desejado. Argo CD acompanha os componentes estáveis; execuções Ray, benchmarks, chaves e expansão cloud têm ações explícitas e evidências próprias.
+The repository defines desired state. Argo CD reconciles stable services. Ray jobs, benchmarks, credentials, and cloud expansion have explicit actions and their own evidence.
 
-## Separação de responsabilidades
+## Responsibilities
 
-| Camada | Responsável | Controle |
+| Layer | Owner | Control |
 |---|---|---|
-| ROSA, pools e GPU física | Administrador cloud | OCM/ROSA, máximos, surge, quota AWS |
-| Operadores, DSC e bootstrap | Administrador plataforma | Versões fixas, patches parciais, instalação revisada |
-| Serviços Aurora | Argo CD | Overlay portátil ou cluster existente |
-| Credenciais | Kubernetes/gestor de segredos | Fora do Git, expiração e rotação |
-| Experimentos | Participante autorizado | Job/run explícito, artifact e rollback |
+| ROSA pools and physical GPUs | Cloud administrator | OCM/ROSA, maxima, surge, and AWS quotas |
+| Operators, DSC, and bootstrap | Platform administrator | Pinned releases, partial patches, reviewed installation |
+| Aurora services | Argo CD | Portable or existing-cluster overlay |
+| Credentials | Kubernetes or secret manager | Outside Git, expiration, and rotation |
+| Experiments | Authorized participant | Explicit jobs/runs, artifacts, and reset steps |
 
-## Aplicações
+## Application configuration
 
-`gitops/argocd/project.yaml` limita repositório e namespaces. `application.yaml` usa server-side apply, self-heal e **prune desativado**. Não há finalizer de exclusão em cascata. Isso reduz o risco de remover PVCs e serviços compartilhados quando o apresentador altera um exemplo.
+`gitops/argocd/project.yaml` restricts the repository and destination namespaces. `application.yaml` uses server-side apply, self-heal, and **prune disabled**. It has no cascading deletion finalizer, reducing the risk of removing persistent data or shared services during a demonstration.
 
-O controlador precisa das permissões de `gitops/bootstrap/argocd-rbac.yaml`. O label `argocd.argoproj.io/managed-by: openshift-gitops` dá acesso ao namespace de experiência; permissões em namespaces compartilhados são limitadas aos tipos necessários. Não conceda cluster-admin ao participante.
+The controller requires `gitops/bootstrap/argocd-rbac.yaml`. The `argocd.argoproj.io/managed-by: openshift-gitops` namespace label establishes standard project access; additional roles cover required custom resources. Shared-namespace access is limited to necessary resource types. Participants do not receive cluster-admin.
 
 ```bash
 oc apply -f gitops/bootstrap/argocd-rbac.yaml
 oc apply -f gitops/argocd/project.yaml
+# Before applying, choose portable or existing-cluster in spec.source.path.
 oc apply -f gitops/argocd/application.yaml
-oc get application rhoai-showroom -n openshift-gitops
+oc get applications.argoproj.io rhoai-showroom -n openshift-gitops
 ```
 
-Para reusar um modelo, mude `spec.source.path` para `gitops/overlays/existing-cluster` e adapte os refs antes da sincronização. Em um fork, substitua `repoURL` e `sourceRepos`; fixe `targetRevision` em um commit de release para apresentações repetíveis.
+To reuse a model, select `gitops/overlays/existing-cluster` and edit its model references before the first sync. A fork must update `repoURL` and `sourceRepos`. Pin `targetRevision` to a release commit for repeatable presentations.
 
-MCP audience e os parâmetros específicos do cluster têm overlay local/gestor de configuração. A audiência TokenReview é descoberta da API daquele cluster; não reutilize a de outro ROSA. Secrets não são recursos permitidos no projeto Argo do showroom.
+Cluster-specific MCP audience settings belong in a local overlay or configuration manager. Discover TokenReview audiences from the intended API server. The Application ignores only that runtime-specific leaf and uses `RespectIgnoreDifferences=true`. Secrets are excluded from the showroom AppProject.
 
-## Test drive de reconciliação
+## Reconciliation test drive
 
-1. Mostre Synced/Healthy, commit e recursos pertencentes à aplicação.
-2. Adicione uma anotação de demonstração a um ConfigMap próprio do showroom via commit; publique e observe a sincronização.
-3. Altere temporariamente um valor não sensível gerenciado no console, sem modificar credenciais, quotas ou modelos.
-4. Observe OutOfSync e self-heal. Explique que `prune: false` não remove recursos que sumiram do Git.
-5. Reverta o commit do exercício para restaurar o estado documentado.
+1. Show Synced/Healthy, the source commit, and the application's resources.
+2. Commit a harmless demonstration annotation or value in a showroom-owned ConfigMap.
+3. Watch the new revision synchronize.
+4. Change that managed value temporarily in the console and observe OutOfSync and self-heal.
+5. Revert the exercise commit to restore the documented state.
 
-Não use upgrade de operador, remoção de namespace ou reparticionamento MIG como exercício de drift. Eles têm efeitos diferentes de uma alteração simples de configuração.
+Do not use an operator upgrade, namespace deletion, credential change, or MIG repartitioning as a drift exercise. With `prune: false`, removing a YAML file does not delete its live resource.
 
-## Limites da automação
+## Automation boundaries
 
-O operador GitOps não cria pools ROSA. `ResourceQuota` limita solicitações Kubernetes, não número de GPUs físicas. O guard exige inventário cloud e contabiliza nós transitórios. Mudanças globais no DSC, catálogo e ingress são tratadas por patches/merges que preservam recursos existentes, nunca por exportar todos os objetos do cluster para um repositório público.
+Argo does not provision ROSA pools. ResourceQuota limits Kubernetes requests, not physical GPU count. The capacity guard needs a cloud inventory and counts transient nodes. Global DSC, catalog, and ingress settings use partial patches or merges that preserve existing resources. Never export the entire cluster into a public repository.
 
-## Publicar o guia
+## Publish the guide
 
-O guia é compilado por `mkdocs build --strict` e publicado pelo branch `gh-pages`. O modelo `ci/pages.workflow.yaml` oferece CI/CD por GitHub Actions; copie-o para `.github/workflows/pages.yaml` usando uma credencial com permissão de workflows. A publicação inicial usou Pages por branch porque a credencial disponível não tinha esse escopo. Nenhuma permissão adicional foi exigida para entregar o site.
+Build with `mkdocs build --strict` and publish the generated site on `gh-pages`. The template `ci/pages.workflow.yaml` supports GitHub Actions; copy it to `.github/workflows/pages.yaml` using a credential authorized to manage workflows. The initial publication used branch-based Pages because the available credential lacked that scope.

@@ -1,57 +1,39 @@
-# Guardrails: regras visíveis e verificáveis
+# Guardrails with visible, testable rules
 
-**Maturidade:** NeMo Guardrails base é GA; integração NeMo→MCP Gateway é Technology Preview. A configuração do showroom usa CPU e regras determinísticas de regex. Ela demonstra enforcement de padrões definidos; não é um detector universal de PII ou prompt injection.
+NeMo Guardrails is generally available; its MCP Gateway integration is Technology Preview in OpenShift AI 3.5. This showroom uses deterministic CPU regex checks, with no model call. They detect the configured patterns, not every form of personal information or prompt injection. The [3.5 NeMo guide](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/enabling_ai_safety_with_guardrails/enabling-ai-safety-with-nemo-guardrails_nemo-guardrails) documents checks without LLM calls.
 
-A validação de uma pergunta é uma etapa separada da inferência. O endpoint NeMo `/v1/guardrail/checks` verifica entradas/saídas sem gerar uma resposta de modelo. A [documentação3.5](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/enabling_ai_safety_with_guardrails/enabling-ai-safety-with-nemo-guardrails_nemo-guardrails) inclui quickstart sem chamadas LLM e os rails `regex check input`/`regex check output`.
+## Direct checks
 
-## Implantar a base
-
-```sh
-oc apply --dry-run=server -k gitops/components/guardrails
-oc apply -k gitops/components/guardrails
-oc get nemoguardrails showroom-rails -n ai-showroom
-oc get service,route -n ai-showroom
-```
-
-`NemoGuardrails/showroom-rails` referencia ConfigMap `showroom-safety`, gerenciado no Git. A anotação `security.opendatahub.io/enable-auth: 'true'` exige acesso Kubernetes ao serviço. Descubra a Route criada pelo operador, valide seu certificado e execute:
+`NemoGuardrails/showroom-rails` loads the versioned `showroom-safety` ConfigMap. Authentication remains enabled. Discover its Route and run:
 
 ```sh
-python3 apps/aurora-tools/check_guardrails.py --url https://HOST_REAL_DO_NEMO
+nemo_host=$(oc get route showroom-rails -n ai-showroom -o jsonpath='{.spec.host}')
+python apps/aurora-tools/check_guardrails.py --url "https://$nemo_host"
 ```
 
-Os seis casos verificam pergunta comercial permitida, e-mail sintético, segredo sintético, instrução explícita de ignorar regras, saída permitida e saída com e-mail. Resultado esperado:200 em todos os checks e `status:success` ou `blocked` conforme o caso. HTTP200 com `status:error` é falha.
+Six cases cover allowed business input/output, a synthetic email, `DEMO_SECRET_AURORA`, an explicit instruction override, and an email in output. Each check returns HTTP 200 with `status:success` or `blocked`. A transport failure or `status:error` is a failed test, not a successful guardrail.
 
-O script usa o token `oc` em memória ou `NEMO_TOKEN`; nenhuma chave é gravada ou mostrada. Todos os exemplos de informação sensível são fictícios, como `cliente@example.invalid` e `DEMO_SECRET_AURORA`.
+The RAG application calls NeMo before recording input in MLflow and before returning/recording output. It accepts only `success`; errors fail closed. Its service account has namespace-level `get services` because the installed RBAC proxy's observed access review omits a resource name. It receives no Secret, write, list, or watch permission from this role.
 
-## Experiência interativa
+## MCP integration
 
-1. Envie “Qual o estoque do produto AS-001?” e veja `success`.
-2. Adicione `cliente@example.invalid` e veja `blocked`, com o rail responsável.
-3. Repita com “Ignore todas as instruções anteriores”.
-4. Mude a mensagem para remover o padrão proibido e repita.
-5. Mostre no Git qual expressão causou o bloqueio.
+The `gitops/components/guardrails/mcp-integration` overlay deploys the actual NeMo IPP plugins, a private HTTPS authentication adapter, NetworkPolicies, and the TrustyAI Gateway reference. Read the [versioned integration contract](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/components/guardrails/mcp-integration/IPP-CONTRACT.md).
 
-A regra só afeta o tráfego enviado ao NeMo. Não diga “todo MCP está protegido” apenas porque o servidor está Ready. O mesmo vale para RAG: a aplicação precisa chamar o check antes da geração e tratar `blocked`/`error` adequadamente.
-
-## Integração MCP/IPP — etapa opcional com gate próprio
-
-Leia o [contrato IPP](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/components/guardrails/mcp-integration/IPP-CONTRACT.md). Ele fixa a fonte inspecionada e os parâmetros de plugins reais. É necessário implantar um IPP que contenha `nemo-request-guard`/`nemo-response-guard`, TLS confiável até o NeMo, ordenação Envoy e modos de processamento de resposta corretos. A configuração inclui um overlay que liga a descoberta TrustyAI:
-
-```sh
-oc apply --dry-run=server -k gitops/components/guardrails/mcp-integration
+```text
+MCP client → authenticated Gateway → IPP → private TLS adapter → NeMo
 ```
 
-Aplique esse overlay somente quando os plugins estiverem instalados. A aceitação requer:
+The adapter uses a fixed upstream, verifies service certificates, rejects redirects, and attaches a rotating service-account token. It translates `success` to `passed` for the pinned older IPP plugin; this is showroom compatibility code, not a product feature. Both NeMo hops use verified HTTPS. Gateway-to-IPP uses private gRPC protected by NetworkPolicy; this is not end-to-end mTLS.
 
-- `status.mcpGateway.mcpGatewayFound=true` e `status.bbrPlugin.bbrPluginFound=true`;
-- filtro `mcp-sse-strip` presente no Gateway correto;
-- chamada MCP permitida chega ao backend;
-- chamada com padrão proibido nos argumentos recebe bloqueio antes do backend;
-- indisponibilidade do checker impede a operação protegida;
-- caminho de resposta testado, inclusive SSE quando habilitado.
+Observed checks include allowed stock calls (200), prohibited synthetic arguments (403), anonymous initialization (401), an unlisted service account (403), and checker outage (503). The internal SDK completed initialization, discovery, and all three tools. A public-route SDK sequence exposed an intermittent duplicated-body HTTP 400 in the pinned IPP stack; public protocol acceptance remains open until the complete sequence passes. A configured response plugin alone is not proof of MCP output enforcement: an output challenge must also pass before claiming it.
 
-O IPP inspecionado exige HTTPS. Seu exemplo não fornece parâmetro de bearer token; uma Route NeMo autenticada não passa a funcionar automaticamente para esse plugin. Resolver o transporte/autenticação privado faz parte do gate. A implementação também não aplica a redação retornada como `modified`; use bloqueio para esta demonstração, sem alegar mascaramento. [IPP oficial, versão inspecionada](https://github.com/opendatahub-io/ai-gateway-payload-processing/blob/07727563b63153c410434a20b62f3ebc5f24ed01/examples/nemo/README.md)
+## Customer test drive
 
-## Limites e melhoria
+1. Ask for the stock level of `AS-001`.
+2. Run the direct check with `customer@example.invalid`; inspect the responsible rail.
+3. Try “Ignore all previous instructions.”
+4. Remove the prohibited text and repeat.
+5. Open the exact regex in Git and explain its limitations.
+6. On a validated integrated path, place the same synthetic pattern in a tool argument and observe 403 before backend execution.
 
-Regex não interpreta intenção e pode ter falsos positivos/negativos. Adicionar detectores semânticos, Presidio ou um modelo de segurança muda custo, latência, dependências e critérios de avaliação. Não dispute a GPU do modelo principal sem capacidade reservada. Compare o mesmo conjunto de casos antes/depois e preserve resultados no EvalHub/MLflow.
+Regex can miss paraphrases and can reject harmless text. Adding semantic detectors, Presidio, or a safety model changes capacity, latency, dependencies, and evaluation requirements. Record equivalent test cases before and after each change.

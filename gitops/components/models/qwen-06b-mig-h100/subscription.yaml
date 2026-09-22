@@ -1,0 +1,34 @@
+{
+  "apiVersion": "maas.opendatahub.io/v1alpha1",
+  "kind": "MaaSSubscription",
+  "metadata": {
+    "name": "aurora-qwen-06b-mig-benchmark",
+    "namespace": "models-as-a-service",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "opendatahub.io/dashboard": "true"
+    }
+  },
+  "spec": {
+    "owner": {
+      "groups": [
+        {
+          "name": "showroom-platform-admins"
+        }
+      ]
+    },
+    "priority": 7,
+    "modelRefs": [
+      {
+        "name": "aurora-qwen-06b-mig",
+        "namespace": "ai-showroom-bench",
+        "tokenRateLimits": [
+          {
+            "limit": 20000,
+            "window": "1h"
+          }
+        ]
+      }
+    ]
+  }
+}

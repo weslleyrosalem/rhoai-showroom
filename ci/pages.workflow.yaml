@@ -21,6 +21,7 @@ jobs:
       - run: python -m unittest discover -s tests -p 'test_capacity.py'
       - run: python -m unittest discover -s tests -p 'test_benchmark.py'
       - run: python -m unittest discover -s tests -p 'test_science.py'
+      - run: python -m unittest discover -s tests -p 'test_bootstrap.py'
       - run: python scripts/validate_repo.py
       - run: mkdocs build --strict
       - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b

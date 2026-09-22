@@ -1,82 +1,85 @@
 site_name: OpenShift AI Showroom
-site_description: Aurora Supply — três jornadas conectadas de IA, da experiência à operação.
+site_description: 'Aurora Supply: three connected AI journeys, from experimentation
+  to operations.'
 site_url: https://weslleyrosalem.github.io/rhoai-showroom/
 repo_url: https://github.com/weslleyrosalem/rhoai-showroom
 repo_name: weslleyrosalem/rhoai-showroom
 edit_uri: edit/main/docs/
 theme:
   name: material
-  language: pt-BR
+  language: en
   font: false
   palette:
-    - scheme: default
-      primary: red
-      accent: red
-      toggle:
-        icon: material/brightness-4
-        name: Mudar para tema escuro
-    - scheme: slate
-      primary: red
-      accent: red
-      toggle:
-        icon: material/brightness-7
-        name: Mudar para tema claro
+  - scheme: default
+    primary: red
+    accent: red
+    toggle:
+      icon: material/brightness-4
+      name: Switch to dark mode
+  - scheme: slate
+    primary: red
+    accent: red
+    toggle:
+      icon: material/brightness-7
+      name: Switch to light mode
   features:
-    - navigation.tabs
-    - navigation.sections
-    - navigation.indexes
-    - navigation.top
-    - content.code.copy
-    - content.tabs.link
-    - search.suggest
-    - search.highlight
+  - navigation.tabs
+  - navigation.sections
+  - navigation.indexes
+  - navigation.top
+  - content.code.copy
+  - content.tabs.link
+  - search.suggest
+  - search.highlight
 plugins:
-  - search
+- search
 markdown_extensions:
-  - admonition
-  - attr_list
-  - md_in_html
-  - tables
-  - toc:
-      permalink: true
-  - pymdownx.details
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.superfences
-  - pymdownx.tabbed:
-      alternate_style: true
+- admonition
+- attr_list
+- md_in_html
+- tables
+- toc:
+    permalink: true
+- pymdownx.details
+- pymdownx.highlight:
+    anchor_linenums: true
+- pymdownx.superfences
+- pymdownx.tabbed:
+    alternate_style: true
 extra_css:
-  - assets/showroom.css
+- assets/showroom.css
 nav:
-  - Comece aqui:
-      - O showroom: index.md
-      - Arquitetura e história: architecture/story.md
-      - Instalação: operations/install.md
-      - Estado de validação: operations/validation.md
-  - Três jornadas:
-      - Segurança e agentes: journeys/security.md
-      - Plataforma de IA: journeys/platform.md
-      - Ciência de dados e ML: journeys/science.md
-      - Test drive: operations/test-drive.md
-  - Laboratórios:
-      - MCP e ferramentas: labs/mcp.md
-      - Guardrails: labs/guardrails.md
-      - Red teaming: labs/red-teaming.md
-      - RAG: labs/rag.md
-      - Workbench: labs/workbench.md
-      - Ray distribuído: labs/ray.md
-      - MLflow: labs/mlflow.md
-      - Avaliações: labs/evaluation.md
-      - AutoML: labs/automl.md
-      - AutoRAG: labs/autorag.md
-      - Pipelines: labs/pipelines.md
-      - Catálogo de modelos: labs/model-catalog.md
-      - MaaS e quotas: labs/maas.md
-      - Hardware e MIG: labs/hardware.md
-      - Benchmark: labs/benchmark.md
-  - Operação:
-      - GitOps e portabilidade: operations/gitops.md
-      - Preparar a apresentação: operations/presenter.md
-      - Restaurar o test drive: operations/reset.md
-      - Maturidade e limites: architecture/maturity.md
-      - Fontes e versões: architecture/sources.md
+- Start here:
+  - The showroom: index.md
+  - Architecture and story: architecture/story.md
+  - Installation: operations/install.md
+  - Validation status: operations/validation.md
+- Three journeys:
+  - Security and agents: journeys/security.md
+  - AI platform: journeys/platform.md
+  - Data science and ML: journeys/science.md
+  - Test drive: operations/test-drive.md
+- Labs:
+  - MCP and tools: labs/mcp.md
+  - Guardrails: labs/guardrails.md
+  - Red teaming: labs/red-teaming.md
+  - RAG: labs/rag.md
+  - Workbench: labs/workbench.md
+  - Distributed Ray: labs/ray.md
+  - MLflow: labs/mlflow.md
+  - Evaluations: labs/evaluation.md
+  - AutoML: labs/automl.md
+  - AutoRAG: labs/autorag.md
+  - Pipelines: labs/pipelines.md
+  - Model catalog: labs/model-catalog.md
+  - Model onboarding: labs/model-onboarding.md
+  - NeMoClaw and OpenShell: labs/nemoclaw.md
+  - MaaS and quotas: labs/maas.md
+  - Hardware and MIG: labs/hardware.md
+  - Benchmark: labs/benchmark.md
+- Operations:
+  - GitOps and portability: operations/gitops.md
+  - Presentation preparation: operations/presenter.md
+  - Reset the test drive: operations/reset.md
+  - Maturity and limitations: architecture/maturity.md
+  - Sources and versions: architecture/sources.md

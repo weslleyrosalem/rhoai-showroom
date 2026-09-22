@@ -1,0 +1,19 @@
+{
+  "test_data_secret_name": "showroom-s3-credentials",
+  "test_data_bucket_name": "aurora-data",
+  "test_data_key": "eval/autorag.json",
+  "input_data_secret_name": "showroom-s3-credentials",
+  "input_data_bucket_name": "aurora-data",
+  "input_data_key": "documents",
+  "ogx_secret_name": "aurora-ogx-connection",
+  "vector_io_provider_id": "pgvector",
+  "embedding_models": [
+    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  ],
+  "generation_models": [
+    "aurora-maas/${MAAS_MODEL_ID}"
+  ],
+  "optimization_metric": "answer_correctness",
+  "optimization_max_rag_patterns": 4,
+  "preset": "speed"
+}

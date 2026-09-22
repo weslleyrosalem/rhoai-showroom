@@ -1,41 +1,41 @@
 # Test drive
 
-Escolha uma experiência e confirme os pré-requisitos na página do laboratório. Use o projeto `ai-showroom` e dados fictícios. O apresentador entrega uma identidade própria com os grupos necessários; não compartilhe a sessão `aiadmin` com visitantes.
+Choose an experience and confirm the lab prerequisites. Use `ai-showroom` and synthetic data. Give each participant an appropriate identity; never share the presenter's administrator session.
 
-## 1. Faça uma pergunta com evidências
+## 1. Ask for an answer with evidence
 
-No Playground ou na aplicação Aurora, use:
+In the Playground or Aurora application, try:
 
-> Precisamos preparar a reposição da próxima semana. Consulte o estoque do produto AS-001, compare com a previsão e cite a política usada. Prepare somente uma proposta, sem executar uma compra.
+> Prepare next week's replenishment proposal. Check inventory for AS-001, compare it with the forecast, and cite the policy you used. Prepare a proposal only; do not place an order.
 
-Observe quais ferramentas foram chamadas, quais documentos sustentam a resposta e qual previsão foi usada. A resposta deve distinguir dados de estoque, previsão estatística e explicação do LLM.
+Observe the tool calls, supporting documents, and forecast. The answer should distinguish inventory facts, statistical forecasts, and the LLM's explanation.
 
-**Mude uma coisa:** pergunte sobre outro SKU. Confira se a ferramenta consultou o SKU correto e se as fontes continuam relevantes. Abra a trace correspondente à nova pergunta.
+**Change one thing:** choose another SKU. Confirm that the tool queried that SKU and that the sources remain relevant. Open the trace for the new question.
 
-## 2. Teste um limite de acesso
+## 2. Test an access boundary
 
-Siga [MCP e ferramentas](../labs/mcp.md). Faça uma consulta permitida e uma chamada sem credencial. A primeira deve funcionar; a segunda deve falhar na camada de autenticação.
+Follow [MCP and tools](../labs/mcp.md). Make one authorized request and one request without credentials. The first should work; the second should fail authentication.
 
-Uma lista menor de ferramentas em um VirtualServer não comprova autorização. Compare descoberta e execução; o controle de acesso deve ser aplicado no caminho da chamada.
+A shorter VirtualServer tool list does not prove authorization. Compare discovery with execution and verify that access controls protect the actual call.
 
-## 3. Experimente uma quota
+## 3. Try a quota
 
-Siga [MaaS e quotas](../labs/maas.md). Use uma chave vinculada à assinatura limitada. Observe primeira resposta, contabilização, 429 e recuperação da janela. Faça uma chamada de controle por outra assinatura.
+Follow [MaaS and quotas](../labs/maas.md). Use a key bound to the limited subscription. Observe a successful response, accounting, HTTP 429, and recovery after the window. Make a control request using another subscription.
 
-**Mude uma coisa:** aumente o tamanho do texto em uma chamada. Observe tokens de entrada e saída. A quota conta tokens, não um número fixo de requisições.
+**Change one thing:** increase the prompt length. Observe input and output tokens. A token quota does not correspond to a fixed number of requests.
 
-## 4. Altere uma hipótese de treinamento
+## 4. Change a training hypothesis
 
-No [Workbench](../labs/workbench.md), abra o notebook Aurora. Altere um parâmetro do experimento, execute o treino pequeno e compare a métrica no conjunto de teste temporal com o baseline.
+Open the Aurora notebook in the [Workbench](../labs/workbench.md). Change an experiment parameter, run the small training job, and compare temporal holdout error against the baseline.
 
-Registre parâmetros e resultados no MLflow. Não escolha um modelo somente pelo erro nos dados usados para treinar. O artefato publicado precisa indicar versão, horizonte e run de origem.
+Record parameters and results in MLflow. Do not select a model based only on training error. A published artifact must identify its version, forecast horizon, and source run.
 
-## 5. Veja uma mudança chegar por GitOps
+## 5. Watch a GitOps change arrive
 
-Em uma branch do seu fork, altere uma política sintética ou um valor de demonstração. Confira o diff antes de sincronizar. Depois do sync, refaça a pergunta que depende daquele dado e verifique a versão usada.
+On a branch of your fork, change a synthetic policy or demonstration setting. Review the diff before synchronization. After sync, repeat the question that depends on the changed data and inspect the version used.
 
-Ao terminar, siga [restaurar o test drive](reset.md). Reverter a mudança de apresentação não deve apagar dados de experimentos, operadores ou modelos compartilhados.
+Follow [Reset the test drive](reset.md) when finished. Reverting a presentation change should not delete experiment data, operators, or shared models.
 
-## O que levar da experiência
+## What the experience demonstrates
 
-Ao final, você deve conseguir relacionar uma pergunta a uma identidade, uma assinatura, um conjunto de fontes, ferramentas, modelo e evidência de execução. Essa cadeia é o resultado demonstrado — não apenas uma resposta convincente no chat.
+You should be able to connect a question with access controls, a subscription, source documents, tools, a model, and execution evidence. Shared backend service-account traces do not provide individual visitor attribution by themselves.

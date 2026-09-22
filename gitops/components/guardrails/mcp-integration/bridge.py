@@ -41,7 +41,8 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(payload, dict) or not isinstance(payload.get('messages'), list):
                 return self.send(400, {'status': 'error'})
             # The caller cannot select a weaker configuration or a different upstream.
-            payload['guardrails'] = {'config_id': 'showroom-safety'}
+            payload = {'model': 'test', 'messages': payload['messages'],
+                       'guardrails': {'config_id': 'showroom-safety'}}
             token = (SERVICEACCOUNT / 'token').read_text().strip()
             request = urllib.request.Request(UPSTREAM, json.dumps(payload).encode(),
                 {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'})
@@ -54,7 +55,10 @@ class Handler(BaseHTTPRequestHandler):
             decision = result.get('status')
             if decision not in {'success', 'blocked'}:
                 return self.send(503, {'status': 'error'})
-            self.send(200, {'status': decision, 'rails_status': result.get('rails_status', {})})
+            # Pinned RHOAI3.5 IPP digest predates upstream fix d32e434/#434.
+            # Translate only a successful check; never turn an error into allow.
+            ipp_decision = 'passed' if decision == 'success' else decision
+            self.send(200, {'status': ipp_decision, 'rails_status': result.get('rails_status', {})})
         except Exception:
             self.send(503, {'status': 'error'})
 

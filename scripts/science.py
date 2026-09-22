@@ -17,14 +17,14 @@ import socket
 
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCTS = [
-    dict(sku="AS-001", name="Filtro hidráulico H20", category="Filtros", stock=45, reorder_point=80, unit_price=42.0, lead_time_days=5),
-    dict(sku="AS-002", name="Sensor de pressão P10", category="Sensores", stock=120, reorder_point=35, unit_price=125.0, lead_time_days=7),
-    dict(sku="AS-003", name="Válvula de controle V30", category="Válvulas", stock=18, reorder_point=30, unit_price=210.0, lead_time_days=10),
-    dict(sku="AS-004", name="Mangueira industrial M15", category="Mangueiras", stock=240, reorder_point=70, unit_price=32.0, lead_time_days=4),
-    dict(sku="AS-005", name="Vedação circular O25", category="Vedações", stock=75, reorder_point=100, unit_price=8.5, lead_time_days=3),
-    dict(sku="AS-006", name="Conector rápido C40", category="Conectores", stock=90, reorder_point=50, unit_price=18.0, lead_time_days=6),
-    dict(sku="AS-007", name="Bomba compacta B50", category="Bombas", stock=8, reorder_point=12, unit_price=650.0, lead_time_days=14),
-    dict(sku="AS-008", name="Medidor de vazão F60", category="Medidores", stock=35, reorder_point=15, unit_price=290.0, lead_time_days=8),
+    dict(sku="AS-001", name="H20 Hydraulic Filter", category="Filters", stock=45, reorder_point=80, unit_price=42.0, lead_time_days=5),
+    dict(sku="AS-002", name="P10 Pressure Sensor", category="Sensors", stock=120, reorder_point=35, unit_price=125.0, lead_time_days=7),
+    dict(sku="AS-003", name="V30 Control Valve", category="Valves", stock=18, reorder_point=30, unit_price=210.0, lead_time_days=10),
+    dict(sku="AS-004", name="M15 Industrial Hose", category="Hoses", stock=240, reorder_point=70, unit_price=32.0, lead_time_days=4),
+    dict(sku="AS-005", name="O25 O-ring Seal", category="Seals", stock=75, reorder_point=100, unit_price=8.5, lead_time_days=3),
+    dict(sku="AS-006", name="C40 Quick Connector", category="Connectors", stock=90, reorder_point=50, unit_price=18.0, lead_time_days=6),
+    dict(sku="AS-007", name="B50 Compact Pump", category="Pumps", stock=8, reorder_point=12, unit_price=650.0, lead_time_days=14),
+    dict(sku="AS-008", name="F60 Flow Meter", category="Meters", stock=35, reorder_point=15, unit_price=290.0, lead_time_days=8),
 ]
 
 
@@ -148,6 +148,8 @@ def bundle(models, rows):
 
 
 def configure_mlflow():
+    if os.environ.get("AURORA_MLFLOW_TRACKING_URI"):
+        os.environ["MLFLOW_TRACKING_URI"] = os.environ["AURORA_MLFLOW_TRACKING_URI"]
     import mlflow
     token_path = Path("/var/run/secrets/kubernetes.io/serviceaccount/token")
     if token_path.exists():
@@ -165,7 +167,7 @@ def publish(result, tracking=True):
     temp = Path(os.environ.get("TMPDIR", "/tmp")) / "aurora-forecast.json"
     if tracking:
         mlflow = configure_mlflow()
-        with mlflow.start_run(run_name="ray-demand-forecast") as run:
+        with mlflow.start_run(run_name="cpu-demand-reference" if all(m["worker"] == "local-reference" for m in result["forecasts"]) else "ray-demand-forecast") as run:
             result["mlflow_run_id"] = run.info.run_id
             mlflow.log_params({"seed": 351, "holdout_days": 28, "workers": 2, "model_version": result["model_version"]})
             for model in result["forecasts"]:
@@ -224,19 +226,175 @@ def eval_submit():
         base += "/v1"
     request = {"name": "aurora-garak-smoke", "model": {"url": base, "name": os.environ["MAAS_MODEL_ID"],
                "auth": {"secret_ref": "showroom-maas-key"}},
-               "benchmarks": [{"provider_id": "garak", "benchmark_id": "quick"}],
+               "benchmarks": [{"provider_id": "garak", "id": "quick"}],
                "experiment": {"name": "aurora-model-safety"}}
     result = eval_request("/api/v1/evaluations/jobs", request)
     print(json.dumps({"job_id": result.get("resource", {}).get("id"), "status": result.get("status")}))
     return result
 
 
+def eval_export(job_id):
+    """Persist the actual EvalHub result through the workspace-aware MLflow SDK."""
+    result = eval_request("/api/v1/evaluations/jobs/" + job_id)
+    mlflow = configure_mlflow()
+    client = mlflow.MlflowClient()
+    run_ids = sorted({b["mlflow_run_id"] for b in result.get("results", {}).get("benchmarks", []) if b.get("mlflow_run_id")})
+    if not run_ids:
+        raise ValueError("No completed benchmark MLflow run is available")
+    for run_id in run_ids:
+        client.log_dict(run_id, result, "evaluation/evalhub-result.json")
+    print(json.dumps({"job_id": job_id, "mlflow_runs": run_ids, "artifact": "evaluation/evalhub-result.json"}))
+    return result
+
+
+def ray_submit():
+    """Bind only the generated Ray OAuth service account to the MLflow data role."""
+    import subprocess
+    import time
+    namespace = "ai-showroom"
+    subprocess.run(["oc", "apply", "-f", str(ROOT / "gitops/components/science/rayjob.yaml")], check=True)
+    for _ in range(60):
+        job = json.loads(subprocess.check_output(["oc", "get", "rayjob", "aurora-demand-train", "-n", namespace, "-o", "json"]))
+        head = job.get("status", {}).get("rayClusterStatus", {}).get("head", {}).get("podName")
+        if head:
+            pod = json.loads(subprocess.check_output(["oc", "get", "pod", head, "-n", namespace, "-o", "json"]))
+            account = pod["spec"]["serviceAccountName"]
+            binding = {"apiVersion": "rbac.authorization.k8s.io/v1", "kind": "RoleBinding", "metadata": {
+                "name": "aurora-ray-mlflow", "namespace": namespace, "ownerReferences": [{"apiVersion": "ray.io/v1", "kind": "RayJob", "name": "aurora-demand-train", "uid": job["metadata"]["uid"]}]},
+                "subjects": [{"kind": "ServiceAccount", "name": account, "namespace": namespace}],
+                "roleRef": {"apiGroup": "rbac.authorization.k8s.io", "kind": "Role", "name": "aurora-mlflow-writer"}}
+            subprocess.run(["oc", "apply", "-f", "-"], input=json.dumps(binding).encode(), check=True)
+            print(json.dumps({"rayjob": "aurora-demand-train", "mlflow_service_account": account}))
+            return
+        time.sleep(2)
+    raise TimeoutError("Ray head pod was not created in 120 seconds")
+
+
+def native_request(path, body=None):
+    """Use the current oc identity; credentials never enter pipeline parameters."""
+    import subprocess
+    import urllib.request
+    if not os.environ.get("KFP_URL"):
+        route = json.loads(subprocess.check_output(["oc", "get", "route", "ds-pipeline-showroom-pipelines", "-n", "ai-showroom", "-o", "json"]))
+        os.environ["KFP_URL"] = "https://" + route["spec"]["host"]
+    token = subprocess.check_output(["oc", "whoami", "-t"], text=True).strip()
+    request = urllib.request.Request(os.environ["KFP_URL"].rstrip("/") + path,
+                                    data=json.dumps(body).encode() if body is not None else None,
+                                    headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"})
+    with urllib.request.urlopen(request, timeout=120) as response:
+        return json.load(response)
+
+
+
+def corpus_prefix(directory):
+    """Content-address inputs so KFP never reuses stale document/QA cache entries."""
+    directory = Path(directory)
+    sources = sorted((directory / "documents").glob("*.md")) + [directory / "eval/autorag.json"]
+    digest = hashlib.sha256()
+    for source in sources:
+        digest.update(str(source.relative_to(directory)).encode() + b"\0" + source.read_bytes())
+    return "corpus/" + digest.hexdigest()[:16]
+
+
+def native_submit(kind):
+    """Submit the installed operator-managed 3.5.1 pipeline by name, never copied YAML."""
+    names = {"automl": "autogluon-timeseries-training-pipeline", "autorag": "documents-rag-optimization-pipeline"}
+    pipelines = native_request("/apis/v2beta1/pipelines?page_size=100").get("pipelines", [])
+    pipeline = next((p for p in pipelines if p["display_name"] == names[kind]), None)
+    if pipeline is None:
+        raise ValueError("Enable managedPipelines in the showroom DSPA first")
+    versions = native_request("/apis/v2beta1/pipelines/" + pipeline["pipeline_id"] + "/versions?page_size=100")["pipeline_versions"]
+    version = next((v for v in versions if v["display_name"] == "3.5.1"), versions[-1])
+    parameters = json.loads((ROOT / "notebooks" / ("native-" + kind + "-parameters.json")).read_text())
+    if kind == "autorag":
+        import base64
+        import subprocess
+        model = os.environ.get("MAAS_MODEL_ID")
+        if not model:
+            secret = json.loads(subprocess.check_output(["oc", "get", "secret", "showroom-maas-key", "-n", "ai-showroom", "-o", "json"]))
+            model = base64.b64decode(secret["data"]["model-id"]).decode()
+        parameters["generation_models"] = ["aurora-maas/" + model]
+        prefix = corpus_prefix(ROOT / "data")
+        parameters["input_data_key"] = prefix + "/documents"
+        parameters["test_data_key"] = prefix + "/eval/autorag.json"
+    experiment = native_request("/apis/v2beta1/experiments", {"display_name": "Aurora Supply " + kind, "namespace": "ai-showroom"})
+    result = native_request("/apis/v2beta1/runs", {"experiment_id": experiment["experiment_id"],
+        "display_name": "Aurora " + kind + " 3.5.1", "pipeline_version_reference": {
+            "pipeline_id": pipeline["pipeline_id"], "pipeline_version_id": version["pipeline_version_id"]},
+        "runtime_config": {"parameters": parameters}})
+    print(json.dumps({"run_id": result["run_id"], "state": result.get("state"), "pipeline": names[kind], "version": version["display_name"]}))
+    return result
+
+
+def native_artifacts(kind, run_id):
+    import boto3
+    names = {"automl": "autogluon-timeseries-training-pipeline", "autorag": "documents-rag-optimization-pipeline"}
+    prefix = names[kind] + "/" + run_id + "/"
+    client = boto3.client("s3", endpoint_url=os.environ["AWS_S3_ENDPOINT"], region_name="us-east-1")
+    keys = [item["Key"] for page in client.get_paginator("list_objects_v2").paginate(Bucket="aurora-artifacts", Prefix=prefix)
+            for item in page.get("Contents", [])]
+    if not keys:
+        raise ValueError("No pipeline artifacts found; check run completion and S3 configuration")
+    return client, keys
+
+
+def native_export(kind, run_id):
+    """Explicitly log native pipeline artifacts when the automatic plugin is unavailable."""
+    client, keys = native_artifacts(kind, run_id)
+    mlflow = configure_mlflow()
+    mlflow.set_experiment("aurora-native-" + kind)
+    with mlflow.start_run(run_name=kind + "-artifact-export") as run:
+        mlflow.set_tags({"pipeline_run_id": run_id, "tracking_method": "explicit-workspace-sdk-export"})
+        mlflow.log_dict({"pipeline_run_id": run_id, "artifacts": ["s3://aurora-artifacts/" + key for key in keys]}, "pipeline/artifact-index.json")
+        selected = [k for k in keys if k.endswith("/metrics/metrics.json") or k.endswith("/pattern.json")]
+        for index, key in enumerate(selected):
+            value = json.loads(client.get_object(Bucket="aurora-artifacts", Key=key)["Body"].read())
+            mlflow.log_dict(value, "pipeline/result-" + str(index) + ".json")
+            if kind == "automl":
+                mlflow.log_metrics({"autogluon_score_" + k: v for k, v in value.items() if isinstance(v, (float, int))})
+                if "mean_absolute_error" in value:
+                    mlflow.log_metric("mean_absolute_error", -value["mean_absolute_error"])
+            else:
+                mlflow.log_metrics({"pattern_" + str(index) + "_" + m["name"]: m["scores"]["mean"] for m in value["evaluation"]["metrics"]})
+        result = {"pipeline_run_id": run_id, "mlflow_run_id": run.info.run_id, "artifact_count": len(keys), "exported_result_count": len(selected)}
+    print(json.dumps(result))
+    return result
+
+
+def native_infer(run_id, question):
+    """Execute the highest-scoring generated AutoRAG Responses API template."""
+    import urllib.request
+    client, keys = native_artifacts("autorag", run_id)
+    patterns = [json.loads(client.get_object(Bucket="aurora-artifacts", Key=k)["Body"].read()) for k in keys if k.endswith("/pattern.json")]
+    if not patterns:
+        raise ValueError("No completed RAG pattern is available")
+    def score(pattern):
+        return next(m["scores"]["mean"] for m in pattern["evaluation"]["metrics"] if m.get("optimization_metric"))
+    pattern = max(patterns, key=score)
+    request_body = pattern["inference"]["responses_template"]
+    for message in request_body["input"]:
+        if message.get("role") == "user":
+            message["content"] = [{"type": "input_text", "text": question}]
+    base = os.environ.get("OGX_CLIENT_BASE_URL", "http://lsd-genai-playground-service.ai-showroom.svc:8321")
+    headers = {"Content-Type": "application/json"}
+    if os.environ.get("OGX_CLIENT_API_KEY"):
+        headers["Authorization"] = "Bearer " + os.environ["OGX_CLIENT_API_KEY"]
+    request = urllib.request.Request(base.rstrip("/") + "/v1/responses", data=json.dumps(request_body).encode(), headers=headers)
+    with urllib.request.urlopen(request, timeout=120) as response:
+        result = json.load(response)
+    print(json.dumps({"pipeline_run_id": run_id, "optimization_score": score(pattern), "response": result}, ensure_ascii=False, indent=2))
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["generate", "train", "ray", "upload", "eval-submit", "eval-status"])
+    parser.add_argument("command", choices=["generate", "train", "ray", "upload", "eval-submit", "eval-status", "native-submit", "native-status", "ray-submit", "eval-export", "native-export", "native-infer"])
     parser.add_argument("--data-dir", default=str(ROOT / "data"))
     parser.add_argument("--output", default=None)
     parser.add_argument("--job-id")
+    parser.add_argument("--pipeline", choices=["automl", "autorag"])
+    parser.add_argument("--run-id")
+    parser.add_argument("--question", default="What is the return deadline?")
     args = parser.parse_args()
     dest = Path(args.data_dir)
     if args.command == "generate":
@@ -251,18 +409,44 @@ def main():
         ray_train(rows)
     elif args.command == "eval-submit":
         eval_submit()
+    elif args.command == "eval-export":
+        if not args.job_id:
+            parser.error("--job-id is required")
+        eval_export(args.job_id)
     elif args.command == "eval-status":
         if not args.job_id:
             parser.error("--job-id is required")
         result = eval_request("/api/v1/evaluations/jobs/" + args.job_id)
         print(json.dumps({"job_id": args.job_id, "status": result.get("status"), "results": result.get("results")}, indent=2))
+    elif args.command == "ray-submit":
+        ray_submit()
+    elif args.command == "native-export":
+        if not args.run_id or not args.pipeline:
+            parser.error("--run-id and --pipeline are required")
+        native_export(args.pipeline, args.run_id)
+    elif args.command == "native-infer":
+        if not args.run_id:
+            parser.error("--run-id is required")
+        native_infer(args.run_id, args.question)
+    elif args.command == "native-submit":
+        if not args.pipeline:
+            parser.error("--pipeline is required")
+        native_submit(args.pipeline)
+    elif args.command == "native-status":
+        if not args.run_id:
+            parser.error("--run-id is required")
+        r = native_request("/apis/v2beta1/runs/" + args.run_id)
+        print(json.dumps({"run_id": r["run_id"], "state": r.get("state"), "error": r.get("error")}, indent=2))
     elif args.command == "upload":
         import boto3
         s3 = boto3.client("s3", endpoint_url=os.environ["AWS_S3_ENDPOINT"], region_name="us-east-1")
         for file in dest.rglob("*"):
             if file.is_file():
                 s3.upload_file(str(file), "aurora-data", str(file.relative_to(dest)))
-        print("Synthetic dataset uploaded")
+        prefix = corpus_prefix(dest)
+        for file in sorted((dest / "documents").glob("*.md")) + [dest / "eval/autorag.json"]:
+            s3.upload_file(str(file), "aurora-data", prefix + "/" + str(file.relative_to(dest)))
+        print("Synthetic dataset uploaded; immutable RAG inputs: " + prefix)
 
 if __name__ == "__main__":
     main()

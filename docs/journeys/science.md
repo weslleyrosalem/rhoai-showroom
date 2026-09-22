@@ -1,44 +1,35 @@
----
-title: Dados, modelos e decisões
----
-# Data Scientist e ML Engineer
+# Data scientist and ML engineer journey
 
-A Aurora Supply precisa recomendar reposição de estoque. A previsão vem de um modelo treinado, o saldo vem de uma ferramenta MCP, e a política vem dos documentos. A resposta conecta as três fontes e prepara uma proposta para aprovação humana.
+The business question is consistent throughout the showroom: **Should Aurora Supply replenish AS-001, and who must approve it?** Every dataset is synthetic and redistributable under CC0. Historical demand covers 2025; a forecast is never described as today's sales.
 
-Todos os produtos, políticas e dados de vendas são fictícios. A série cobre 2025: a previsão é histórica e serve ao laboratório. Ela não representa a data atual nem uma decisão comercial real.
+## A 20-minute demonstration
 
-## Test drive de 20 minutos
-
-| Tempo | Ação | Resultado a mostrar |
+| Time | Action | Evidence |
 |---|---|---|
-| 0–3 | Perguntar “Devo repor AS-001? Explique a aprovação.” | Resposta, fontes e ferramentas |
-| 3–6 | Abrir `01-demand.ipynb` | Dados sintéticos e split temporal |
-| 6–10 | Submeter o RayJob; abrir uma execução concluída | Dois workers CPU, modelo e métricas no MLflow |
-| 10–13 | Comparar candidato e baseline | Um candidato perde e é rejeitado; não esconder esse resultado |
-| 13–17 | Alterar pergunta/prompt e consultar novamente | Política citada e proposta sem compra |
-| 17–20 | Abrir trace e avaliação | Relação entre experimento, modelo e resposta |
+| 0–3 min | Open the Aurora workbench and inspect products and demand | 8 SKUs, 2,920 daily observations, recorded seed and checksum |
+| 3–7 min | Run the demand notebook | Chronological holdout, candidate versus baseline, measured MAE |
+| 7–10 min | Open MLflow | Parent run, one child per SKU, model version and artifact |
+| 10–16 min | Ask the assistant about AS-001 | Cited policies, governed MCP calls, forecast, human approval |
+| 16–20 min | Inspect the MLflow trace and evaluation result | Retrieval/tool/inference spans and measured security result |
 
-## Versão de 45 minutos
+## A 45-minute workshop
 
-Acrescente exploração de dados, execução do pipeline, o ranking de um AutoML já concluído e a comparação de padrões AutoRAG. Inicie um run curto ao vivo; mantenha resultados anteriores reais para explicar etapas demoradas. Identifique claramente quando está mostrando uma execução histórica.
+Add the [Ray lab](../labs/ray.md), [native AutoML lab](../labs/automl.md), and [native AutoRAG lab](../labs/autorag.md). Compare the transparent lexical baseline with semantic search through OGX and pgvector. Review the generated leaderboard before deploying a selected model or RAG pattern.
 
-## Caminho técnico
+Start expensive training and optimization before the presentation. Their execution time and capacity needs are visible in the pipeline UI; pending or failed runs must never be presented as completed.
 
-`demand.csv → Ray por SKU → quality gate → MLflow/S3 → ferramenta MCP → RAG/LLM → avaliação/tracing`.
+## How the pieces connect
 
-O modelo é uma regressão regularizada de tendência e sazonalidade. O último mês é holdout. Para cada SKU, o candidato só é escolhido se não piorar a baseline sazonal. A previsão de sete dias é um artefato JSON com versão e origem temporal.
+Synthetic demand → two Ray worker pods → measured quality gate → MLflow and S3 model artifact → read-only MCP replenishment tool → RAG assistant → MaaS LLM → input/output guardrails → MLflow trace → EvalHub evaluation.
 
-O Ray distribui tarefas de treinamento entre workers. Isso não é DDP de gradientes. O aplicativo RAG usa recuperação lexical TF-IDF claramente identificada; o laboratório AutoRAG apresenta o caminho nativo com OGX, embeddings e banco vetorial.
+The lightweight application uses **lexical TF-IDF**. The separate native AutoRAG path uses real sentence-transformer embeddings and pgvector. Ray demonstrates independent per-SKU training tasks, not distributed gradient training.
 
-## Laboratórios
+## Customer exercises
 
-- [Workbench](../labs/workbench.md)
-- [Ray](../labs/ray.md)
-- [MLflow](../labs/mlflow.md)
-- [Pipeline](../labs/pipelines.md)
-- [RAG](../labs/rag.md)
-- [Avaliação](../labs/evaluation.md)
-- [AutoML](../labs/automl.md)
-- [AutoRAG](../labs/autorag.md)
+1. Change a synthetic inventory level in Git and review its deployment.
+2. Change the prompt and inspect sources, tools, and the trace.
+3. Compare a failed candidate with the accepted baseline.
+4. Submit a new native pipeline run and inspect its resource requirements.
+5. Explain why a one-probe Garak result cannot certify a model as safe.
 
-Preparar a apresentação exige testar o fluxo, não apenas verificar pods Ready. O relatório de validação da instalação informa quais laboratórios passaram em execução real.
+Use the live validation report as the source of truth. Technology Preview and Developer Preview features keep their documented support status even when a demonstration succeeds.

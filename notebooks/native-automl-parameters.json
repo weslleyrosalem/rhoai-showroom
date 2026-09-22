@@ -1,0 +1,13 @@
+{
+  "train_data_secret_name": "showroom-s3-credentials",
+  "train_data_bucket_name": "aurora-data",
+  "train_data_file_key": "demand.csv",
+  "target": "units",
+  "timestamp_column": "date",
+  "id_column": "sku",
+  "known_covariates_names": [],
+  "prediction_length": 7,
+  "top_n": 1,
+  "eval_metric": "mean_absolute_error",
+  "preset": "speed"
+}

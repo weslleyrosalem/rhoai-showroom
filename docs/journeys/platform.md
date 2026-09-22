@@ -1,40 +1,40 @@
-# Jornada Plataforma — operar a Aurora Supply
+# Platform journey — operating Aurora Supply
 
-A Aurora Supply quer que seu assistente consulte políticas, estoque e previsões sem transformar cada equipe em operadora de infraestrutura. Nesta visita, o cliente assume o papel de engenheiro de plataforma: escolhe modelos, oferece uma API governada e mede o resultado.
+Aurora Supply wants its assistant to use policies, inventory, and forecasts without making every team operate infrastructure. The visitor acts as a platform engineer: curate models, offer a governed API, and measure the results.
 
-A instalação de referência usa OpenShift AI **3.5.1**. Os manifests e scripts deste módulo foram preparados e tiveram validação de schema; isso não significa que benchmarks GPU, MIG ou modelos grandes já tenham sido executados. Consulte a evidência da instalação antes de apresentar cada etapa.
+The reference installation uses OpenShift AI **3.5.1**. The curated catalog and MaaS controls have passed real tests: three Qwen models are available; missing credentials return 401; authorized requests return 200; the short quota produces 429 and recovers after its window. GPU benchmarks, MIG, and large models have separate acceptance gates. Check the [validation record](../operations/validation.md) before presenting them.
 
-## Três níveis de visita
+## Three visit formats
 
-| Duração | História | Interação do cliente |
+| Duration | Story | Visitor interaction |
 |---|---|---|
-| 20 minutos | Escolher → consumir → limitar → observar | Filtrar o catálogo, fazer uma pergunta e atingir uma quota de teste |
-| 45 minutos | A anterior + eficiência e escala | Repetir prefixos, comparar resultados medidos e interpretar TTFT/throughput |
-| Laboratório | Reprodução completa | Alterar configuração em Git, sincronizar, executar ensaio e conferir evidências |
+| 20 minutes | Choose → consume → limit → observe | Filter the catalog, ask a question, and exhaust a test quota |
+| 45 minutes | Add efficiency and scaling | Repeat prefixes, compare measured results, and interpret TTFT/throughput |
+| Workshop | Reproduce the environment | Change Git configuration, synchronize, run an experiment, and inspect evidence |
 
-## Visita de 20 minutos
+## The 20-minute visit
 
-1. **0–3 min: mostrar o produto conectado.** Abra `ai-showroom`. Explique que a mesma Aurora Supply conecta RAG, estoque MCP, previsão de demanda e o assistente. Mostre a fronteira entre o projeto e os serviços compartilhados.
-2. **3–6 min: curadoria.** Abra o catálogo e a fonte Qwen curada. O visitante escolhe um modelo incluído, lê a licença e confere o hardware profile. Um nome no catálogo não garante que haja GPU livre.
-3. **6–10 min: test drive.** Faça uma pergunta sobre o estoque da Aurora pelo Playground. Mostre modelo, subscription e métricas. Na instalação que reutiliza a fundação existente, o backend é o Llama de `maas-how-to`; no perfil GPU novo, é `aurora-qwen-4b`.
-4. **10–14 min: governança.** Use chaves criadas explicitamente para `showroom-test-drive` e `showroom-standard`. Demonstre 401 sem credencial, 200 autorizado, 429 no limite curto, premium ainda atendendo e recuperação após a janela. Nunca exponha a chave na tela ou em Git.
-5. **14–18 min: operação.** Relacione a chamada aos contadores de tokens, latência e GPU. Identifique quais dados são desta execução e quais são de um ensaio anterior. Tracing de aplicação e métricas de infraestrutura respondem a perguntas diferentes.
-6. **18–20 min: GitOps.** Mostre um diff pequeno e o recurso reconciliado. Explique que o catálogo compartilhado usa merge protegido contra concorrência e que credenciais pertencem ao ambiente.
+1. **0–3 minutes: show the connected experience.** Open `ai-showroom`. The same Aurora workflow connects RAG policies, MCP inventory, demand forecasts, and an assistant. Explain the project boundary and shared platform services.
+2. **3–6 minutes: curate.** Open the Qwen source in Model Catalog. Let the visitor select an included model, read its license, and inspect the hardware profile. A catalog entry does not guarantee available GPUs.
+3. **6–10 minutes: take a test drive.** Ask an inventory question in Playground. Show the model, subscription, and metrics. The existing-cluster experience reuses the Llama in `maas-how-to`; the optional new GPU experience uses `aurora-qwen-4b` after runtime acceptance.
+4. **10–14 minutes: govern consumption.** Use keys issued explicitly for `showroom-test-drive` and `showroom-standard`. Show 401 without a key, 200 when authorized, 429 after the short quota, the standard subscription still working, and recovery after the window. Keep keys off-screen.
+5. **14–18 minutes: operate.** Relate the request to token, latency, and GPU metrics. Distinguish the current request from a previously recorded experiment. Application traces and infrastructure metrics answer different questions.
+6. **18–20 minutes: use GitOps.** Show a small diff and the reconciled resource. Explain the catalog's concurrency-protected merge and environment-owned credentials.
 
-## Extensão para 45 minutos
+## Extend to 45 minutes
 
-- **5 min:** escolher outro modelo do catálogo e examinar os recursos de uma implantação já aquecida.
-- **8 min:** abrir a comparação Transformers/vLLM na mesma GPU, modelo, precisão e carga; olhar erros, TTFT e tokens/s.
-- **7 min:** repetir prefixos em duas réplicas e confirmar atividade do Endpoint Picker. Comparar round-robin e llm-d sobre os mesmos oito dispositivos.
-- **3 min:** distinguir TP4 em um nó, duas réplicas TP4 em dois nós e um único modelo repartido entre nós. Este último exige outro ensaio; não é demonstrado simplesmente por ter duas réplicas.
-- **2 min:** explicar capacidade, autoscaling e a opção MIG. A L40S não suporta MIG; a alternativa usa A100 e outro perfil de infraestrutura.
+- **5 minutes:** select another catalog model and inspect an already warmed deployment.
+- **8 minutes:** open measured Transformers/vLLM results with the same GPU, model, precision, and load. Inspect errors, TTFT, and tokens/second.
+- **7 minutes:** repeat prefixes across two replicas and confirm actual Endpoint Picker activity. Compare round-robin and llm-d using the same eight GPUs.
+- **3 minutes:** distinguish TP4 on one node, two TP4 replicas on separate nodes, and one model partitioned across nodes. The last case requires its own experiment.
+- **2 minutes:** explain capacity, autoscaling, and MIG. L40S does not support MIG; H100 and A100 use separate hardware plans.
 
-## O que apresentar como produto e como laboratório
+## Product maturity and laboratory scope
 
-MaaS core, quotas e chaves são a fundação suportada. vLLM no MaaS, algumas integrações externas e WVA têm classificação Technology Preview. Hierarchical KV cache tiering é Developer Preview. Mostre o selo de maturidade no momento da demonstração; a versão da API Kubernetes não substitui essa informação. [Release notes 3.5](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/technology-preview-features_relnotes), [Developer Preview](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/developer-preview-features_relnotes).
+MaaS core, quotas, and keys provide the supported foundation. vLLM through MaaS and WVA are Technology Preview. Hierarchical KV cache offloading is Developer Preview. Show maturity when introducing a feature; a Kubernetes API version does not establish its support status. [Technology Preview](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/technology-preview-features_relnotes), [Developer Preview](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/developer-preview-features_relnotes).
 
-## Preparação e critérios de sucesso
+## Preparation and acceptance
 
-Execute os laboratórios de [hardware](../labs/hardware.md), [catálogo](../labs/model-catalog.md), [MaaS](../labs/maas.md) e [benchmark](../labs/benchmark.md). Tenha resultados datados, modelos prontos e corpus já carregado. Não espere provisionamento de worker ou download de dezenas de gigabytes durante a visita.
+Complete the [hardware](../labs/hardware.md), [catalog](../labs/model-catalog.md), [MaaS](../labs/maas.md), and [benchmark](../labs/benchmark.md) labs. Have dated results, ready models, and a loaded corpus. Provisioning workers and downloading model weights belong before the customer visit.
 
-O ensaio só passa quando os caminhos realmente respondem, os acessos negativos são negados, a quota é observada, os recursos anteriores continuam saudáveis e o teto global de **16 GPUs físicas** é respeitado. Um módulo bloqueado por capacidade ou dependência aparece como bloqueado no guia e fica fora do roteiro ao vivo.
+The journey passes when requests succeed, negative access tests fail as intended, quotas are observed, existing services remain healthy, and the global **16 physical GPU** ceiling is respected. A module blocked by capacity or dependencies stays outside the live demonstration and remains labeled blocked.

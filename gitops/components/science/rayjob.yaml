@@ -98,11 +98,11 @@
                 "resources": {
                   "requests": {
                     "cpu": "1",
-                    "memory": "2Gi"
+                    "memory": "4Gi"
                   },
                   "limits": {
                     "cpu": "1",
-                    "memory": "3Gi"
+                    "memory": "6Gi"
                   }
                 },
                 "securityContext": {

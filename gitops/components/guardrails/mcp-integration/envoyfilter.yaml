@@ -3,7 +3,7 @@ kind: EnvoyFilter
 metadata:
   name: showroom-mcp-nemo
 spec:
-  priority: 10
+  priority: 0
   workloadSelector:
     labels:
       gateway.networking.k8s.io/gateway-name: showroom-mcp
@@ -17,22 +17,40 @@ spec:
             filter:
               name: envoy.filters.network.http_connection_manager
               subFilter:
-                name: envoy.filters.http.wasm
+                name: envoy.filters.http.router
       patch:
-        operation: INSERT_AFTER
+        operation: INSERT_BEFORE
         value:
           name: envoy.filters.http.ext_proc.bbr
           typed_config:
             '@type': type.googleapis.com/envoy.extensions.filters.http.ext_proc.v3.ExternalProcessor
             failure_mode_allow: false
+            allow_mode_override: true
             message_timeout: 15s
             grpc_service:
               envoy_grpc:
                 cluster_name: outbound|9004||showroom-mcp-ipp.ai-showroom.svc.cluster.local
             processing_mode:
               request_header_mode: SEND
-              request_body_mode: BUFFERED
-              request_trailer_mode: SKIP
+              request_body_mode: FULL_DUPLEX_STREAMED
+              request_trailer_mode: SEND
               response_header_mode: SEND
               response_body_mode: FULL_DUPLEX_STREAMED
-              response_trailer_mode: SKIP
+              response_trailer_mode: SEND
+    - applyTo: HTTP_FILTER
+      match:
+        context: GATEWAY
+        listener:
+          portNumber: 8080
+          filterChain:
+            filter:
+              name: envoy.filters.network.http_connection_manager
+              subFilter:
+                name: envoy.filters.http.ext_proc
+      patch:
+        operation: MERGE
+        value:
+          typed_config:
+            '@type': type.googleapis.com/envoy.extensions.filters.http.ext_proc.v3.ExternalProcessor
+            processing_mode:
+              request_body_mode: BUFFERED

@@ -9,6 +9,7 @@ import argparse
 import datetime as dt
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -18,7 +19,7 @@ GPU_COUNTS = {
     'g6e.8xlarge': 1, 'g6e.16xlarge': 1, 'g6e.12xlarge': 4,
     'g6e.24xlarge': 4, 'g6e.48xlarge': 8,
     'p4d.24xlarge': 8, 'p4de.24xlarge': 8,
-    'p5.48xlarge': 8,
+    'p5.4xlarge': 1, 'p5.48xlarge': 8,
 }
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -39,6 +40,8 @@ def physical_gpus(node):
     # physical inventory; never interpret those virtual-device labels as cards.
     if instance_count is not None:
         return instance_count
+    if re.match(r'^[gp][0-9]', instance):
+        raise ValueError('Unmapped AWS GPU instance type; add verified physical GPU count before proceeding')
     mig_active = labels.get('nvidia.com/mig.config', 'all-disabled') != 'all-disabled'
     shared = labels.get('nvidia.com/gpu.sharing-strategy', 'none') != 'none'
     if mig_active or shared:
@@ -54,7 +57,7 @@ def physical_gpus(node):
     return 0
 
 
-def assess(profile, nodes, inventory=None, now=None):
+def assess(profile, nodes, inventory=None, now=None, expected_server=None):
     """Conservatively retain every live/cloud pool, overlay requested maxima by id."""
     now = now or dt.datetime.now(dt.timezone.utc)
     problems = []
@@ -72,6 +75,8 @@ def assess(profile, nodes, inventory=None, now=None):
         return {'status': 'BLOCKED', 'limit': LIMIT, 'live_physical_gpus': live,
                 'profile_pool_ceiling': planned,
                 'reasons': ['Complete fresh ROSA/OCM pool inventory is required; live nodes omit pending machines, maxima and surge.']}
+    if expected_server is not None and inventory.get('cluster_server') != expected_server:
+        problems.append('Inventory cluster_server must match the explicitly selected cluster.')
     if inventory.get('schema_version') != 1 or inventory.get('complete') is not True:
         problems.append('Inventory must declare schema_version=1 and complete=true.')
     try:
@@ -93,6 +98,8 @@ def assess(profile, nodes, inventory=None, now=None):
         if ident in pools:
             raise ValueError('duplicate pool id')
         if pool.get('instance_type') not in GPU_COUNTS:
+            if re.match(r'^[gp][0-9]', pool.get('instance_type', '')):
+                raise ValueError('Unmapped AWS GPU pool cannot be declared CPU-only')
             if pool.get('gpus_per_node') != 0:
                 raise ValueError('unknown pool type: declare CPU-only gpus_per_node=0 or add verified GPU mapping')
             gpu = 0
@@ -147,7 +154,7 @@ def assess(profile, nodes, inventory=None, now=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', required=True, choices=['core', 'interactive', 'active-l40s-9', 'full-l40s-13', 'mig-9', 'mig-13'])
+    parser.add_argument('--profile', required=True, choices=['core', 'interactive', 'active-l40s-9', 'mig-h100-single', 'full-l40s-13', 'mig-9', 'mig-13'])
     parser.add_argument('--inventory', type=Path, help='Private complete ROSA/OCM JSON snapshot; see hardware lab')
     parser.add_argument('--nodes', type=Path, help='Saved oc get nodes -o json; otherwise query current cluster')
     parser.add_argument('--expected-server', help='Require an exact oc API server before querying live nodes')
@@ -165,7 +172,7 @@ def main(argv=None):
                 raise ValueError('oc context does not match --expected-server')
             nodes = json.loads(subprocess.check_output(['oc','get','nodes','-o','json','--request-timeout=30s'], text=True))
         inventory = json.loads(args.inventory.read_text()) if args.inventory else None
-        result = assess(profile, nodes, inventory)
+        result = assess(profile, nodes, inventory, expected_server=args.expected_server)
     except (ValueError, KeyError, OSError, subprocess.CalledProcessError) as exc:
         result = {'status':'BLOCKED','limit':LIMIT,'reasons':[str(exc)]}
     rendered = json.dumps(result, indent=2) + '\n'

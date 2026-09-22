@@ -1,0 +1,61 @@
+apiVersion: mcp.x-k8s.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: aurora-tools-lifecycle
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+  annotations:
+    openshift.io/display-name: Aurora Supply — lifecycle test drive
+    openshift.io/description: Read-only synthetic inventory managed by the MCP Lifecycle Operator.
+spec:
+  source:
+    type: ContainerImage
+    containerImage:
+      ref: image-registry.openshift-image-registry.svc:5000/ai-showroom/aurora-tools:1.0.0
+  mcp:
+    stateless: true
+  config:
+    port: 8000
+    path: /mcp
+    env:
+      - name: AURORA_PRODUCTS_PATH
+        value: /data/products.json
+      - name: AURORA_FORECASTS_PATH
+        value: /data/forecasts.json
+      - name: AURORA_ALLOWED_HOSTS
+        value: "aurora-tools-lifecycle:*,aurora-tools-lifecycle,aurora-tools-lifecycle.ai-showroom.svc:*,aurora-tools-lifecycle.ai-showroom.svc,aurora-tools-lifecycle.ai-showroom.svc.cluster.local:*,aurora-tools-lifecycle.ai-showroom.svc.cluster.local,localhost:*,127.0.0.1:*"
+    storage:
+      - path: /data
+        permissions: ReadOnly
+        source:
+          type: ConfigMap
+          configMap:
+            name: aurora-tools-lifecycle-data
+      - path: /tmp
+        source:
+          type: EmptyDir
+          emptyDir:
+            sizeLimit: 32Mi
+  runtime:
+    replicas: 1
+    resources:
+      requests: {cpu: 50m, memory: 128Mi}
+      limits: {cpu: '1', memory: 512Mi}
+    security:
+      serviceAccountName: aurora-tools
+      podSecurityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities: {drop: [ALL]}
+    health:
+      readinessProbe:
+        httpGet: {path: /health, port: 8000}
+        initialDelaySeconds: 3
+      livenessProbe:
+        httpGet: {path: /health, port: 8000}
+        initialDelaySeconds: 15
+  extraLabels:
+    showroom.aurora/component: lifecycle-test-drive

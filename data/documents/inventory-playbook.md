@@ -1,15 +1,15 @@
-# Procedimento de estoque — Aurora Supply
-ID da fonte: inventory-playbook.md. Revisão fictícia 1.0.
+# Inventory playbook — Aurora Supply
+Source ID: inventory-playbook.md. Fictional revision 1.0.
 
-A cobertura alvo de estoque é 21 dias. Cobertura inferior a sete dias gera alerta
-para o comprador. O saldo vigente deve ser consultado na ferramenta de estoque;
-este documento não contém saldos em tempo real.
+Target inventory coverage is 21 days. Coverage below seven days triggers an alert
+to the buyer. Read current stock from the inventory tool; this document does not
+contain live stock balances.
 
-A previsão de demanda informa a origem temporal, o horizonte e a versão do modelo.
-Os dados do showroom são sintéticos e históricos. Nunca afirmar que são vendas reais
-ou que a origem temporal da previsão corresponde ao dia atual.
+A demand forecast includes its origin date, horizon, and model version. Showroom
+data is synthetic and historical. Never describe it as real sales or imply that
+the forecast origin is today's date.
 
-Para recomendar reposição, consultar SKU, saldo, previsão e prazo do fornecedor.
-Calcular quantidade sugerida como máximo entre zero e a diferença entre demanda
-estimada para 21 dias e saldo atual. Arredondar para unidade inteira acima.
-Se o modelo ou o SKU não estiver disponível, informar a ausência sem inventar valores.
+Before recommending replenishment, check the SKU, stock, forecast, and supplier
+lead time. Suggested quantity is max(0, estimated 21-day demand minus current stock),
+rounded up to a whole unit. If a model or SKU is unavailable, report the missing
+information instead of inventing values.

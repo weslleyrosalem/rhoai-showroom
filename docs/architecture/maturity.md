@@ -1,31 +1,31 @@
-# Maturidade e limites
+# Maturity and limitations
 
-Maturidade do produto e resultado do teste são dimensões diferentes. A tabela identifica o que a documentação3.5 declara; o [registro de validação](../operations/validation.md) informa o que foi executado neste showroom.
+Product maturity and test results are separate dimensions. This table identifies documented 3.5 capabilities. The [validation record](../operations/validation.md) describes what actually ran in the showroom.
 
-| Recurso | Classificação/documentação | Limite relevante |
+| Capability | Classification | Important boundary |
 |---|---|---|
-| MaaS core, quotas, chaves e grupos | GA | Chaves expiram e refletem acesso do consumidor |
-| llm-d/vLLM core | Componentes do produto; extensões classificadas separadamente | Perfil e hardware determinam capacidade |
-| vLLM via MaaS, WVA, gateway discovery | Technology Preview | Validar versão e caminho efetivo de tráfego |
-| Hierarchical KV cache, roteamento LoRA/latência | Developer Preview | Um teste de prefix cache local não comprova tiering |
-| MCP Gateway/Lifecycle | Technology Preview | OCP4.22+, RHCL, authN/authZ e versões compatíveis |
-| Catálogo MCP por YAML na UI | Developer Preview | Catálogo não equivale a servidor ativo |
-| NeMo Guardrails base | GA desde3.4 | Regras deste exemplo são determinísticas, não classificador LLM |
-| NeMo + MCP IPP | Technology Preview | Plugins, TLS e teste de enforcement explícitos |
-| MLflow | Integração saiu de TP em3.4 | SQLite/pod único são escolhas de laboratório |
-| Tracing inline Playground | Technology Preview | Tracing MLflow e Tempo são caminhos distintos |
-| Agentes salvos Playground | Developer Preview | Requer configuração funcional e maturidade indicada |
-| EvalHub MCP e comparações UI | Technology Preview | Avaliar backend e UI separadamente |
-| OpenShell | Extensão externa NVIDIA; Kubernetes experimental | Não é feature nativa/suportada RHOAI |
-| MIG | Infraestrutura NVIDIA | L40S não suporta; A100/H100 compatíveis conforme perfil |
-| Frontier externo | Integração de provedor e contrato separados | Não exige GPU local; exige credencial e orçamento próprios |
+| Core MaaS, quotas, keys, and groups | GA | Keys expire and reflect consumer access |
+| Core llm-d/vLLM | Product components; extensions have separate classifications | Capacity depends on runtime configuration and hardware |
+| vLLM through MaaS, WVA, gateway discovery | Technology Preview | Verify the version and actual request path |
+| Hierarchical KV cache, LoRA/latency routing | Developer Preview | Local prefix-cache reuse does not demonstrate tiering |
+| MCP Gateway/Lifecycle | Technology Preview | OCP 4.22+, RHCL, authentication, authorization, compatible versions |
+| MCP catalog administration through YAML in the UI | Developer Preview | A catalog entry is not a running server |
+| Base NeMo Guardrails | GA since 3.4 | This example uses deterministic rules rather than an LLM classifier |
+| NeMo with MCP IPP | Technology Preview | Plugins, validated TLS, and actual enforcement tests are required |
+| MLflow | Integration left TP in 3.4 | SQLite and a single replica are lab choices |
+| Inline Playground tracing | Technology Preview | MLflow application traces and Tempo inference traces are different flows |
+| Saved Playground agents | Developer Preview | Requires a working configuration and clear maturity labeling |
+| EvalHub MCP and UI comparisons | Technology Preview | Verify the backend and UI independently |
+| OpenShell | Developer Preview in RHOAI 3.5; upstream Helm chart is experimental | Runtime lab pending; no production or completed-isolation claim |
+| MIG | NVIDIA infrastructure feature | Unsupported on L40S; requires compatible A100/H100 hardware |
+| External frontier models | Separate provider integration and contract | No local GPU, but provider credentials and budget are required |
 
-As fontes oficiais estão em [Fontes e versões](sources.md). O sufixo `v1alpha1` de um CRD não determina, sozinho, o estado de suporte comercial.
+See [Sources and versions](sources.md). A `v1alpha1` API suffix does not determine commercial support status on its own.
 
-## Decisões do laboratório
+## Lab decisions
 
-- Estoque, vendas, documentos e destinatários de teste são sintéticos. A aplicação apenas recomenda e calcula; não efetua compras.
-- RAG básico usa TF-IDF e cita os documentos recuperados. Embeddings/pgvector e AutoRAG são laboratórios próprios; não se usa o nome RAG para presumir que ambos são iguais.
-- S3, MLflow e PostgreSQL têm persistência, mas não alta disponibilidade. O namespace tem quotas e RBAC; não é fronteira de proteção suficiente por si só para workloads hostis.
-- Benchmark de engine mantém modelo/precisão/GPU iguais. Testes de escala e roteamento respondem a perguntas distintas. Ganhos não são universais e regressões também são resultados válidos.
-- VirtualServer MCP filtra descoberta; não é autorização de ferramenta. O teste de acesso real é separado da lista exibida.
+- Inventory, demand, documents, and test identities are synthetic. The application recommends and calculates; it does not place orders.
+- Basic RAG uses TF-IDF and cites retrieved documents. Embeddings, pgvector, and AutoRAG are separate labs.
+- S3, MLflow, and PostgreSQL persist data but do not provide high availability. Namespace quotas and RBAC are not a complete isolation boundary for hostile workloads.
+- Engine benchmarks hold model, precision, and hardware constant. Scaling and routing experiments answer different questions. Regressions are valid results.
+- MCP VirtualServer filtering affects discovery, not authorization. Test access to the actual call path.

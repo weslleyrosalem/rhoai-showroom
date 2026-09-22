@@ -1,107 +1,107 @@
 [
   {
-    "question": "Qual é o estoque alvo?",
+    "question": "What is the target inventory coverage?",
     "correct_answers": [
-      "21 dias"
+      "21 days"
     ],
     "correct_answer_document_ids": [
       "inventory-playbook.md"
     ]
   },
   {
-    "question": "Qual cobertura gera alerta?",
+    "question": "Which coverage level triggers an alert?",
     "correct_answers": [
-      "inferior a sete dias"
+      "Below seven days"
     ],
     "correct_answer_document_ids": [
       "inventory-playbook.md"
     ]
   },
   {
-    "question": "Uma proposta de 6000 precisa de aprovação de quem?",
+    "question": "Who approves a proposal totaling 6000?",
     "correct_answers": [
-      "gerente de operações"
+      "The operations manager"
     ],
     "correct_answer_document_ids": [
       "purchasing-policy.md"
     ]
   },
   {
-    "question": "Uma proposta de 4000 precisa de aprovação?",
+    "question": "Does a proposal totaling 4000 require approval?",
     "correct_answers": [
-      "Sim, do comprador responsável"
+      "Yes, the assigned buyer must approve it"
     ],
     "correct_answer_document_ids": [
       "purchasing-policy.md"
     ]
   },
   {
-    "question": "O assistente pode comprar automaticamente?",
+    "question": "Can the assistant place a purchase automatically?",
     "correct_answers": [
-      "Não, só consultar e preparar propostas"
+      "No, it may only read information and prepare proposals"
     ],
     "correct_answer_document_ids": [
       "purchasing-policy.md"
     ]
   },
   {
-    "question": "Qual é o prazo de devolução?",
+    "question": "What is the return deadline?",
     "correct_answers": [
-      "30 dias corridos após recebimento"
+      "30 calendar days after receipt"
     ],
     "correct_answer_document_ids": [
       "returns-policy.md"
     ]
   },
   {
-    "question": "Devolução exige comprovante?",
+    "question": "Does a return require proof of purchase?",
     "correct_answers": [
-      "Sim, comprovante e inspeção"
+      "Yes, proof of purchase and an inspection are required"
     ],
     "correct_answer_document_ids": [
       "returns-policy.md"
     ]
   },
   {
-    "question": "Qual o preço de AS-001?",
+    "question": "What is the unit price of AS-001?",
     "correct_answers": [
-      "42.00 unidades monetárias"
+      "42.00 demo currency units"
     ],
     "correct_answer_document_ids": [
       "catalog.md"
     ]
   },
   {
-    "question": "Qual o prazo do fornecedor de AS-007?",
+    "question": "What is the supplier lead time for AS-007?",
     "correct_answers": [
-      "14 dias"
+      "14 days"
     ],
     "correct_answer_document_ids": [
       "catalog.md"
     ]
   },
   {
-    "question": "O que fazer se não existe previsão para o SKU?",
+    "question": "What happens if a SKU has no forecast?",
     "correct_answers": [
-      "Informar a ausência, não inventar valores"
+      "Report the missing information; do not invent values"
     ],
     "correct_answer_document_ids": [
       "inventory-playbook.md"
     ]
   },
   {
-    "question": "Como transformar demanda de sete dias em alvo de estoque?",
+    "question": "How do we convert seven-day demand into a stock target?",
     "correct_answers": [
-      "Multiplicar por três para estimar 21 dias"
+      "Multiply by three to estimate 21 days"
     ],
     "correct_answer_document_ids": [
       "purchasing-policy.md"
     ]
   },
   {
-    "question": "Quais dados identificam uma proposta?",
+    "question": "Which fields identify a proposal?",
     "correct_answers": [
-      "SKU, quantidade, preço unitário, justificativa, previsão e versão do modelo"
+      "SKU, quantity, unit price, rationale, demand forecast, and model version"
     ],
     "correct_answer_document_ids": [
       "purchasing-policy.md"

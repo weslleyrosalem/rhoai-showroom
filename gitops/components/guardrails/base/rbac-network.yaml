@@ -5,8 +5,8 @@ metadata:
 rules:
   - apiGroups: ['']
     resources: [services]
-    # This is the synthetic resourceName required by the operator's RBAC proxy.
-    resourceNames: [showroom-rails-service]
+    # RHOAI3.5 proxy SAR omits the resource name in observed requests.
+    # Namespace-scoped get services is required; no list/watch/write/Secret access.
     verbs: [get]
 ---
 apiVersion: rbac.authorization.k8s.io/v1

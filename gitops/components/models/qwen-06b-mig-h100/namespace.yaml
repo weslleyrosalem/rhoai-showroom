@@ -1,0 +1,16 @@
+{
+  "apiVersion": "v1",
+  "kind": "Namespace",
+  "metadata": {
+    "name": "ai-showroom-bench",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "opendatahub.io/dashboard": "true",
+      "showroom.openshift.ai/maas-gateway-access": "true"
+    },
+    "annotations": {
+      "openshift.io/display-name": "AI Showroom \u00b7 Inference Benchmark",
+      "argocd.argoproj.io/sync-options": "Prune=false"
+    }
+  }
+}

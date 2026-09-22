@@ -1,18 +1,13 @@
----
-title: Experimentos e traces com MLflow
----
-# Evidência de como a resposta foi produzida
+# MLflow experiments and traces
 
-O operador gerencia o singleton `MLflow/mlflow` e seu serviço em `redhat-ods-applications`. O projeto `ai-showroom` é um workspace. O Secret de artefatos e `MLflowConfig` do projeto selecionam o bucket; nenhum segredo faz parte deste repositório.
+The platform singleton runs in `redhat-ods-applications`; the workspace is `ai-showroom`. Workbench and workload identities use namespace-scoped Kubernetes authorization.
 
-O overlay showroom usa SQLite em PVC 5Gi para metadados e SeaweedFS S3 para artefatos. São escolhas de laboratório com uma réplica. Uma implantação permanente deve trocar esses serviços de exemplo por PostgreSQL e storage S3 adequados ao ambiente.
+Open `notebooks/01-demand.ipynb`. Generate the synthetic dataset, inspect the chronological holdout, and publish the measured result. The model artifact is also uploaded to `s3://aurora-artifacts/models/forecast/latest.json` for the MCP backend.
 
-O endpoint interno testado é `https://mlflow.redhat-ods-applications.svc:8443/mlflow`. Clientes montam a CA de serviço do OpenShift e verificam TLS. O token de ServiceAccount é lido em memória; não é exibido no notebook, logs ou página.
+The internal tracking endpoint is `https://mlflow.redhat-ods-applications.svc:8443/mlflow` with the injected service CA. `AURORA_MLFLOW_TRACKING_URI` selects this internal endpoint when the notebook webhook injects a public dashboard URI. Do not disable TLS verification.
 
-- `aurora-demand`: treino, baseline, seleção e artefato de previsão.
-- `aurora-assistant`: trace de recuperação, chamadas MCP e inferência MaaS.
-- `aurora-model-safety`: resultados de avaliação do EvalHub.
+The application records retrieval, MCP Gateway calls, and MaaS inference spans after input safety checks. It checks generated output before storing that output in a trace. MLflow workspace artifacts use S3, so this client image includes boto3 and receives credentials from a Kubernetes Secret.
 
-Execute o notebook `01-demand.ipynb` para registrar um experimento. Consulte o app RAG para gerar trace. Abra o workspace no dashboard e confirme que o trace contém os spans, não apenas uma linha de log. Falha de integração gera erro; a aplicação não simula um resultado positivo.
+Acceptance: real parent/child runs, measured metrics, a downloadable model artifact, and a trace that can be retrieved after the request completes. An experiment appearing in the UI alone does not prove artifact upload succeeded.
 
-MLflow base é GA. Algumas experiências integradas de Playground/prompt registry/tracing permanecem TP. MLflow e o Model Registry do RHOAI são produtos de registro distintos; esta entrega não pressupõe sincronização automática entre eles. [Configuração oficial](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_mlflow/installing-mlflow_mlflow).
+[Official MLflow integration documentation](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_mlflow/installing-and-authenticating-mlflow-sdk_mlflow).

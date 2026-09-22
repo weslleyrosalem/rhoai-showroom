@@ -112,6 +112,42 @@ def parse_sse(lines, started, clock=time.monotonic):
             'total_tokens':usage.get('total_tokens')}
 
 
+def bounded_sse_lines(response, deadline, clock=time.monotonic,
+                      max_bytes=4*1024*1024, max_line_bytes=64*1024):
+    """Bound bytes and wall time even when an endpoint never finishes a line."""
+    pending = bytearray()
+    received = 0
+    # urllib's HTTPResponse exposes the active socket through its buffered reader.
+    # read1 returns after one underlying read, unlike readline/read which may keep
+    # accepting trickled data forever without yielding to a deadline check.
+    sock = getattr(getattr(getattr(response, 'fp', None), 'raw', None), '_sock', None)
+    while True:
+        remaining = deadline - clock()
+        if remaining <= 0:
+            raise TimeoutError('per-request total duration exceeded')
+        if sock is not None:
+            sock.settimeout(remaining)
+        chunk = response.read1(8192)
+        if clock() > deadline:
+            raise TimeoutError('per-request total duration exceeded')
+        if not chunk:
+            if pending:
+                yield bytes(pending)
+            return
+        received += len(chunk)
+        if received > max_bytes:
+            raise ValueError('SSE response exceeded the byte limit')
+        pending.extend(chunk)
+        while b'\n' in pending:
+            end = pending.index(b'\n') + 1
+            if end > max_line_bytes:
+                raise ValueError('SSE line exceeded the byte limit')
+            yield bytes(pending[:end])
+            del pending[:end]
+        if len(pending) > max_line_bytes:
+            raise ValueError('SSE line exceeded the byte limit')
+
+
 def request_once(url, model, key, index, args):
     started = time.monotonic()
     row = {'index':index, 'started_at':dt.datetime.now(dt.timezone.utc).isoformat(),
@@ -128,12 +164,7 @@ def request_once(url, model, key, index, args):
         with urllib.request.build_opener(NoRedirect).open(request, timeout=args.timeout) as response:
             row['http_status'] = response.status
             deadline = started + args.timeout
-            def bounded_lines():
-                for line in response:
-                    if time.monotonic() > deadline:
-                        raise TimeoutError('per-request total duration exceeded')
-                    yield line
-            row.update(parse_sse(bounded_lines(), started))
+            row.update(parse_sse(bounded_sse_lines(response, deadline), started))
             row['ok'] = response.status == 200
     except urllib.error.HTTPError as exc:
         row.update(ok=False,http_status=exc.code,error='HTTPError')
