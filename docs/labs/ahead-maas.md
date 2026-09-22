@@ -173,7 +173,15 @@ The rehearsal observed nonempty gateway, consumption and rate-limit series in th
 
 ## Preserved state and deferred extensions
 
-The initial before/after comparison kept the original MaaS tenant/configuration, subscriptions, policies, model references, shared Config, DSC, DSCI and default Gateway specs and UIDs unchanged. Original Llama, scheduler, default gateway and MaaS API pod UIDs were unchanged, with zero additional restarts during that check. Later persistence work touched only AHEAD's identity service and database.
+### Add a real Granite deployment
+
+The presenter subsequently deployed **Granite 3.1 8B Instruct** through the native project flow, with two L40S replicas and llm-d. At 13:59 UTC on September 22, both replicas were Ready and its dedicated AHEAD tenant subscription passed discovery, inference, and access checks. The optional [Granite governance profile](https://github.com/weslleyrosalem/rhoai-showroom/tree/main/gitops/components/models/ahead-granite) records the exact-model policy, 20,000-token/minute presenter budget, and backend network isolation. It preserves the user-created model and is separate from the core Argo application.
+
+One authorized request returned HTTP 200 with 80 provider-reported tokens; anonymous discovery returned 401, and the same key requesting an unsubscribed model returned 403. The temporary rehearsal key was revoked. These are functional and access results, not an inference-performance comparison.
+
+**Native key-screen limit:** the installed **Gen AI studio → API keys** screen uses the default tenant and did not list `ahead-granite-presenter`. Use the tenant's scoped key helper described in the profile for AHEAD; do not select an unrelated default-tenant subscription. Notebook 09 accepts the tenant HTTPS endpoint, exact model alias, and a masked key without changing the existing Llama preset. The API path was validated; key creation for this tenant through the native screen was not.
+
+The initial before/after comparison kept the original MaaS tenant/configuration, subscriptions, policies, model references, shared Config, DSC, DSCI and default Gateway specs and UIDs unchanged. Original Llama, scheduler, default gateway and MaaS API pod UIDs were unchanged, with zero additional restarts during that check. The identity-service persistence work and the separate Granite addition above followed those preservation checks.
 
 | Deferred option | Why it remains outside the live path | Procedure for a later coordinated window |
 |---|---|---|

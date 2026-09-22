@@ -27,12 +27,12 @@ Select **Aurora Inference Demo** from the kernel picker before using the inferen
 |---|---|---|
 | `07-qwen-live-traffic.ipynb` | Send an Aurora question, then deliberately start bounded manual traffic | Actual responses, per-request status/timing, and the existing native OpenShift AI charts |
 | `08-qwen-guidellm.ipynb` | Run the short GuideLLM cell once | Real GuideLLM results, achieved throughput, latency, streaming TTFT when observed, and sanitized JSON/CSV/HTML reports on the PVC |
-
 | `09-maas-api.ipynb` | Enter the approved MaaS endpoint/model and a masked API key | Discovery, one real response, status, latency, provider usage, and an optional disabled-by-default quota exercise |
+| `10-llmd-live.ipynb` | Request a fresh comparison while the presenter controller is active | Round-robin and llm-d requests, backend/cache counters, and measured latency charts |
 
 The GuideLLM default requests at most three completions at 0.1 requests/second, concurrency one, with 64 output tokens. Its independent watchdog covers startup and execution. An interrupted or failed run remains visible in its status file. No unattended load is started by setup or left after a run returns.
 
-Both notebooks start with explicit `BASE_URL`, `MODEL_ID`, and `AUTH_MODE` settings. The prepared `service_account` mode reads the Workbench's rotating credential in memory and restricts it to the exact private Gateway and matching model path. Existing routing and RBAC authorize only the prepared Qwen model; changing a name does not grant access. For another HTTPS OpenAI-compatible endpoint, use `api_key` mode and enter an endpoint-bound key through the masked prompt. Redirects and environment proxies are disabled, and TLS verification remains enabled. The model discovery preflight must list the exact selected model before generation starts.
+Notebooks 07 and 08 start with explicit `BASE_URL`, `MODEL_ID`, and `AUTH_MODE` settings. The prepared `service_account` mode reads the Workbench's rotating credential in memory and restricts it to the exact private Gateway and matching model path. Existing routing and RBAC authorize only the prepared Qwen model; changing a name does not grant access. For another HTTPS OpenAI-compatible endpoint, use `api_key` mode and enter an endpoint-bound key through the masked prompt. Redirects and environment proxies are disabled, and TLS verification remains enabled. The model discovery preflight must list the exact selected model before generation starts.
 
 GuideLLM also requires a matching tokenizer. Notebook 08 exposes `TOKENIZER_ID`, an immutable `TOKENIZER_REVISION`, and the explicit `TOKENIZER_FOR_MODEL` binding. Its default uses the verified Qwen preset. For another model, deliberately run the tokenizer preparation cell with the correct public Hugging Face ID and revision; it downloads only allowlisted tokenizer files, not weights or Python code. A changed model with the stale Qwen binding is refused. This association is supplied by the operator: the models API does not attest the remote weights or tokenizer. Use notebook 07's manual client when a frontier model has no known compatible public tokenizer.
 
@@ -41,3 +41,9 @@ The private Qwen Gateway must already be deployed with the narrowly scoped Workb
 Use **Observe & monitor → Dashboard**, rechecking **Project = ai-showroom** and **Model = aurora-qwen-4b** on each LLM tab. The private Qwen route is separate from the Llama `showroom-load` MaaS subscription. See the [native dashboard guide](https://weslleyrosalem.com/rhoai-showroom/operations/native-dashboards/) for chart definitions, scrape-window limits, and unavailable native inter-token latency. A short shared-system run demonstrates measurement; it does not establish capacity or prove a routing/cache speedup.
 
 The earlier notebooks cover demand forecasting, RAG, Ray, evaluation, AutoRAG, and Feature Store. Follow each notebook's own kernel and dependency instructions; installing the inference kernel does not validate every science notebook under that kernel.
+
+## Supervised live llm-d comparison
+
+Notebook 10 uses the persistent kernel only for its interface and charts. A separate, temporary administrator controller runs the fixed AHEAD comparison with its pinned GuideLLM 0.6.0 environment. Follow the [controller setup and live workflow](https://weslleyrosalem.com/rhoai-showroom/labs/ahead-llmd/#supervised-live-comparison-from-the-workbench). The Workbench receives no administrator credential or raw backend access.
+
+Each comparison permits 16 requests per path at concurrency 2 and 32 output tokens, plus an authentication preflight. The controller has an absolute expiration, a six-attempt budget, and a 30-second cooldown. Run All always requests fresh results; an unavailable controller raises an error. The paths differ in authentication and transport, and fresh prefix salts differ, so observed latency differences are not causal proof of scheduler efficiency.

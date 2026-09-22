@@ -211,6 +211,7 @@ def main():
     p.add_argument('--output', required=True, type=Path)
     p.add_argument('--check-only',action='store_true',help='Validate identity, topology, versions, and tokenizer without requests or resources')
     p.add_argument('--seconds', type=int, default=30, choices=range(5,31))
+    p.add_argument('--requests', type=int, default=30, choices=range(1,31))
     p.add_argument('--modes', nargs='+', choices=('single','round-robin','llmd'), default=['single','round-robin','llmd'])
     a = p.parse_args()
     a.output = private_output_path(a.output)
@@ -253,7 +254,7 @@ def main():
       'model':model['spec']['model'],'runtime_image':pods[0]['spec']['containers'][0]['image'],
       'scheduler_image':picker['image'],'scheduler_config':config},
       'workload':{'seconds_per_mode':a.seconds,'concurrency':{'single':1,'round-robin':2,'llmd':2},'output_tokens':32,
-                  'guidellm_version':GUIDELLM_VERSION,'prompt_rows':16,'unique_questions':4},
+                  'guidellm_version':GUIDELLM_VERSION,'prompt_rows':16,'unique_questions':4,'request_cap_per_mode':a.requests},
       'limitations':['Administrator-only loopback port-forwards bypass normal backend network access for baseline measurements.',
         'The llm-d path includes native Gateway authentication and scheduling; baseline bypasses both.',
         'Shared live backends, short windows, and no cache flush preclude causal routing-speedup or statistically robust tail claims.',
@@ -297,7 +298,7 @@ def main():
               '--model',MODEL,'--request-type','chat_completions','--profile','concurrent','--rate',str(concurrency),
               '--max-seconds',str(a.seconds),'--data',str(data.resolve()),'--processor',str(a.tokenizer.resolve()),
               '--output-dir',str(out.resolve()),'--outputs','json,csv','--max-errors','2',
-              '--max-requests','30','--warmup','0','--cooldown','0','--data-num-workers','0',
+              '--max-requests',str(a.requests),'--warmup','0','--cooldown','0','--data-num-workers','0',
               '--random-seed','42','--disable-console-interactive',
               '--processor-args',json.dumps({'local_files_only':True,'trust_remote_code':False}),
               '--backend-kwargs',json.dumps({'http2':False,'follow_redirects':False,'timeout':25,'max_tokens':32,

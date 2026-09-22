@@ -1,0 +1,48 @@
+# Optional policy for the existing AHEAD Granite deployment.
+# Backend traffic must arrive through the governed tenant Gateway.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ahead-granite-backend-private
+  namespace: ahead
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: private-inference
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: redhataigranite-31-8b-instruct
+      kserve.io/component: workload
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openshift-ingress
+      podSelector:
+        matchLabels:
+          gateway.networking.k8s.io/gateway-name: ahead
+    ports:
+    - protocol: TCP
+      port: 8000
+  - from:
+    # A podSelector without namespaceSelector admits this namespace only.
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: redhataigranite-31-8b-instruct
+          app.kubernetes.io/component: llminferenceservice-router-scheduler
+    ports:
+    - protocol: TCP
+      port: 8000
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: redhat-ods-monitoring
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/component: opentelemetry-collector
+          app.kubernetes.io/instance: redhat-ods-monitoring.data-science-collector
+    ports:
+    - protocol: TCP
+      port: 8000

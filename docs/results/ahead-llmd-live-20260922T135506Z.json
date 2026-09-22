@@ -1,0 +1,165 @@
+{
+  "status": "MEASURED",
+  "started_at": "2026-09-22T13:55:06.615062+00:00",
+  "finished_at": "2026-09-22T13:55:55.834748+00:00",
+  "topology": {
+    "ready_backends": 2,
+    "distinct_gpu_nodes": 2,
+    "gpu_type": "NVIDIA L40S",
+    "model": {
+      "name": "aurora-qwen-4b",
+      "uri": "hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554"
+    },
+    "runtime_image": "registry.redhat.io/rhaii/vllm-cuda-rhel9@sha256:c056e61672b6aea489ad5dde0bd2f8497230f5333e87f7cf6c494eba3bfdc808",
+    "scheduler_image": "registry.redhat.io/rhoai/odh-llm-d-router-endpoint-picker-rhel9@sha256:14e57b536479e7d8b7d495000d8402ca780997994096277d131b56e6a9bcf27f",
+    "prefix_cache_scorer_present": true
+  },
+  "workload": {
+    "seconds_per_mode": 30,
+    "concurrency": {
+      "single": 1,
+      "round-robin": 2,
+      "llmd": 2
+    },
+    "output_tokens": 32,
+    "guidellm_version": "0.6.0",
+    "prompt_rows": 16,
+    "unique_questions": 4
+  },
+  "limitations": [
+    "Administrator-only loopback port-forwards bypass normal backend network access for baseline measurements.",
+    "The llm-d path includes native Gateway authentication and scheduling; baseline bypasses both.",
+    "Shared live backends, short windows, and no cache flush preclude causal routing-speedup or statistically robust tail claims.",
+    "Distinct fresh prefix salts reduce cross-mode carryover; workload shapes match, prompt bytes differ.",
+    "Two existing Qwen3 4B L40S backends replace the source lab four Llama 8B GPUs.",
+    "Local prefix caching is not cross-node KV transfer or prefill/decode disaggregation.",
+    "Backend and EPP counter deltas include concurrent activity; they are not uniquely attributed request traces."
+  ],
+  "authentication": {
+    "anonymous_status": 401,
+    "authorized_status": 200
+  },
+  "source_workshop": {
+    "repository": "https://github.com/rhpds/llm-d-showroom",
+    "revision": "e4d63c30252ce42fa783b1a08a1706d3cda20761"
+  },
+  "runs": [
+    {
+      "mode": "round-robin",
+      "duration_seconds": 30.0,
+      "requests": {
+        "successful": 16,
+        "errored": 0,
+        "incomplete": 0,
+        "total": 16
+      },
+      "guidellm_report_sha256": "ddb27bb9617fe8a0aed6d2a515cf2341f58b13a99a0f47ee2be767f64ec65ed1",
+      "prompt_sha256": "70e05ceb24a0470b4b92108d00ee4e878a584c6cd2c590dad11e1a8289caf5c5",
+      "broker_requests": 16,
+      "broker_upstream_errors": 0,
+      "client_disconnects": 0,
+      "backend_success_deltas": [
+        8.0,
+        8.0
+      ],
+      "backend_prefix_queries_delta": 9552.0,
+      "backend_prefix_hits_delta": 8256.0,
+      "observed_cache_hit_fraction": 0.864321608040201,
+      "epp_request_delta": 0.0,
+      "broker_assignment_counts": {
+        "0": 8,
+        "1": 8,
+        "picker": 0
+      },
+      "time_to_first_token_ms": {
+        "mean": 218.23160350322723,
+        "p50": 218.3077335357666,
+        "p95": 237.02692985534668
+      },
+      "request_latency": {
+        "mean": 0.5937034785747528,
+        "p50": 0.5945682525634766,
+        "p95": 0.610374927520752
+      },
+      "requests_per_second": {
+        "mean": 0.5333333333333333,
+        "p50": 0.07923331287723062,
+        "p95": 3.375436585986113
+      },
+      "output_tokens_per_second": {
+        "mean": 112.98462608196427,
+        "p50": 164.92878770005112,
+        "p95": 166.14394929689047
+      },
+      "prompt_token_count": {
+        "mean": 597.0,
+        "p50": 597.0,
+        "p95": 597.0
+      },
+      "output_token_count": {
+        "mean": 32.0,
+        "p50": 32.0,
+        "p95": 32.0
+      }
+    },
+    {
+      "mode": "llmd",
+      "duration_seconds": 30.0,
+      "requests": {
+        "successful": 16,
+        "errored": 0,
+        "incomplete": 0,
+        "total": 16
+      },
+      "guidellm_report_sha256": "b1a7a00edae514f90a1256e197799aba01e5a57ddf46c340fbcc93b0beb80f61",
+      "prompt_sha256": "80e10744916a72be0d322a4b09ec6dd130f6ba4259318f79aaf73ee40c28b4fa",
+      "broker_requests": 16,
+      "broker_upstream_errors": 0,
+      "client_disconnects": 0,
+      "backend_success_deltas": [
+        8.0,
+        8.0
+      ],
+      "backend_prefix_queries_delta": 9568.0,
+      "backend_prefix_hits_delta": 8256.0,
+      "observed_cache_hit_fraction": 0.862876254180602,
+      "epp_request_delta": 16.0,
+      "broker_assignment_counts": {
+        "0": 0,
+        "1": 0,
+        "picker": 16
+      },
+      "time_to_first_token_ms": {
+        "mean": 184.97219681739807,
+        "p50": 182.83510208129883,
+        "p95": 202.4078369140625
+      },
+      "request_latency": {
+        "mean": 0.5610126405954361,
+        "p50": 0.5587148666381836,
+        "p95": 0.5791239738464355
+      },
+      "requests_per_second": {
+        "mean": 0.5333333333333333,
+        "p50": 0.07841013713881209,
+        "p95": 3.5941154695147866
+      },
+      "output_tokens_per_second": {
+        "mean": 119.3065493877597,
+        "p50": 164.63100051026416,
+        "p95": 166.4934899968244
+      },
+      "prompt_token_count": {
+        "mean": 598.0,
+        "p50": 598.0,
+        "p95": 598.0
+      },
+      "output_token_count": {
+        "mean": 32.0,
+        "p50": 32.0,
+        "p95": 32.0
+      }
+    }
+  ],
+  "interpretation": "Functional inference, authentication, two-backend availability, installed prefix scoring, and observed cache counters. Short shared-environment end-to-end samples do not establish a causal llm-d speedup or four-GPU scalability."
+}

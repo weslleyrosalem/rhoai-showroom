@@ -4,6 +4,54 @@ Aurora's procurement assistant repeats inventory and approval context across req
 
 This is an administrator-led adaptation of the [llm-d workshop](https://github.com/rhpds/llm-d-showroom/tree/e4d63c30252ce42fa783b1a08a1706d3cda20761). `ahead-llmd` contains workshop materials and sanitized results. The model remains in `ai-showroom`: two Qwen3 4B replicas on two L40S nodes. No model/GPU deployment is copied, no shared resources are restarted, and no capacity is added. The original Llama/MaaS demonstrations continue independently.
 
+## Supervised live comparison from the Workbench
+
+**Live notebook rehearsal passed on September 22, 2026.** The actual notebook completed all three code cells in 67.773 seconds, with 32/32 benchmark requests and zero errors or incomplete requests. Cleanup left no benchmark worker, GuideLLM process, or port-forward. Read the [fresh two-mode observations](#live-notebook-result-september-22-2026-1355-utc) separately from the earlier, explicitly dated three-mode measurement.
+
+Use `notebooks/10-llmd-live.ipynb` in the existing Aurora workbench, with the **Aurora Inference Demo** kernel. A presenter must operate the short-lived controller on an authenticated administrator workstation. **Run All** submits a fresh UUID request, waits for that request's result, and plots only its sanitized measurements. An unavailable or expired controller produces an error, never a saved-result fallback.
+
+### Start the temporary controller
+
+Prepare the local Python 3.12 environment, **GuideLLM 0.6.0**, and pinned tokenizer using Activity 2 below. This administrator environment is separate from the Workbench's persistent inference kernel and the GuideLLM version used by notebook 08. Notebook 10 itself is only a file-channel client: it receives no administrator token, kubeconfig, backend permission, or port-forward.
+
+From the repository root, set these values deliberately:
+
+- `SHOWROOM_SERVER` and `SHOWROOM_USER`: independently verified target cluster and authorized administrator identity. Do not derive expected values from the current context in the same command.
+- `SHOWROOM_GUIDELLM` and `SHOWROOM_TOKENIZER`: absolute paths to the prepared local GuideLLM executable and matching tokenizer directory.
+- `SHOWROOM_CONTROLLER_RESULTS`: a **new absolute directory outside Git** for the private ledger, raw reports, logs, and partial results.
+- `SHOWROOM_CONTROLLER_EXPIRES_AT`: an explicit ISO 8601 UTC expiry, in the future and no more than three hours away.
+
+```bash
+python3.12 scripts/ahead-llmd/workbench_controller.py \
+  --expected-server "$SHOWROOM_SERVER" \
+  --expected-user "$SHOWROOM_USER" \
+  --guidellm "$SHOWROOM_GUIDELLM" \
+  --tokenizer "$SHOWROOM_TOKENIZER" \
+  --output "$SHOWROOM_CONTROLLER_RESULTS" \
+  --expires-at "$SHOWROOM_CONTROLLER_EXPIRES_AT" \
+  --max-runs 6
+```
+
+Starting the controller publishes health only; it does not start inference. Keep the presenter session running. In Jupyter, first inspect the notebook's controller status, then run its comparison cell once. The fixed channel is under `/opt/app-root/src/.local/share/aurora-showroom/llmd-live`. Requests contain only a UUID, `compare`, and a recent creation time; they cannot supply shell commands, model URLs, or workload settings. Files use owner-only permissions, and symlink targets are rejected. The controller accepts a request only within its freshness window and records claimed IDs locally to prevent replay during the session.
+
+### Fixed workload and stopping behavior
+
+| Limit | Live notebook contract |
+|---|---|
+| Comparison | Round-robin, then llm-d; two existing Qwen backends |
+| Each phase | At most 30 seconds, 16 requests, concurrency 2, and 32 output tokens per request |
+| Authentication check | One additional authorized request, at most 16 output tokens, plus one denied anonymous request |
+| Session | One active comparison; 30-second cooldown; at most six claimed runs; explicit temporary expiry |
+| Deadlines | 180-second worker wall budget including shutdown margin; 210-second notebook wait |
+
+A full two-phase run contains 32 benchmark completions and can add one successful authentication preflight. Failed or cancelled attempts consume the session budget. The controller preserves private partial artifacts, but the notebook does not present an incomplete comparison as a successful result.
+
+**Interrupt kernel** writes a cancellation marker for that request. The controller checks it every five seconds; including the bounded channel operation, detection can take about nine seconds. It requests normal AHEAD cleanup, then enforces cleanup of its tracked GuideLLM process group, children, and forwards. An independent worker watchdog also handles controller death and expiry. Closing the browser alone does not send cancellation. A backend may finish an already accepted request after the client has disconnected.
+
+The phases use matching workload structure with different fresh prefix salts; exact prompt bytes therefore differ. Caches are not reset. Round-robin uses administrator-only direct backend forwards, while llm-d includes native Gateway authentication and endpoint-picker scheduling. Other traffic can contribute to backend/EPP counters. Show actual request counts, errors, timestamps, and these limits alongside every latency or cache comparison; this exercise does not isolate a causal llm-d speedup or demonstrate cross-node KV transfer.
+
+When the budget is exhausted or the expiry arrives, the temporary controller stops accepting requests. A presenter must explicitly start a new authorized session for further comparisons. This is not a permanently available benchmarking service or an automatic background load generator.
+
 ## Activity 1: Identify the inference path
 
 ```bash
@@ -91,6 +139,23 @@ The project/model selectors are populated from collected series. After new targe
 - Local prefix reuse is not cross-node KV transfer or disaggregated prefill/decode. Four-GPU Llama results and the original workshop's 98% example were not reproduced here.
 
 There is no persistent inference proxy, new cross-namespace service account, or public model route. Rehearsal access requires the existing authorized administrator identity. Keep this privileged path distinct from the customer/native Playground experience.
+
+## Live notebook result: September 22, 2026, 13:55 UTC
+
+The new comparison measured **13:55:06–13:55:55 UTC**, using the two existing Qwen backends. Native authentication returned anonymous **401** and authorized **200**. Each benchmark phase completed **16/16 requests**, with zero errors, incomplete requests, proxy errors, or client disconnects. The successful authentication preflight is separate from those 32 benchmark completions.
+
+| Path | Mean TTFT | Mean end-to-end latency | Prefix-hit fraction |
+|---|---:|---:|---:|
+| Explicit round-robin | 218.232 ms | 0.59370 s | 86.432% |
+| Native llm-d Gateway | 184.972 ms | 0.56101 s | 86.288% |
+
+Both phases observed **8/8 successful requests across the two backends**. The EPP request counter increased by **0** during round-robin and **16** during llm-d. Cache counters were **8,256 hits / 9,552 queries** for round-robin and **8,256 / 9,568** for llm-d.
+
+This run demonstrated the two working paths and endpoint-picker participation. It **did not show increased prefix affinity or a higher hit fraction** for llm-d: both paths were balanced, and its observed hit fraction was slightly lower. The smaller mean latency in this sample does not establish a causal benefit; the paths, salts, tokenized prompt lengths, cache state, and shared traffic limits still apply. No configuration was changed to force a preferred result.
+
+GuideLLM reports a 30-second measurement window per phase, with a finite 16-request workload. Its 0.533 requests/second average is not serving capacity. Mean input size was 597 tokens for round-robin and 598 for llm-d; both generated 32 output tokens per request. Compare like timing statistics: the table above uses **means**, while the earlier historical table below uses **P95 TTFT**.
+
+Read the [typed, sanitized live result](../results/ahead-llmd-live-20260922T135506Z.json), including exact timestamps, report and prompt hashes, pinned images, counts, and limitations. These are this request's actual measurements; the notebook did not substitute the earlier result.
 
 ## Observed rehearsal: September 22, 2026, 06:10–06:11 UTC
 
