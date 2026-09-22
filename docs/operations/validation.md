@@ -26,7 +26,7 @@ Validation started on **September 22, 2026 UTC**. This record separates actual f
 | EvalHub/Garak | [Matched OWASP pair](../labs/owasp-evaluations.md):33 responses per target;both 42.42% ASR,14 detector hits;benchmark and overall Fail | Complete raw JSONL/HTML downloaded from MLflow and hash-verified;NeMo blocked 0/33 in this broader corpus;four probes, not all ten risks |
 | Model onboarding/scoring | Native registry Available; pinned candidate created once; repeated apply stable; authenticated and unauthorized tests passed | Registration passed; candidate safety/performance approval pending |
 | OpenShell | Exact-subject authentication, denied alternate identity, network boundaries, agent filesystem restrictions, denied external egress, real MaaS inference | Private administrator-led preview passed the documented gates |
-| Predictive TrustyAI | Native Project Settings shows installed; actual OVMS capture; baseline SPD0/DIR1, promotion SPD−0.30/DIR0.6667; demand drift measured | Functional metrics passed; native chart collection under final review |
+| Predictive TrustyAI | Native Project Settings shows installed; actual OVMS capture; baseline SPD0/DIR1, promotion SPD−0.30/DIR0.6667; demand drift measured | Functional metrics and native SPD/DIR chart history passed |
 | MIG / NeMoClaw | Prerequisites and pinned deployment options researched | Not yet validated |
 
 The active cloud configuration has a conservative maximum of 11 physical GPUs, including every pool maximum and upgrade surge. The user-authorized hard ceiling is 16. These are allocation bounds, not the number of GPUs running continuously, and optional profiles cannot be combined without recalculating them.

@@ -14,3 +14,4 @@ resources:
 - ../../components/mcp/lifecycle-isolation
 - ../../components/mcp/lifecycle
 - ../../components/models/registry
+- ../../components/platform/telemetry

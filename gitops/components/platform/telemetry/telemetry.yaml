@@ -1,0 +1,50 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: showroom-gpu-utilization
+  namespace: ai-showroom-monitoring
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: gpu-telemetry
+    monitoring.opendatahub.io/scrape: 'true'
+spec:
+  namespaceSelector:
+    matchNames:
+    - nvidia-gpu-operator
+  selector:
+    matchLabels:
+      app: nvidia-dcgm-exporter
+  podMetricsEndpoints:
+  - targetPort: 9400
+    path: /metrics
+    scheme: http
+    interval: 30s
+    scrapeTimeout: 10s
+    honorLabels: true
+    metricRelabelings:
+    - action: keep
+      sourceLabels:
+      - __name__
+      regex: DCGM_FI_DEV_GPU_UTIL
+    - action: keep
+      sourceLabels:
+      - namespace
+      - pod
+      separator: ';'
+      regex: 'ai-showroom;aurora-qwen-4b-kserve-.*|maas-how-to;redhataillama-31-8b-instruct-kserve-.*'
+    - action: replace
+      sourceLabels:
+      - pod
+      regex: '(aurora-qwen-4b|redhataillama-31-8b-instruct)-kserve-.*'
+      targetLabel: model_name
+      replacement: '$1'
+    - action: replace
+      sourceLabels:
+      - pod
+      targetLabel: workload_pod
+    - action: replace
+      sourceLabels:
+      - __name__
+      regex: DCGM_FI_DEV_GPU_UTIL
+      targetLabel: __name__
+      replacement: accelerator_gpu_utilization

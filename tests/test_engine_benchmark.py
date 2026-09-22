@@ -2,6 +2,7 @@ import copy
 import importlib.util
 from pathlib import Path
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('engine_benchmark', ROOT / 'scripts/engine_benchmark.py')
@@ -77,6 +78,26 @@ class EngineRehearsalGuards(unittest.TestCase):
         command = m.engine_command('vllm')
         self.assertIn('--no-enable-prefix-caching', command)
         self.assertEqual(command[command.index('--host') + 1], '127.0.0.1')
+
+    def test_reconciles_successful_scale_with_lost_response(self):
+        original = {'metadata': {'uid': 'original'}}
+        live = {'metadata': {'uid': 'original'}, 'spec': {'replicas': 1}}
+        with mock.patch.object(m, 'get', return_value=live), mock.patch.object(m, 'scale') as scale:
+            m.restore_model(original)
+            scale.assert_called_once_with(original, 1, 2)
+
+    def test_does_not_rewrite_already_restored_or_replaced_model(self):
+        original = {'metadata': {'uid': 'original'}}
+        live = {'metadata': {'uid': 'original'}, 'spec': {'replicas': 2}}
+        with mock.patch.object(m, 'get', return_value=live), mock.patch.object(m, 'scale') as scale:
+            m.restore_model(original)
+            scale.assert_not_called()
+        for changed in [dict(live, metadata={'uid': 'replacement'}),
+                        dict(live, spec={'replicas': 3})]:
+            with mock.patch.object(m, 'get', return_value=changed), mock.patch.object(m, 'scale') as scale:
+                with self.assertRaises(RuntimeError):
+                    m.restore_model(original)
+                scale.assert_not_called()
 
 
 if __name__ == '__main__':

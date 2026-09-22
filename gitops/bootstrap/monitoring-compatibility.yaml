@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: showroom-ovms-resource-limit-compatibility
+  namespace: openshift-monitoring
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: metrics-compatibility
+  annotations:
+    openshift.io/description: 'Namespaced compatibility series for the Aurora OVMS native dashboard; no resource or query values are fabricated'
+spec:
+  groups:
+  - name: showroom.ovms.resource-limits
+    interval: 30s
+    rules:
+    - record: kube_pod_resource_limit
+      expr: sum by (namespace, pod, resource) (kube_pod_container_resource_limits{namespace="ai-showroom-monitoring",pod=~"aurora-allocation-predictor-.*",resource=~"cpu|memory"})

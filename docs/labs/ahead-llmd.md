@@ -77,11 +77,19 @@ There is no persistent inference proxy, new cross-namespace service account, or 
 
 All three modes completed **16/16 requests**, with zero reported errors or incomplete requests. Native gateway authentication returned anonymous **401** and authorized **200**. The two model replicas stayed Ready, their model resource UID/spec remained unchanged, and neither model pod restarted.
 
-| Path | Concurrency | Successful requests | P95 TTFT | Prefix-hit fraction | Backend success deltas | EPP delta |
-|---|---:|---:|---:|---:|---|---:|
-| Single backend | 1 | 16 | 1625.05 ms | 92.93% | 16 / 0 | 0 |
-| Explicit round-robin | 2 | 16 | 439.27 ms | 86.14% | 8 / 8 | 0 |
-| Native llm-d gateway | 2 | 16 | 251.36 ms | 92.46% | 0 / 16 | 16 |
+| Path | Requests | P95 TTFT | Prefix-hit fraction |
+|---|---:|---:|---:|
+| Single backend | 16/16 | 1625.05 ms | 92.93% |
+| Explicit round-robin | 16/16 | 439.27 ms | 86.14% |
+| Native llm-d gateway | 16/16 | 251.36 ms | 92.46% |
+
+Concurrency was one for the single-backend observation and two for each two-backend path. Counter changes show where requests went:
+
+| Path | Backend 0 | Backend 1 | EPP requests |
+|---|---:|---:|---:|
+| Single backend | +16 | 0 | 0 |
+| Explicit round-robin | +8 | +8 | 0 |
+| Native llm-d gateway | 0 | +16 | +16 |
 
 The llm-d sample routed all 16 requests to one backend and observed more prefix reuse than round-robin. That is consistent with prefix affinity at this light load, but other scoring plugins also participate. It does not establish which scorer caused each decision. The observed smaller TTFT is not a causal or general speedup claim.
 

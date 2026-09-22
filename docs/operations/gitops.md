@@ -44,6 +44,8 @@ Do not use an operator upgrade, namespace deletion, credential change, or MIG re
 
 Argo does not provision ROSA pools. ResourceQuota limits Kubernetes requests, not physical GPU count. The capacity guard needs a cloud inventory and counts transient nodes. Global DSC, catalog, and ingress settings use partial patches or merges that preserve existing resources. Never export the entire cluster into a public repository.
 
+The existing-cluster overlay also owns the narrow GPU telemetry PodMonitor. Its model/namespace filters deliberately match that reference installation. Review them before reuse. The optional OVMS compatibility recording rule is an explicit guarded bootstrap step in `scripts/configure_monitoring_compatibility.py`; it runs in cluster monitoring because its input series are unavailable to user-workload rules. It leaves existing rules and controller-generated dashboards unchanged. The [telemetry implementation](https://github.com/weslleyrosalem/rhoai-showroom/tree/main/gitops/components/platform/telemetry) records the exact scope and remaining native latency-unit defect.
+
 ## Publish the guide
 
 Build with `mkdocs build --strict` and publish the generated site on `gh-pages`. The template `ci/pages.workflow.yaml` supports GitHub Actions; copy it to `.github/workflows/pages.yaml` using a credential authorized to manage workflows. The initial publication used branch-based Pages because the available credential lacked that scope.
