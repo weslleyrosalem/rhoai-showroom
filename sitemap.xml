@@ -1,123 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/architecture/maturity/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/architecture/maturity/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/architecture/sources/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/architecture/sources/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/architecture/story/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/architecture/story/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/journeys/platform/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/demos/inference/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/journeys/science/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/demos/maas/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/journeys/security/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/demos/sustained-load/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/automl/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/journeys/platform/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/autorag/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/journeys/science/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/benchmark/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/journeys/security/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/evaluation/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/automl/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/guardrails/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/autorag/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/hardware/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/benchmark/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/maas/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/evaluation/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/mcp/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/feature-store/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/mlflow/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/guardrails/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/model-catalog/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/hardware/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/model-onboarding/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/maas/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/nemoclaw/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/mcp/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/pipelines/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/mlflow/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/rag/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/model-catalog/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/ray/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/model-onboarding/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/red-teaming/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/model-score/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/labs/workbench/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/nemoclaw/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/operations/gitops/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/pipelines/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/operations/install/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/prompts/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/operations/presenter/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/rag/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/operations/reset/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/ray/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/operations/test-drive/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/red-teaming/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://weslleyrosalem.github.io/rhoai-showroom/operations/validation/</loc>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/trainer/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/trustyai/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/labs/workbench/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/operations/gitops/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/operations/install/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/operations/presenter/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/operations/project-plan/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/operations/reset/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/operations/review/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/operations/screen-tour/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/operations/test-drive/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://weslleyrosalem.com/rhoai-showroom/operations/validation/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
 </urlset>

@@ -1,0 +1,14 @@
+{
+  "RedHatText-VF.woff2": {
+    "source": "https://raw.githubusercontent.com/RedHatOfficial/RedHatFont/master/fonts/Proportional/RedHatText/webfonts/RedHatText-VF.woff2",
+    "sha256": "1a5c9a8a88447c5b171ae99dab5daa4c1d49e3502db0fdc0da65d59fc5603feb"
+  },
+  "RedHatDisplay-VF.woff2": {
+    "source": "https://raw.githubusercontent.com/RedHatOfficial/RedHatFont/master/fonts/Proportional/RedHatDisplay/webfonts/RedHatDisplay-VF.woff2",
+    "sha256": "69dca56dda2a2b067dee3e910323c97e54b8544f90f3d1c2192b5a37c0eb1ec3"
+  },
+  "OFL.txt": {
+    "source": "https://raw.githubusercontent.com/RedHatOfficial/RedHatFont/master/OFL.txt",
+    "sha256": "4f1417e27511207cd217656c964f1b0d8b0c4a30156a1a699cf16dc5eba0dff6"
+  }
+}
