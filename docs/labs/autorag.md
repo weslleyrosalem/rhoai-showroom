@@ -11,7 +11,7 @@ python3 scripts/science.py native-status --run-id <run-id>
 
 The launcher resolves the current generation model from the showroom MaaS Secret. `notebooks/native-autorag-parameters.json` requests four patterns, `answer_correctness`, and the `speed` preset. Document IDs in the ground truth match the Markdown filenames.
 
-Open **Develop & train → AutoRAG**, select **ai-showroom**, and open the completed optimization. The native results page displays the four-pattern leaderboard and generated indexing/inference notebook actions. Use the project Playground to compare model behavior. The lexical Aurora application remains a separately labeled baseline; adding OGX does not silently turn that application's TF-IDF into vector retrieval.
+Open **Gen AI studio → AutoRAG**, select **ai-showroom**, and open the completed optimization. The native results page displays the four-pattern leaderboard and generated indexing/inference notebook actions. Use the project Playground to compare model behavior. The lexical Aurora application remains a separately labeled baseline; adding OGX does not silently turn that application's TF-IDF into vector retrieval.
 
 Acceptance: completed optimization, ranked patterns and real metrics, followed by indexing/deployment of a chosen pattern and a semantic retrieval test. Model registration or an OGX Ready condition alone does not prove AutoRAG optimization succeeded.
 
@@ -30,7 +30,7 @@ python scripts/science.py native-export --pipeline autorag --run-id <run-id>
 python scripts/science.py native-infer --run-id <run-id> --question "What is the return deadline?"
 ```
 
-The helper selects the highest measured optimization score, queries OGX `vector-io/query`, and sends the retrieved context to its `chat/completions` API. These are real embedding and pgvector operations. The optional `--use-responses` exercises the generated Responses API template; it returned an upstream incomplete-stream HTTP 500 in this cluster, so it is not the default acceptance path. Review all quality metrics before promotion. `optimization_max_rag_patterns=4` is an upper bound; the optimization can stop after fewer patterns.
+The helper selects the highest measured optimization score, queries OGX `vector-io/query`, and sends the retrieved context to its `chat/completions` API. These are real embedding and pgvector operations. The optional `--use-responses` exercises the generated template against the optimization's original Llama model. That original runtime does not enable automatic tool calling: vLLM returns HTTP 400, which the OGX streaming path surfaced as HTTP 500. Use the [native Playground lab](playground.md) and the separate tool-capable Qwen model for Responses file search and MCP. Qwen passed both paths; changing the generation model does not transfer the original optimization score to Qwen. Review all quality metrics before promotion. `optimization_max_rag_patterns=4` is an upper bound; the optimization can stop after fewer patterns.
 
 ## Measured English result
 

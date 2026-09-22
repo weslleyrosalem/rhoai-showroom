@@ -2,6 +2,7 @@
 import copy
 import importlib.util
 import json
+import sys
 from pathlib import Path
 import unittest
 
@@ -70,6 +71,7 @@ class RegistrationTest(unittest.TestCase):
         registry.onboard(client, CANDIDATE, True)
         version = client.data[registry.API + "/registered_models/1/versions"][0]
         version["customProperties"]["showroom.safety_evaluation"]["string_value"] = "FAILED"
+        version["description"] = "Runtime measured; safety failed and promotion remains blocked."
         registry.onboard(client, CANDIDATE, True)
         self.assertEqual(version["customProperties"]["showroom.safety_evaluation"]["string_value"], "FAILED")
 
@@ -87,6 +89,33 @@ class RegistrationTest(unittest.TestCase):
         for key in ["model", "revision", "license", "source"]:
             self.assertEqual(CANDIDATE[key], model[key])
         self.assertEqual(CANDIDATE["runtime_image"], lock["runtime_image"])
+
+
+class RuntimeEvidenceTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        sys.modules['register_model'] = registry
+        spec = importlib.util.spec_from_file_location('record_runtime', ROOT / 'gitops/components/models/record_runtime.py')
+        cls.module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.module)
+
+    def test_runtime_pass_preserves_failed_safety_and_candidate(self):
+        props = registry.properties({'showroom.owner': registry.OWNER,
+            'showroom.lifecycle': 'candidate', 'showroom.safety_evaluation': 'FAILED',
+            'showroom.performance_evaluation': 'NOT_RUN', 'showroom.revision': 'a' * 40})
+        before = copy.deepcopy(props)
+        result = self.module.runtime_properties(props, 'b' * 64, '2026-09-22T00:00:00Z')
+        self.assertEqual(props, before)
+        self.assertEqual(result['showroom.safety_evaluation']['string_value'], 'FAILED')
+        self.assertEqual(result['showroom.lifecycle']['string_value'], 'candidate')
+        self.assertEqual(result['showroom.performance_evaluation']['string_value'], 'NOT_RUN')
+        self.assertEqual(result['showroom.revision']['string_value'], 'a' * 40)
+
+    def test_runtime_recorder_rejects_foreign_and_promoted_versions(self):
+        for owner, lifecycle in [('someone-else', 'candidate'), (registry.OWNER, 'approved')]:
+            with self.subTest(owner=owner, lifecycle=lifecycle), self.assertRaises(ValueError):
+                self.module.runtime_properties(registry.properties({'showroom.owner': owner,
+                    'showroom.lifecycle': lifecycle}), 'b' * 64, '2026-09-22T00:00:00Z')
 
 
 if __name__ == "__main__":

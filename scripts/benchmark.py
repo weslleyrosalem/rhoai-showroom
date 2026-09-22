@@ -328,7 +328,7 @@ def serve_transformers(args):
         if body.get('temperature',0) != 0:
             raise HTTPException(400,'Reference server supports deterministic temperature=0 only')
         inputs = tokenizer.apply_chat_template(body['messages'],tokenize=True,
-            add_generation_prompt=True,return_tensors='pt',enable_thinking=False)
+            add_generation_prompt=True,return_tensors='pt',return_dict=False,enable_thinking=False)
         if inputs.shape[-1]+n > args.max_model_len:
             raise HTTPException(400,'Context length exceeded')
         def events():

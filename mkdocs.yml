@@ -68,6 +68,7 @@ nav:
   - Data science and ML: journeys/science.md
   - Test drive: operations/test-drive.md
 - Labs:
+  - Native Playground: labs/playground.md
   - MCP and tools: labs/mcp.md
   - Prompt versions: labs/prompts.md
   - Guardrails: labs/guardrails.md

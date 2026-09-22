@@ -7,6 +7,14 @@ metadata:
     showroom.openshift.ai/access: private-native-auth-port-forward-and-approved-ogx-only
     opendatahub.io/display-name: Aurora Qwen3 4B — native tools and private inference
     showroom.openshift.ai/validation: private-native-auth-and-epp-verified-topology-requires-live-check
+    openshift.io/display-name: Aurora Qwen — tools and policy knowledge
+    openshift.io/description: Answer Aurora Supply policy questions and use read-only
+      inventory and replenishment tools. Native user authorization is required; purchases
+      are never executed.
+    opendatahub.io/genai-use-case: Aurora policy retrieval and read-only replenishment
+      tools
+  labels:
+    opendatahub.io/genai-asset: 'true'
 spec:
   router:
     gateway:

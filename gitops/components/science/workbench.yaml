@@ -17,6 +17,7 @@ metadata:
     app: aurora-lab
     opendatahub.io/dashboard: 'true'
     opendatahub.io/odh-managed: 'true'
+    opendatahub.io/feast-integration: 'true'
   annotations:
     notebooks.opendatahub.io/inject-auth: 'true'
     opendatahub.io/mlflow-instance: mlflow

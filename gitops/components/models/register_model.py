@@ -84,6 +84,8 @@ def assert_matches(existing, desired):
                     continue
                 if existing.get(key, {}).get(prop) != expected:
                     raise ValueError(f"Existing registry provenance differs: {prop}")
+        elif key == 'description' and 'registeredModelId' in desired:
+            continue  # Version summaries can evolve with separately audited runtime evidence.
         elif existing.get(key) != value:
             raise ValueError(f"Existing registry field differs: {key}")
 
@@ -95,12 +97,12 @@ class RegistryClient:
         self.opener = urllib.request.build_opener(
             NoRedirect(), urllib.request.HTTPSHandler(context=ssl.create_default_context()))
 
-    def request(self, path, body=None):
+    def request(self, path, body=None, method=None):
         if not path.startswith(API + "/") or ".." in path:
             raise ValueError("Registry API path is invalid")
         request = urllib.request.Request(self.endpoint + path,
             data=None if body is None else json.dumps(body).encode(),
-            headers={"Authorization": "Bearer " + self.token, "Content-Type": "application/json"})
+            headers={"Authorization": "Bearer " + self.token, "Content-Type": "application/json"}, method=method)
         try:
             with self.opener.open(request, timeout=30) as response:
                 raw = response.read(4 * 1024 * 1024 + 1)
@@ -154,7 +156,7 @@ def onboard(client, candidate, apply):
     metadata = {**common, **{"showroom." + k: v for k, v in candidate.items()
                if k not in {"schema_version", "registered_model_name", "version_name", "artifact_name", "uri"}}}
     version = {"name": candidate["version_name"], "registeredModelId": model["id"],
-               "author": OWNER, "description": "Pinned candidate; runtime, safety, and performance validation have not run.",
+               "author": OWNER, "description": "Pinned candidate; consult lifecycle evidence. Registration does not approve runtime, safety, or performance.",
                "customProperties": properties(metadata)}
     artifact = {"name": candidate["artifact_name"], "artifactType": "model-artifact",
                 "uri": candidate["uri"], "modelFormatName": "safetensors",

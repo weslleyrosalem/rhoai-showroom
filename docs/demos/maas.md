@@ -8,7 +8,7 @@
 |---|---|---|
 | 0–5 min | OpenShift AI model catalog and deployed models | Distinguish a discoverable catalog entry, a candidate registry record, and an actually Ready deployed endpoint. |
 | 5–10 min | MaaS models, subscriptions, and API keys | Inspect `showroom-standard`, `showroom-test-drive`, and the separate `showroom-load` class. Never project a raw key. |
-| 10–15 min | Playground or Aurora Supply | A valid standard credential receives a model response. The sustained benchmark uses a separate subscription and credential. |
+| 10–15 min | Aurora Supply or the Llama path in Playground | A valid standard credential receives a model response. The sustained benchmark uses a separate subscription and credential. |
 | 15–22 min | A bounded quota rehearsal | Anonymous access fails. A valid test-drive request succeeds; exhausting its 100-token/minute allowance returns 429. The standard subscription still succeeds. Wait for the quota window before repeating. |
 | 22–27 min | Groups and model access | Show platform administrators, data scientists, and visitors as separate groups. Group creation does not create an identity or log in a customer. |
 | 27–30 min | GitOps and audit evidence | Inspect the owned subscription manifests, the key expiration annotation, and recorded response statuses. Explain how the same controls can be recreated. |
@@ -24,6 +24,8 @@ oc get secret showroom-guidellm-key -n ai-showroom \
 ```
 
 Never use `oc get secret -o yaml`, decode a Secret on a shared terminal, paste a key into slides, or display browser network headers during the demo. Use the [MaaS lab](../labs/maas.md) for guarded credential provisioning and the current subscription model reference. The installed existing-cluster overlay reuses the existing Llama endpoint; the fresh-cluster base points at the showroom Qwen model.
+
+The native Qwen tool-and-knowledge Playground is a separate path using the current user’s Kubernetes authorization. It does not consume a MaaS key or the `showroom-standard` subscription; use Llama or Aurora Supply for this MaaS quota demonstration.
 
 ## What was tested
 

@@ -45,13 +45,31 @@ A repeated apply preserves matching records. Same-name entries without the showr
 
 `candidate` is a custom lifecycle value. Native resource visibility does not mean that safety, runtime compatibility, or performance has been approved. All three validation properties start at `NOT_RUN`. Attach real evidence and use a separately reviewed promotion workflow after execution. Registration itself does not start GPU workloads.
 
+
+## Record measured runtime acceptance
+
+After the native Qwen deployment is Ready, the separate runtime recorder can measure one bounded automatic tool call and its endpoint-picker counter, then attach the report hash and timestamp to the owned registry version. It checks the live pinned model URI, requested runtime digest, and resolved container digest. The latter can differ for an OCI platform image; both are retained in the report.
+
+```bash
+python3 gitops/components/models/record_runtime.py \
+  --expected-server "$SHOWROOM_SERVER" --expected-user "$SHOWROOM_USER" \
+  --evidence /private/directory/qwen-runtime-NEW-DATE.json
+# Review the PLAN, then repeat with --apply.
+```
+
+Expected identity values must come from the independently approved environment record. The report path must be new and outside the repository. PLAN is read-only; APPLY performs a native-auth request for `get_stock({"sku":"AS-001"})`, verifies a successful structured response and picker activity, writes the private report, and updates runtime evidence only. It preserves candidate lifecycle, immutable provenance, safety status, and performance status. A failed runtime check never updates the registry. Existing failures must not be replaced with a green overall score.
+
+Use a single editor window for this version. The helper re-reads metadata immediately before the PATCH and aborts if it changed during measurement; the registry API does not provide a Kubernetes resourceVersion compare-and-swap transaction. Keep concurrent promotion/evaluation writers paused for this short update.
+
+On September 22, 2026, version 2 recorded `PASSED_PROTOCOL_TOOL_AND_ROUTING` with a timestamp and SHA-256 evidence reference. Its lifecycle remained `candidate`; safety and performance remained `NOT_RUN`. Fresh registrations still initialize all three checks as `NOT_RUN`. This is acceptance of the native serving protocol, not model quality, a benchmark result, or promotion.
+
 ## Add another model
 
 Copy the JSON example and choose unique model, version, and artifact names. Verify the model license and access requirements. Pin a full 40-character Hugging Face commit and an exact runtime image digest. Keep the immutable URI consistent with that model and revision. Add the corresponding catalog allowlist entry, hardware profile, deployment manifest, and lock entry through their own reviewed workflows. Run the helper with `--candidate path/to/new-candidate.json`; do not reuse the Qwen example's identifiers for unrelated weights.
 
 ## Verified on the showroom cluster
 
-On September 22, 2026, the native registry became Available with a Bound 5Gi PostgreSQL PVC. Qwen3-4B registration created one registered model, one version, and one artifact; an immediate second apply preserved all three IDs. This is registry onboarding evidence only. It does not establish GPU inference, safety, or benchmark readiness.
+On September 22, 2026, the native registry became Available with a Bound 5Gi PostgreSQL PVC. Qwen3-4B registration created one registered model, one version, and one artifact; an immediate second apply preserved all three IDs. That initial result is registry onboarding evidence only. A later runtime recorder attached actual native inference, structured tool-call, and endpoint-picker evidence while preserving the candidate lifecycle and uncompleted safety/performance gates.
 
 ## Sources
 

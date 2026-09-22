@@ -55,7 +55,7 @@ The September 22, 2026 rehearsal registered these linked native records:
 | Model version | instruct-2507-cdbee75f | 2 |
 | Model artifact | aurora-qwen-4b-cdbee75f | 1 |
 
-The artifact location is `hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554`. Version metadata includes the runtime image digest, Apache 2.0 license, catalog source, hardware profile, and deployment manifest. Its lifecycle is `candidate`; runtime, safety, and performance validation are `NOT_RUN`. IDs are local to this registry and can differ on a fresh installation.
+The artifact location is `hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554`. Version metadata includes the runtime image digest, Apache 2.0 license, catalog source, hardware profile, and deployment manifest. Its lifecycle remains `candidate`. The September 22 runtime recorder later measured native inference, structured tool calling, and endpoint-picker processing, updating runtime status to `PASSED_PROTOCOL_TOOL_AND_ROUTING`. Safety and performance remain `NOT_RUN`; fresh registrations still initialize all checks as `NOT_RUN`. IDs are local to this registry and can differ on a fresh installation.
 
 Run the read-only onboarding plan from the repository root. Replace the guarded server and identity with values that you have intentionally selected.
 
@@ -75,3 +75,21 @@ The registry is protected by kube-rbac-proxy with verified TLS. The generated re
 The access rehearsal returned **401** without a token, **403** for an unbound short-lived ServiceAccount token, and **200** for the same identity after granting the generated registry role. Separate SubjectAccessReviews confirmed the data scientist group grant and visitor denial. This tests group authorization and equivalent-role API access; it does not claim a separate human login was exercised. The temporary ServiceAccount and binding were deleted after the test. Allow for the authorization cache to expire when testing a newly granted role.
 
 A direct TCP connection from the RAG pod to the registry pod's REST port 8080 timed out while the authenticated Route's port 443 remained reachable. The backend cannot be used from that application pod to bypass the registry proxy. This is a scoped network test, not a claim about cluster-administrator port forwarding or every possible source namespace.
+
+
+## Update the runtime evidence after testing
+
+After the native Qwen deployment is Ready, the separate runtime recorder can measure one bounded automatic tool call and its endpoint-picker counter, then attach the report hash and timestamp to the owned registry version. It checks the live pinned model URI, requested runtime digest, and resolved container digest. The latter can differ for an OCI platform image; both are retained in the report.
+
+```bash
+python3 gitops/components/models/record_runtime.py \
+  --expected-server "$SHOWROOM_SERVER" --expected-user "$SHOWROOM_USER" \
+  --evidence /private/directory/qwen-runtime-NEW-DATE.json
+# Review the PLAN, then repeat with --apply.
+```
+
+Expected identity values must come from the independently approved environment record. The report path must be new and outside the repository. PLAN is read-only; APPLY performs a native-auth request for `get_stock({"sku":"AS-001"})`, verifies a successful structured response and picker activity, writes the private report, and updates runtime evidence only. It preserves candidate lifecycle, immutable provenance, safety status, and performance status. A failed runtime check never updates the registry. Existing failures must not be replaced with a green overall score.
+
+Use a single editor window for this version. The helper re-reads metadata immediately before the PATCH and aborts if it changed during measurement; the registry API does not provide a Kubernetes resourceVersion compare-and-swap transaction. Keep concurrent promotion/evaluation writers paused for this short update.
+
+On September 22, 2026, version 2 recorded `PASSED_PROTOCOL_TOOL_AND_ROUTING` with a timestamp and SHA-256 evidence reference. Its lifecycle remained `candidate`; safety and performance remained `NOT_RUN`. Fresh registrations still initialize all three checks as `NOT_RUN`. This is acceptance of the native serving protocol, not model quality, a benchmark result, or promotion.

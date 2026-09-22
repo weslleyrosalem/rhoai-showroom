@@ -12,7 +12,8 @@ The acceptance process follows the customer journey: open a screen, perform a me
 | Shared inference route configuration selected the wrong model's endpoint picker | Isolated the additional model's inference gateway | Correct model picker selection and actual request counters verified |
 | OpenShell authenticated a token without constraining its administrative subject | Added an exact-subject TokenReview gate and restricted backend reachability | Another valid service-account token denied; authorizer outage failed closed |
 | A catalog entry did not automatically populate native Playground assets | Added a separate merge-based asset configuration | Native connection still requires a scoped identity and its own tool test |
-| The guide gave similar visual weight to every feature | Put presentation routes first and used clear documentation hierarchy | Desktop browser reviewed; responsive layout and keyboard checks are tracked separately |
+| Feature Store and Playground runtimes were Ready but absent from native discovery | Added each module's required discovery label and preserved scoped backend access | Actual native screens populated after GitOps reconciliation |
+| The guide gave similar visual weight to every feature | Put presentation routes first and used clear documentation hierarchy | Published desktop layout and keyboard skip-link/action navigation passed; mobile viewport verification remains open |
 
 These are engineering and simulated customer reviews. They are not testimonials or feedback attributed to an actual customer.
 
@@ -29,3 +30,7 @@ At the end of a test drive, ask the participant to explain the result in their o
 [Share showroom feedback](https://github.com/weslleyrosalem/rhoai-showroom/issues/new?template=demo-feedback.yml){ .md-button }
 
 Feedback is public. Use synthetic examples and sanitized errors. Credentials, private cluster URLs, account identifiers, and customer data must stay out of the issue.
+
+## Website acceptance
+
+The published guide was inspected on desktop after the September 22 release. Its keyboard skip link moves focus to the content, and Tab/Enter reaches and opens the presentation action. The requested 390-pixel browser override did not change the measured viewport; mobile testing is therefore **not yet verified**, rather than assumed from responsive CSS. The override was reset after the check.

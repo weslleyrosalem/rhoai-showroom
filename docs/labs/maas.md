@@ -47,7 +47,7 @@ import json, os, urllib.error, urllib.parse, urllib.request
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
-url = os.environ['SHOWROOM_GATEWAY'].rstrip('/') + '/v1/chat/completions'
+url = os.environ['SHOWROOM_GATEWAY'].rstrip('/').removesuffix('/v1') + '/v1/chat/completions'
 parsed = urllib.parse.urlsplit(url)
 if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password:
     raise ValueError('Use the verified HTTPS endpoint without credentials in its URL')

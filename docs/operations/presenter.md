@@ -2,6 +2,8 @@
 
 Open with one question: **“How does Aurora turn documents, inventory, and forecasts into a replenishment decision we can explain and operate?”** Choose the journey that fits the audience and keep the shared architecture visible.
 
+Use the [inference script](../demos/inference.md), [MaaS script](../demos/maas.md), and [native screen tour](screen-tour.md) for the scheduled sessions and optional deep dives.
+
 ## Before the session
 
 - Check the [validation record](validation.md), MaaS key expiration, operators, and endpoints.
