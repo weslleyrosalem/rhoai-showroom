@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     
@@ -697,6 +699,34 @@
     
   
     Load test and metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/native-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
   
 
     
@@ -1776,6 +1806,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#inspect-native-consumption-charts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect native consumption charts
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2226,6 +2267,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#inspect-native-consumption-charts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect native consumption charts
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2340,6 +2392,8 @@
 <h2 id="acceptance-and-cleanup">Acceptance and cleanup<a class="headerlink" href="#acceptance-and-cleanup" title="Permanent link">&para;</a></h2>
 <p>Record 200/401/429, timestamps, subscription, and usage without keys. Test a real identity outside the permitted groups; testing only as <code>aiadmin</code> does not establish tenant isolation. Reissue keys after membership changes because issued keys may retain a group snapshot.</p>
 <p>Revoke only the visit's keys when finished. Remove owned showroom resources by name/label; preserve shared namespaces, models, and <code>subplus</code>. This installation uses <code>maas.opendatahub.io/v1alpha1</code>; do not copy obsolete API-group examples. <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/govern_llm_access_with_models-as-a-service/deploy-and-manage-models-as-a-service_maas">MaaS guide</a>.</p>
+<h2 id="inspect-native-consumption-charts">Inspect native consumption charts<a class="headerlink" href="#inspect-native-consumption-charts" title="Permanent link">&para;</a></h2>
+<p>Use <strong>Observe &amp; monitor → Dashboard → Usage</strong>. Filter the exact subscription used by the request; select the model and inspect the <strong>Token consumption table</strong>, <strong>Total rate limited</strong>, and <strong>Token consumption chart</strong>. The <a href="../../operations/native-dashboards/#1000-am-consumption-and-quota">native dashboard guide</a> explains the selected-range summary versus rolling two-hour chart, sampled counters, and the limiter-specific meaning of <strong>Success rate</strong>. Keep the actual HTTP status and recovery evidence alongside these charts.</p>
 
 
 

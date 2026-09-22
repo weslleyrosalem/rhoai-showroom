@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     
@@ -697,6 +699,34 @@
     
   
     Load test and metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../native-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
   
 
     
@@ -2226,14 +2256,15 @@
 
 <h1 id="prepare-a-presentation">Prepare a presentation<a class="headerlink" href="#prepare-a-presentation" title="Permanent link">&para;</a></h1>
 <p>Open with one question: <strong>“How does Aurora turn documents, inventory, and forecasts into a replenishment decision we can explain and operate?”</strong> Choose the journey that fits the audience and keep the shared architecture visible.</p>
-<p>Use the <a href="../../demos/inference/">inference script</a>, <a href="../../demos/maas/">MaaS script</a>, and <a href="../screen-tour/">native screen tour</a> for the scheduled sessions and optional deep dives.</p>
+<p>Use the <a href="../../demos/inference/">inference script</a>, <a href="../../demos/maas/">MaaS script</a>, <a href="../native-dashboards/">native dashboard guide</a>, and <a href="../screen-tour/">native screen tour</a> for the scheduled sessions and optional deep dives.</p>
 <h2 id="before-the-session">Before the session<a class="headerlink" href="#before-the-session" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Check the <a href="../validation/">validation record</a>, MaaS key expiration, operators, and endpoints.</li>
 <li>Warm up the models and GPU capacity you will use. Download weights and provision nodes before the session.</li>
 <li>Run one RAG question, one MCP tool call, and the bounded safety control. Inspect the saved evaluation and Ray forecast artifacts; submit new experiments only when that is the planned test drive.</li>
 <li>Test the participant's restricted identity. The presenter's admin session does not demonstrate visitor RBAC.</li>
-<li>Open the guide, OpenShift AI, MLflow, observability, and Argo CD. Use synthetic inputs throughout.</li>
+<li>Open the guide, OpenShift AI <strong>Observe &amp; monitor → Dashboard</strong>, MLflow, and Argo CD. Use the installed <strong>Models, LLM Traffic, LLM Performance, LLM Utilization, and Usage</strong> tabs for model and consumption evidence; <strong>Cluster</strong> supplies platform context. Use synthetic inputs throughout.</li>
+<li>Set the native chart time window and filters before the session: Qwen is in <code>ai-showroom</code>; the sustained Llama model is in <code>maas-how-to</code>; its Usage subscription is <code>showroom-load</code>. Follow the <a href="../native-dashboards/">dashboard guide</a> for exact panels, timezone, and metric limits. Recheck selectors after every tab change.</li>
 <li>Keep measured benchmark artifacts with their date and configuration. If a live experiment fails, identify earlier results as earlier results.</li>
 </ul>
 <h2 id="three-ways-to-tell-the-story">Three ways to tell the story<a class="headerlink" href="#three-ways-to-tell-the-story" title="Permanent link">&para;</a></h2>

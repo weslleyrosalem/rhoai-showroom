@@ -583,6 +583,8 @@
       
         
       
+        
+      
     
     
     
@@ -737,6 +739,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#read-the-existing-usage-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read the existing Usage dashboard
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#read-only-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -804,6 +817,34 @@
     
   
     Load test and metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/native-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
   
 
     
@@ -2183,6 +2224,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#read-the-existing-usage-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read the existing Usage dashboard
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#read-only-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2265,8 +2317,8 @@
 </tr>
 <tr>
 <td>5–10 min</td>
-<td>MaaS models, subscriptions, and API keys</td>
-<td>Inspect <code>showroom-standard</code>, <code>showroom-test-drive</code>, and the separate <code>showroom-load</code> class. Never project a raw key.</td>
+<td>MaaS models, subscriptions, API keys, and native <strong>Usage</strong></td>
+<td>Inspect <code>showroom-standard</code>, <code>showroom-test-drive</code>, and the separate <code>showroom-load</code> class. Open the existing Usage dashboard and select the intended Subscription. Never project a raw key.</td>
 </tr>
 <tr>
 <td>10–15 min</td>
@@ -2290,6 +2342,15 @@
 </tr>
 </tbody>
 </table>
+<h2 id="read-the-existing-usage-dashboard">Read the existing Usage dashboard<a class="headerlink" href="#read-the-existing-usage-dashboard" title="Permanent link">&para;</a></h2>
+<p>Use the native <strong>Usage</strong> dashboard described in the <a href="../../operations/native-dashboards/">native dashboard guide</a>. Its filters are <strong>User</strong>, <strong>Subscription</strong>, <strong>Model</strong>, and <strong>View by</strong>. Start with User <strong>All</strong>, Subscription <strong>showroom-load</strong>, Model <strong>redhataillama-31-8b-instruct</strong>, and View by <strong>By subscription</strong> to inspect the sustained traffic separately from the customer test drive. Then switch to the relevant interactive subscription. Confirm every visible selector and the time range after changing tabs; do not infer filter state from the URL.</p>
+<p>The installed panels are <strong>Active users</strong>, <strong>Success rate</strong>, <strong>Total requests</strong>, <strong>Total rate limited</strong>, <strong>Total tokens</strong>, <strong>Token consumption table</strong>, and <strong>Token consumption chart</strong>. These existing charts are the presentation surface. Use recorded response statuses to explain the control test rather than building a replacement dashboard.</p>
+<ul>
+<li><strong>Success rate</strong> uses authorization and rate-limit counters, not end-to-end inference HTTP success or answer quality. Its query falls back to 100% when no usable denominator exists. An anonymous 401 may be rejected before these counters; use the recorded request result to demonstrate it.</li>
+<li><strong>Total rate limited</strong> uses observed Limitador counter increases. Allow collection time after a 429; a newly created series first scraped at a nonzero value has no earlier zero sample, so the first event is not guaranteed to appear in <code>increase</code>. Do not manufacture another request simply to repair a chart.</li>
+<li><strong>Total tokens</strong> and the table use the selected dashboard range. <strong>Token consumption chart</strong> uses a fixed rolling <strong>two-hour</strong> increase. Their values can differ when the ranges differ; neither is a lifetime counter.</li>
+<li>Request and limited counts are grouped by user/subscription before being joined to model labels. With a multi-model subscription, the same subscription count can appear on several model rows. Do not sum those rows as unique requests.</li>
+</ul>
 <h2 id="read-only-checks">Read-only checks<a class="headerlink" href="#read-only-checks" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oc<span class="w"> </span>get<span class="w"> </span>maassubscription<span class="w"> </span>-n<span class="w"> </span>models-as-a-service
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oc<span class="w"> </span>get<span class="w"> </span>authpolicy<span class="w"> </span>-n<span class="w"> </span>maas-how-to

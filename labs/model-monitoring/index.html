@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     
@@ -697,6 +699,34 @@
     
   
     Load test and metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/native-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
   
 
     
@@ -1261,6 +1291,17 @@
     <span class="md-ellipsis">
       
         Native screens and test drive
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read-the-native-graphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read the native graphs
       
     </span>
   </a>
@@ -2194,6 +2235,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#read-the-native-graphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read the native graphs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#measured-results" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2256,9 +2308,9 @@
 <h2 id="native-screens-and-test-drive">Native screens and test drive<a class="headerlink" href="#native-screens-and-test-drive" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Open <strong>Projects → AI Showroom — Predictive Monitoring → Settings</strong> and inspect the configured <strong>TrustyAI service</strong>.</li>
-<li>Inspect the project's OVMS model deployment. Explain its three inputs: warehouse zone, seven-day demand, and available units; its output is expedited review.</li>
+<li>Open the project's <strong>Model deployments</strong> and select <strong>Aurora inventory — expedited review policy</strong>. Its metrics page has <strong>Endpoint performance</strong> and <strong>Model bias</strong> tabs. Explain the three inputs: warehouse zone, seven-day demand, and available units; the output is expedited review.</li>
 <li>In the Aurora Workbench terminal, use the published repository helper to send a normal batch, then a promotion batch. Inspect the returned group rates, actual inference count, capture confirmation, and TrustyAI results.</li>
-<li>Inspect the scheduled metrics and their history. Statistical parity difference (SPD) is a difference in outcome proportions; disparate impact ratio (DIR) is a ratio. Their neutral references are <code>0</code> and <code>1</code>, respectively. For this request, SPD is West minus East and DIR is West divided by East. The installed service's generated prose reverses its group labels; use the observed rates and arithmetic below.</li>
+<li>In <strong>Model bias → Metrics to display</strong>, select <strong>Aurora warehouse service levels — SPD</strong> and <strong>Aurora warehouse service levels — DIR</strong>, and expand both charts. Statistical parity difference (SPD) is a difference in outcome proportions; disparate impact ratio (DIR) is a ratio. Their neutral references are <code>0</code> and <code>1</code>, respectively. For this request, SPD is West minus East and DIR is West divided by East. The installed service's generated prose reverses its group labels; use the observed rates and arithmetic below.</li>
 <li>Restore the normal batch after discussing the effect. This changes the last 100 observations without deleting the history.</li>
 </ol>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>scripts/trustyai_metrics.py<span class="w"> </span>baseline<span class="w"> </span>--schedule
@@ -2271,6 +2323,40 @@
 </code></pre></div>
 <p>Run <code>reference</code> once per new dataset. The script preserves the actual OVMS predictions in a named <code>AURORA_REFERENCE</code> dataset. Repeated calls append observations; they do not erase history. Run these batches exclusively; concurrent traffic to the same model can satisfy an aggregate count check. The helper waits for 100 additional captured observations before calculating the current batch. A capture timeout stops the demonstration rather than displaying stale metrics.</p>
 <p>MeanShift compares the current numeric distribution with that reference. A low p-value is evidence against its no-shift hypothesis under the test's assumptions, <strong>not</strong> the probability that the model is unsafe or that the hypothesis is true. The deliberately simple, partly discrete synthetic fixture is useful for demonstrating a controlled change; use distribution-appropriate tests and representative reference data for real monitoring.</p>
+<h2 id="read-the-native-graphs">Read the native graphs<a class="headerlink" href="#read-the-native-graphs" title="Permanent link">&para;</a></h2>
+<p>For a prepared presentation, inspect the existing history before running another batch. Set <strong>Time range → 1 hour</strong> for a fresh rehearsal, or <strong>24 hours</strong>, <strong>7 days</strong>, or <strong>30 days</strong> to include the recorded September 22 run. <strong>Refresh interval → 30 seconds</strong> refreshes the display; it does not change the metric's latest-100-observation window. Check the chart's time axis and allow capture, scheduling, and collection to complete before interpreting a transition.</p>
+<table>
+<thead>
+<tr>
+<th>Native panel</th>
+<th>What to inspect</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model bias → SPD</td>
+<td>Normal <code>0</code> to promotion <code>−0.30</code>; configured bounds <code>−0.10</code> to <code>0.10</code></td>
+<td>West's expedited-review rate becomes 30 percentage points lower than East's in this fixture. These are demonstration bounds, not a compliance standard.</td>
+</tr>
+<tr>
+<td>Model bias → DIR</td>
+<td>Normal <code>1</code> to promotion <code>0.6667</code>; configured bounds <code>0.8</code> to <code>1.2</code></td>
+<td>Compare the two observed rates; the ratio does not establish why they differ.</td>
+</tr>
+<tr>
+<td>Endpoint performance → Requests per 5 minutes</td>
+<td>Successful and failed request counts near the batch timestamp</td>
+<td>The helper sends 100 observations in one inference request. Do not expect 100 HTTP requests or read this panel as requests per second.</td>
+</tr>
+<tr>
+<td>Endpoint performance → CPU / Memory utilization %</td>
+<td>Resource use relative to the predictor pod's limits</td>
+<td>These panels include the serving pod's sidecars. They are not GPU utilization or isolated model-process measurements.</td>
+</tr>
+</tbody>
+</table>
+<p>The native <strong>Model bias</strong> selector in this version exposes SPD and DIR. The scheduled <strong>Aurora promotion demand drift</strong> MeanShift result is available through the measured helper/API output; do not promise a MeanShift chart on that native tab. A flat bias line can simply mean the latest observation window has not changed. If charts are empty, first confirm the project, selected named metrics, time range, and successful collection; an empty graph is not evidence that disparity or drift is absent. <a href="https://github.com/opendatahub-io/odh-dashboard/blob/4fdc824a5ff91fc2069ceb35130b2338499e2c5f/frontend/src/pages/modelServing/screens/metrics/bias/BiasMetricConfigSelector.tsx">OpenShift AI 3.5 dashboard metric selector</a>.</p>
 <h2 id="measured-results">Measured results<a class="headerlink" href="#measured-results" title="Permanent link">&para;</a></h2>
 <p>The actual September 22, 2026 acceptance run produced:</p>
 <table>
@@ -2320,8 +2406,9 @@
 <p>The installed capture parser rejects the optional KServe request <code>id</code> field, so the helper omits it. The fixture uses FP64 inputs: FP32 group values exposed a numeric-equality issue in the installed fairness implementation, yielding <code>NaN</code>; those setup-probe results are not valid fairness measurements. The checked fixture avoids that mismatch. Do not silently replace a non-finite result with zero.</p>
 <p>The secure metrics monitors use a dedicated service account with only the permissions needed by the native model and TrustyAI proxies. Its controller-populated service-account token Secret follows the installed KServe monitor convention; its value is never in Git. The OVMS policy permits only the exact user-workload Prometheus pods for its authenticated scrape. TrustyAI also retains the operator policy described above; its authentication remains mandatory on 8443.</p>
 <p>The service data is persistent. Validate scheduled requests after a service restart, and rerun <code>baseline --schedule</code> if required. Evaluation results in EvalHub and NeMo guardrail decisions remain separate from these model-monitoring metrics.</p>
-<p>The native <strong>Model bias</strong> charts were inspected after secure collection was enabled: both named series show the baseline and promotion transitions, with their configured reference bounds. Select a one-hour window for a fresh rehearsal, or a longer window containing the recorded run.</p>
-<p>The installed endpoint-performance template expects a legacy resource-limit metric. The optional <a href="https://github.com/weslleyrosalem/rhoai-showroom/tree/main/gitops/components/platform/telemetry">compatibility rule</a> supplies only the actual limits for this model so its CPU and memory panels work. The template also labels its microsecond latency query as milliseconds. This remains a product-template limitation: do not read that panel's value as milliseconds. The controller regenerates the dashboard, so the showroom preserves its ownership rather than applying a temporary patch that would disappear.</p>
+<p>The native <strong>Model bias</strong> charts were inspected after secure collection was enabled: both named series show the baseline and promotion transitions, with their configured reference bounds.</p>
+<p>The installed endpoint-performance template expects a legacy resource-limit metric. The optional <a href="https://github.com/weslleyrosalem/rhoai-showroom/tree/main/gitops/components/platform/telemetry">compatibility rule</a> supplies only the actual limits for this model so its CPU and memory panels work.</p>
+<p><strong>The endpoint latency unit mismatch remains present in the installed template.</strong> Its <strong>Average response time (ms)</strong> panel calculates <code>rate(ovms_*_time_us_sum) / rate(ovms_*_time_us_count)</code> over one minute, with no division by 1,000; the renderer does not convert the result. Those values are microseconds despite the title. The renderer also displays an undefined idle-window latency as zero, so zero without request activity is not a measured zero response time. The end-to-end query does not explicitly include the namespace selector used by the inference-latency query. Treat this panel as a documented template limitation, not a validated latency SLA or cross-project comparison. The controller regenerates the dashboard, so the showroom preserves its ownership rather than applying a temporary patch that would disappear. <a href="https://github.com/opendatahub-io/odh-dashboard/blob/4fdc824a5ff91fc2069ceb35130b2338499e2c5f/frontend/src/concepts/metrics/kserve/content/KserveMeanLatencyGraph.tsx">Version-pinned latency renderer</a>.</p>
 
 
 

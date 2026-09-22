@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     
@@ -697,6 +699,34 @@
     
   
     Load test and metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/native-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
   
 
     
@@ -2441,7 +2471,7 @@
 <p>For round-robin/EPP, use <code>--kind routing</code>; the vLLM image digest must also match. Use the same backend pool in separate stages and verify actual backend selection. Do not create two additional eight-GPU pools simultaneously. The script measures existing endpoints; it does not configure a load balancer or rewrite routes.</p>
 <p>The current <code>active-l40s-11</code> plan demonstrates Qwen4B on single-GPU hosts and keeps the original Llama running. Qwen32B/TP4 was removed from the live cluster after capacity did not become Ready. An eight-GPU routing comparison requires a separately verified alternative pool plan and actual Ready TP4 replicas; it has not been measured.</p>
 <h2 id="cache-and-endpoint-picker-evidence">Cache and Endpoint Picker evidence<a class="headerlink" href="#cache-and-endpoint-picker-evidence" title="Permanent link">&para;</a></h2>
-<p>Use long shared input with new suffixes. Compare per-pod cache counters and TTFT against distinct-prefix controls. One GPU demonstrates local cache reuse. Two replicas with actual EPP traffic are required for a routing claim. Discover metric names from the installed runtime; an empty graph is not evidence of zero activity.</p>
+<p>Use the existing <strong>LLM Performance → KV cache hit rate / KV cache usage</strong> panels, paired with <strong>LLM Traffic</strong> and <strong>LLM Utilization</strong>, as described in the <a href="../../operations/native-dashboards/">native dashboard guide</a>. Select the serving project, model, and recorded run interval. Use long shared input with new suffixes. Compare per-pod cache counters and TTFT against distinct-prefix controls. One GPU demonstrates local cache reuse. Two replicas with actual EPP traffic are required for a routing claim. Discover metric names from the installed runtime; an empty graph is not evidence of zero activity.</p>
 <p>Check known issue INFERENG-6962: shared wildcard listeners can bypass Endpoint Picker. Confirm authorized routes and EPP traffic. Hierarchical KV offloading is Developer Preview; prefill/decode disaggregation requires validated network/RDMA support and is not enabled by this benchmark. <a href="https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/">vLLM prefix caching</a>, <a href="https://docs.vllm.ai/en/v0.23.0/cli/bench/serve/">vLLM benchmark CLI</a>, <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/known-issues_relnotes">RHOAI known issues</a>.</p>
 <h2 id="acceptance">Acceptance<a class="headerlink" href="#acceptance" title="Permanent link">&para;</a></h2>
 <p>Require raw results, verified metadata, three repetitions, explained errors, and cache/EPP counters for related claims. Report absolute and per-GPU throughput, p50/p95/p99 latency, failures, and sampled output quality. Do not turn this small workload into a universal speedup claim. Local HTTP/SSE test fixtures validate client instrumentation only and must never be presented as model performance.</p>

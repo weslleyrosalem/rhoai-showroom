@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     
@@ -697,6 +699,34 @@
     
   
     Load test and metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/native-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
   
 
     
@@ -1464,6 +1494,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#read-the-native-overview-graphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read the native overview graphs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#current-measured-acceptance" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2194,6 +2235,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#read-the-native-overview-graphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read the native overview graphs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#current-measured-acceptance" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2247,6 +2299,7 @@
 
 
 <h1 id="mlflow-experiments-and-traces">MLflow experiments and traces<a class="headerlink" href="#mlflow-experiments-and-traces" title="Permanent link">&para;</a></h1>
+<p><strong>Customer question:</strong> Can we explain one replenishment proposal, account for its model usage, and challenge a fluent answer with the underlying tool evidence?</p>
 <p>The platform singleton runs in <code>redhat-ods-applications</code>; the workspace is <code>ai-showroom</code>. Workbench and workload identities use namespace-scoped Kubernetes authorization.</p>
 <p>Open <code>notebooks/01-demand.ipynb</code>. Generate the synthetic dataset, inspect the chronological holdout, and publish the measured result. The model artifact is also uploaded to <code>s3://aurora-artifacts/models/forecast/latest.json</code> for the MCP backend.</p>
 <p>The internal tracking endpoint is <code>https://mlflow.redhat-ods-applications.svc:8443/mlflow</code> with the injected service CA. <code>AURORA_MLFLOW_TRACKING_URI</code> selects this internal endpoint when the notebook webhook injects a public dashboard URI. Do not disable TLS verification.</p>
@@ -2261,6 +2314,35 @@
 <h2 id="current-test-drive">Current test drive<a class="headerlink" href="#current-test-drive" title="Permanent link">&para;</a></h2>
 <p>Open <strong>MLflow → Experiments → aurora-assistant-demo</strong>. Ask “Should I replenish AS-001? Explain the policy and required approval.” In the resulting trace, inspect the retrieval span, two named tool spans, the LLM usage, and the successful configured policy check. Compare the recorded proposal with the app's deterministic business card. Ask an unsupported policy question to demonstrate uncertainty, then verify that an explicitly blocked input produces no new trace containing that input.</p>
 <p>The inventory rule distinguishes target stock from additional quantity: <code>target_stock = max(reorder_point, ceil(forecast_7d_units * 21 / 7))</code>; <code>recommended_quantity = max(0, target_stock - stock)</code>. The tool calculates these values. The model explains them without recomputing the proposal. No policy check is presented as factual truth verification.</p>
+<h2 id="read-the-native-overview-graphs">Read the native overview graphs<a class="headerlink" href="#read-the-native-overview-graphs" title="Permanent link">&para;</a></h2>
+<p>In MLflow, select workspace <strong>ai-showroom</strong>, then <strong>Experiments → aurora-assistant-demo → Overview</strong>. Start with <strong>Last 7 days</strong>, the window used in browser acceptance. Use a range containing the September 22, 2026 run when reviewing the saved history, and check the time axis before comparing a UTC record with the browser's displayed time. Keep the same experiment and time range while switching panels.</p>
+<table>
+<thead>
+<tr>
+<th>Native panel</th>
+<th>Recorded acceptance signal</th>
+<th>Customer interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Overview → Usage</td>
+<td>Six traces; 9,950 tokens: 8,098 input and 1,852 output</td>
+<td>These are actual provider-derived counts. <strong>No cost data available</strong> means there is no monetary measurement, even if a headline shows <code>$0</code>.</td>
+</tr>
+<tr>
+<td>Overview → Tool calls</td>
+<td>Two calls, 100% execution success, 0 failures, 101 ms average; usage and latency charts render</td>
+<td>This aggregate covers one request through the corrected span export, not all historical tool executions. A successful call does not establish that the generated explanation used its result correctly.</td>
+</tr>
+<tr>
+<td>Traces → selected request</td>
+<td>Retrieval, stock, replenishment, LLM, and output-policy spans</td>
+<td>Inspect the selected trace's duration and token usage, then compare its typed decision with the complete answer and citations.</td>
+</tr>
+</tbody>
+</table>
+<p>These are dated observations, not fixed targets: additional customer requests change counts and averages. The token totals cover six traces, while the initial validated tool aggregate covers only the post-correction request. Do not divide the two to infer tokens per tool call. A blank chart first calls for checking workspace, experiment, time range, and export health; it does not establish zero usage. An execution-success or policy-check signal is not a factual-quality score. Continue to <strong>Review</strong> to inspect the prepared correct explanation and the real counterexample.</p>
 <h2 id="current-measured-acceptance">Current measured acceptance<a class="headerlink" href="#current-measured-acceptance" title="Permanent link">&para;</a></h2>
 <p>Validated on 2026-09-22 06:42 UTC using app source <code>6888e2f</code>. Provider-reported usage and persisted trace-level usage matched exactly. These records belong to the current English experiment; historical setup traces were retained.</p>
 <table>

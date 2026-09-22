@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     
@@ -697,6 +699,34 @@
     
   
     Load test and metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/native-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
   
 
     
@@ -2304,7 +2334,7 @@
 <li><strong>3–6 minutes: curate.</strong> Open the Qwen source in Model Catalog. Let the visitor select an included model, read its license, and inspect the hardware profile. A catalog entry does not guarantee available GPUs.</li>
 <li><strong>6–10 minutes: take a test drive.</strong> Ask an inventory and policy question with Aurora Qwen in native Playground; inspect the read-only tools and cited policy. This path uses the visitor’s authorized Kubernetes identity. Then open Aurora Supply to connect the shared Llama in <code>maas-how-to</code> with its MaaS subscription and metrics. The Ready <code>aurora-qwen-4b</code> deployment also supplies the private inference rehearsal and is not advertised as a public MaaS endpoint.</li>
 <li><strong>10–14 minutes: govern consumption.</strong> Use keys issued explicitly for <code>showroom-test-drive</code> and <code>showroom-standard</code>. Show 401 without a key, 200 when authorized, 429 after the short quota, the standard subscription still working, and recovery after the window. Keep keys off-screen.</li>
-<li><strong>14–18 minutes: operate.</strong> Relate the request to token, latency, and GPU metrics. Distinguish the current request from a previously recorded experiment. Application traces and infrastructure metrics answer different questions.</li>
+<li><strong>14–18 minutes: operate.</strong> Open <strong>Observe &amp; monitor → Dashboard</strong>. Use <strong>LLM Traffic</strong>, <strong>LLM Performance</strong>, and <strong>LLM Utilization</strong> for the selected serving project/model, then <strong>Usage</strong> for the selected MaaS subscription. Follow the <a href="../../operations/native-dashboards/">native dashboard guide</a> for exact panels and windows. Relate the request to token, latency, and GPU metrics. Distinguish the current request from a previously recorded experiment. Application traces and infrastructure metrics answer different questions.</li>
 <li><strong>18–20 minutes: use GitOps.</strong> Show a small diff and the reconciled resource. Explain the catalog's concurrency-protected merge and environment-owned credentials.</li>
 </ol>
 <h2 id="extend-to-45-minutes">Extend to 45 minutes<a class="headerlink" href="#extend-to-45-minutes" title="Permanent link">&para;</a></h2>
@@ -2353,13 +2383,13 @@
 </tr>
 <tr>
 <td>Playground</td>
-<td>Can the assistant use current inventory and policy together?</td>
+<td>Can the assistant use the synthetic inventory fixture and policy together?</td>
 <td>Ask for a replenishment recommendation for <code>AS-001</code>; inspect the tool's exact SKU, forecast provenance, and required approval. No purchase is executed.</td>
 </tr>
 <tr>
-<td>Observability</td>
+<td>Observe &amp; monitor → Dashboard</td>
 <td>Is the platform processing real work?</td>
-<td>Correlate the request window with successful requests, errors, token counts, GPU utilization, and endpoint-picker/cache counters. Do not equate pod readiness or a counter increase with model quality.</td>
+<td>Use the installed Models and three LLM tabs for serving behavior, Usage for subscription accounting, and Cluster for capacity context. Follow the <a href="../../operations/native-dashboards/">native chart map</a>. Quota decisions, inference outcomes, and answer quality are different measurements.</td>
 </tr>
 </tbody>
 </table>

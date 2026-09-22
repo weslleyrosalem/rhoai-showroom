@@ -583,6 +583,8 @@
       
         
       
+        
+      
     
     
     
@@ -837,6 +839,34 @@
     
   
     Load test and metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/native-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
   
 
     
@@ -2332,18 +2362,18 @@
 </tr>
 <tr>
 <td>4–8 min</td>
-<td>Aurora Supply application and playground</td>
-<td>Ask for a replenishment review. The response is a recommendation, and the application uses a MaaS credential.</td>
+<td>Aurora Supply application, then native Qwen Playground</td>
+<td>Ask for a replenishment review. The application uses the Llama MaaS subscription; native Qwen Playground uses the current user's Kubernetes model authorization. Both produce recommendations, through distinct serving paths.</td>
 </tr>
 <tr>
 <td>8–13 min</td>
-<td>Model metrics and the sustained GuideLLM workload</td>
-<td>Real benchmark traffic produces prompt/output tokens, requests, latency, and GPU activity. GuideLLM has its own quota and a visible automatic stop. Synthetic prompts generate real inference; they are not a representative customer workload.</td>
+<td>Native <strong>LLM Traffic</strong> and <strong>LLM Utilization</strong></td>
+<td>Select Project <code>maas-how-to</code> and Model <code>redhataillama-31-8b-instruct</code> for existing GuideLLM traffic. Show <strong>Throughput (req/s)</strong>, <strong>Token throughput (tokens/s)</strong>, <strong>GPU utilization</strong>, and running/waiting requests. Synthetic prompts produce real inference; they are not a representative customer workload.</td>
 </tr>
 <tr>
 <td>13–20 min</td>
-<td>Controlled repeated-prefix rehearsal</td>
-<td>Explain local prefix reuse, run one first-use/repeated pair, then compare cache-counter deltas and client timing. Keep identical prompts and output limits within each pair.</td>
+<td>Native <strong>LLM Performance</strong>, then the recorded repeated-prefix evidence</td>
+<td>Select Project <code>ai-showroom</code> and Model <code>aurora-qwen-4b</code>; start with the six-hour rehearsal window. Explain <strong>KV cache hit rate</strong>, <strong>KV cache usage</strong>, <strong>Time to first token (TTFT)</strong>, and <strong>E2E request latency</strong>. A new controlled pair is optional and requires the bounded helper below.</td>
 </tr>
 <tr>
 <td>20–25 min</td>
@@ -2358,6 +2388,39 @@
 </tbody>
 </table>
 <h2 id="live-checks">Live checks<a class="headerlink" href="#live-checks" title="Permanent link">&para;</a></h2>
+<p>Start with the <a href="../../operations/native-dashboards/">installed native dashboards</a>, keeping their existing panels and filters. The terminal checks and retained benchmark reports below provide supporting evidence when a customer asks how a result was obtained.</p>
+<table>
+<thead>
+<tr>
+<th>Native dashboard</th>
+<th>Filters for the Aurora Qwen path</th>
+<th>Existing panels to show</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LLM Traffic</strong></td>
+<td>Project <code>ai-showroom</code>; Model <code>aurora-qwen-4b</code></td>
+<td><strong>Throughput (req/s)</strong>, <strong>Token throughput (tokens/s)</strong>, <strong>Error rate</strong></td>
+</tr>
+<tr>
+<td><strong>LLM Utilization</strong></td>
+<td>Same project and model</td>
+<td><strong>GPU utilization</strong>, <strong>Requests running</strong>, <strong>Requests waiting</strong></td>
+</tr>
+<tr>
+<td><strong>LLM Performance</strong></td>
+<td>Same project and model</td>
+<td><strong>Time to first token (TTFT)</strong>, <strong>E2E request latency</strong>, <strong>KV cache hit rate</strong>, <strong>KV cache usage</strong></td>
+</tr>
+<tr>
+<td><strong>Models</strong></td>
+<td>Project <code>ai-showroom</code>; Model deployment <code>aurora-qwen-4b</code></td>
+<td><strong>Model deployments</strong>, <strong>Replica count</strong>, <strong>P90 E2E request latency</strong>, <strong>P90 Time to first token (TTFT)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Recheck the visible Project, Model, and time range after every tab change. The model selection can reset, and the URL does not reliably encode every active filter. Use the six-hour window to discuss recorded Qwen bursts; use a recent window for ongoing Llama load. Do not imply Qwen is receiving GuideLLM traffic. The native <strong>Cluster</strong> overview is a separate infrastructure view: several cards remain cluster-wide despite the Project selector, and <strong>Deployed models</strong> counts metric label groups rather than all model resources.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oc<span class="w"> </span>get<span class="w"> </span>llminferenceservice<span class="w"> </span>-n<span class="w"> </span>maas-how-to
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oc<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>maas-how-to<span class="w"> </span>-o<span class="w"> </span>wide
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>oc<span class="w"> </span>get<span class="w"> </span>inferencepool<span class="w"> </span>-n<span class="w"> </span>maas-how-to
@@ -2376,8 +2439,10 @@
 <h2 id="recorded-rehearsal-and-interpretation">Recorded rehearsal and interpretation<a class="headerlink" href="#recorded-rehearsal-and-interpretation" title="Permanent link">&para;</a></h2>
 <p>The September 22 rehearsal completed six successful requests. The final repeated prompt generated <strong>1,840 local prefix-cache hit tokens from 1,853 query tokens</strong> in its isolated counter window. Five earlier windows overlapped science traffic and must not be used as an isolated comparison. The runtime reported prefix caching enabled. External prefix-cache counter deltas were zero.</p>
 <p>Client-observed SSE first-token arrival nearly matched total response arrival, suggesting buffering along the gateway path. Show those values as <strong>client-observed timing</strong>, not engine TTFT. Use vLLM histograms for engine behavior. Do not calculate a headline speedup from six shared-instance requests.</p>
-<p>The native LLM Traffic dashboard discovers projects from actual <code>kserve_vllm:num_requests_running</code> series. In this installation, collectors expose the model project as <code>exported_namespace</code>, while the collecting namespace is <code>redhat-ods-monitoring</code>. Both Qwen backends and the private Gateway were successfully scraped after scoped monitoring ingress was applied. Refresh the project selector after new target discovery; do not invent namespace labels to populate a graph.</p>
-<p>Useful Prometheus metrics include <code>vllm:prefix_cache_hits_total</code>, <code>vllm:prefix_cache_queries_total</code>, <code>vllm:kv_cache_usage_perc</code>, <code>vllm:num_requests_running</code>, <code>vllm:num_requests_waiting</code>, request latency, and token counters. GPU utilization comes from the installed NVIDIA/DCGM integration; verify the metric and labels available in this cluster.</p>
+<p>The three native LLM dashboards discover projects from <code>kserve_vllm:num_requests_running</code>, using <code>exported_namespace</code> for the workload project. Their Data Science datasource is separate from the Cluster datasource; an empty query against the latter does not establish that LLM telemetry is absent. Both Qwen backends and the private Gateway were successfully scraped after scoped monitoring ingress was applied.</p>
+<p><strong>KV cache hit rate</strong> divides rates of local prefix-hit tokens by prefix-query tokens; it does not measure cross-node KV transfer. <strong>KV cache usage</strong> displays a 0–1 fraction as a percentage. Native latency queries use engine histogram seconds, with the chart formatting the displayed unit; they are distinct from client SSE timing. <strong>Error rate</strong> has a zero fallback when its error series is absent, so zero does not prove a healthy scrape or absence of MaaS 401/429 responses. Performance panels also have zero fallbacks when there are no usable histogram observations. Low-rate requests can occur between gauge scrapes without producing a visible running-request spike.</p>
+<p>The installed <strong>Inter-token latency</strong> panel is <strong>unavailable for this runtime</strong>: its query uses the absent <code>kserve_vllm:time_per_output_token_seconds_bucket</code>. Current vLLM exports separate <code>inter_token_latency_seconds</code> and <code>request_time_per_output_token_seconds</code> histograms. The native panel's fallback zero is not a latency measurement; omit it from the demonstrated results. This guide leaves the shared dashboard unchanged.</p>
+<p>The scoped GPU telemetry began at <strong>06:17 UTC on September 22</strong>, after the short AHEAD routing run. Use its current or subsequent history; do not attribute those GPU lines to an earlier benchmark. Two GPU legends establish observed devices, not that every request used both GPUs. The <strong>Models</strong> CPU quota cell can remain blank because its installed query expects <code>resource="cpu"</code>, while this project's quota metric is <code>resource="requests.cpu"</code>; blank is not zero allocation or zero usage.</p>
 <h2 id="claims-to-keep-precise">Claims to keep precise<a class="headerlink" href="#claims-to-keep-precise" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Local prefix cache:</strong> demonstrated by the measured token-counter delta.</li>

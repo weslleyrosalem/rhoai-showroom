@@ -10,11 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://weslleyrosalem.com/rhoai-showroom/architecture/sources/">
+        <link rel="canonical" href="https://weslleyrosalem.com/rhoai-showroom/operations/native-dashboards/">
       
       
-        <link rel="prev" href="../maturity/">
+        <link rel="prev" href="../../demos/sustained-load/">
       
+      
+        <link rel="next" href="../screen-tour/">
       
       
         
@@ -25,7 +27,7 @@
     
     
       
-        <title>Sources and versions - OpenShift AI Showroom</title>
+        <title>Native dashboard guide - OpenShift AI Showroom</title>
       
     
     
@@ -72,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sources-and-versions" class="md-skip">
+        <a href="#present-with-the-native-dashboards" class="md-skip">
           Skip to content
         </a>
       
@@ -105,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Sources and versions
+              Native dashboard guide
             
           </span>
         </div>
@@ -238,10 +240,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../../demos/inference/" class="md-tabs__link">
           
   
@@ -304,13 +308,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../operations/gitops/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../gitops/" class="md-tabs__link">
           
   
   
@@ -450,7 +452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../story/" class="md-nav__link">
+      <a href="../../architecture/story/" class="md-nav__link">
         
   
   
@@ -478,7 +480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../operations/install/" class="md-nav__link">
+      <a href="../install/" class="md-nav__link">
         
   
   
@@ -506,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../operations/validation/" class="md-nav__link">
+      <a href="../validation/" class="md-nav__link">
         
   
   
@@ -534,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../operations/project-plan/" class="md-nav__link">
+      <a href="../project-plan/" class="md-nav__link">
         
   
   
@@ -566,8 +568,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -585,19 +589,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   
@@ -615,7 +622,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -714,10 +721,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../operations/native-dashboards/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -733,6 +767,92 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#set-the-context-before-reading-a-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set the context before reading a chart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choose-the-chart-that-answers-the-customer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose the chart that answers the customer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#800-am-traffic-latency-cache-and-replicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8:00 a.m. — traffic, latency, cache, and replicas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1000-am-consumption-and-quota" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10:00 a.m. — consumption and quota
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read-the-known-panel-limits-correctly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read the known panel limits correctly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acceptance-in-this-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance in this environment
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -745,7 +865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../operations/screen-tour/" class="md-nav__link">
+      <a href="../screen-tour/" class="md-nav__link">
         
   
   
@@ -926,7 +1046,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../operations/test-drive/" class="md-nav__link">
+      <a href="../test-drive/" class="md-nav__link">
         
   
   
@@ -1829,10 +1949,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1852,22 +1970,19 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1885,7 +2000,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1903,7 +2018,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../operations/gitops/" class="md-nav__link">
+      <a href="../gitops/" class="md-nav__link">
         
   
   
@@ -1931,7 +2046,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../operations/presenter/" class="md-nav__link">
+      <a href="../presenter/" class="md-nav__link">
         
   
   
@@ -1959,7 +2074,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../operations/review/" class="md-nav__link">
+      <a href="../review/" class="md-nav__link">
         
   
   
@@ -1987,7 +2102,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../operations/reset/" class="md-nav__link">
+      <a href="../reset/" class="md-nav__link">
         
   
   
@@ -2015,7 +2130,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../maturity/" class="md-nav__link">
+      <a href="../../architecture/maturity/" class="md-nav__link">
         
   
   
@@ -2040,37 +2155,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Sources and versions
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../architecture/sources/" class="md-nav__link">
         
   
   
@@ -2086,81 +2174,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#platform-and-release" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Platform and release
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#security-mcp-and-data-science" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security, MCP, and data science
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#hardware-and-models" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Hardware and models
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#openshell-maturity-clarification" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        OpenShell maturity clarification
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#guide-design-and-typography" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Guide design and typography
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2200,10 +2213,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#platform-and-release" class="md-nav__link">
+  <a href="#set-the-context-before-reading-a-chart" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform and release
+        Set the context before reading a chart
       
     </span>
   </a>
@@ -2211,10 +2224,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#security-mcp-and-data-science" class="md-nav__link">
+  <a href="#choose-the-chart-that-answers-the-customer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security, MCP, and data science
+        Choose the chart that answers the customer
       
     </span>
   </a>
@@ -2222,10 +2235,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hardware-and-models" class="md-nav__link">
+  <a href="#800-am-traffic-latency-cache-and-replicas" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hardware and models
+        8:00 a.m. — traffic, latency, cache, and replicas
       
     </span>
   </a>
@@ -2233,10 +2246,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#openshell-maturity-clarification" class="md-nav__link">
+  <a href="#1000-am-consumption-and-quota" class="md-nav__link">
     <span class="md-ellipsis">
       
-        OpenShell maturity clarification
+        10:00 a.m. — consumption and quota
       
     </span>
   </a>
@@ -2244,10 +2257,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#guide-design-and-typography" class="md-nav__link">
+  <a href="#read-the-known-panel-limits-correctly" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Guide design and typography
+        Read the known panel limits correctly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acceptance-in-this-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance in this environment
       
     </span>
   </a>
@@ -2274,41 +2298,113 @@
   
 
 
-<h1 id="sources-and-versions">Sources and versions<a class="headerlink" href="#sources-and-versions" title="Permanent link">&para;</a></h1>
-<p>Primary-source research and cluster validation started on <strong>September 22, 2026 UTC</strong>. The target is OpenShift AI <strong>3.5.1</strong>, OpenShift <strong>4.22.14</strong>, RHCL <strong>1.4.3</strong>, MCP Gateway Operator <strong>0.7.1</strong>, and GitOps <strong>1.21.4</strong>. Revalidate the combination in each new cluster.</p>
-<h2 id="platform-and-release">Platform and release<a class="headerlink" href="#platform-and-release" title="Permanent link">&para;</a></h2>
+<h1 id="present-with-the-native-dashboards">Present with the native dashboards<a class="headerlink" href="#present-with-the-native-dashboards" title="Permanent link">&para;</a></h1>
+<p>Open <strong>Observe &amp; monitor → Dashboard</strong> in OpenShift AI <strong>3.5.1</strong>. Use the existing product charts for the live presentation. The installed administrator view has six tabs: <strong>Cluster, Models, LLM Traffic, LLM Utilization, Usage, and LLM Performance</strong>. These names and their queries were checked against this installation on September 22, 2026. <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/managing_openshift_ai/managing-observability_managing-rhoai">Red Hat observability documentation</a>.</p>
+<h2 id="set-the-context-before-reading-a-chart">Set the context before reading a chart<a class="headerlink" href="#set-the-context-before-reading-a-chart" title="Permanent link">&para;</a></h2>
+<p>Start with <strong>Last 6 hours</strong> for the rehearsal history, then use <strong>Last 30 minutes</strong> for an interaction during the session. At 8:00 a.m., use <strong>Last 12 hours</strong> or a custom interval to retain the earliest overnight runs. The time picker defaults to the browser's local timezone; the presentation uses <strong>America/New_York</strong>, while saved benchmark artifacts use UTC. Recheck the visible filters after changing tabs. A bookmark does not restore every selector.</p>
+<table>
+<thead>
+<tr>
+<th>Experience</th>
+<th>Serving project and model</th>
+<th>Usage subscription</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Qwen, native Playground, and llm-d rehearsal</td>
+<td><code>ai-showroom</code> / <code>aurora-qwen-4b</code></td>
+<td>This private route does not use a MaaS subscription</td>
+</tr>
+<tr>
+<td>Sustained GuideLLM load</td>
+<td><code>maas-how-to</code> / <code>redhataillama-31-8b-instruct</code></td>
+<td><code>showroom-load</code></td>
+</tr>
+<tr>
+<td>Aurora application</td>
+<td><code>maas-how-to</code> / <code>redhataillama-31-8b-instruct</code></td>
+<td><code>showroom-standard</code></td>
+</tr>
+<tr>
+<td>Short quota test drive</td>
+<td><code>maas-how-to</code> / <code>redhataillama-31-8b-instruct</code></td>
+<td><code>showroom-test-drive</code></td>
+</tr>
+</tbody>
+</table>
+<p>The load client runs in <code>ai-showroom</code>, but its <strong>serving metrics belong to <code>maas-how-to</code></strong>. LLM charts aggregate the selected serving model's traffic; they do not isolate a MaaS subscription. Use <strong>Usage</strong> for that distinction. Clear unrelated selections rather than combining the two workloads accidentally.</p>
+<h2 id="choose-the-chart-that-answers-the-customer">Choose the chart that answers the customer<a class="headerlink" href="#choose-the-chart-that-answers-the-customer" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Native tab</th>
+<th>Panels to show</th>
+<th>Customer question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cluster</strong></td>
+<td>System health; Cluster resource overview; Project resource usage</td>
+<td>Are nodes Ready, and where are resources being consumed?</td>
+</tr>
+<tr>
+<td><strong>Models</strong></td>
+<td>Model deployments; Replica count; P90 E2E request latency; P90 Time to first token (TTFT); Token throughput (tokens/sec)</td>
+<td>Which deployment is serving, and how is it behaving?</td>
+</tr>
+<tr>
+<td><strong>LLM Traffic</strong></td>
+<td>Error rate; Throughput (req/s); Token throughput (tokens/s)</td>
+<td>How much inference work is the service processing?</td>
+</tr>
+<tr>
+<td><strong>LLM Utilization</strong></td>
+<td>GPU utilization; Requests running; Requests waiting</td>
+<td>Are the replicas busy, idle, or building a queue?</td>
+</tr>
+<tr>
+<td><strong>LLM Performance</strong></td>
+<td>Time to first token (TTFT); E2E request latency; KV cache hit rate; KV cache usage</td>
+<td>How quickly does generation begin, and what happens to cache reuse?</td>
+</tr>
+<tr>
+<td><strong>Usage</strong></td>
+<td>Total tokens; Total requests; Total rate limited; Success rate; Active users; Token consumption chart and table</td>
+<td>Who consumed the service, under which subscription and limits?</td>
+</tr>
+</tbody>
+</table>
+<p>In <strong>Models</strong>, use <strong>Project</strong> and <strong>Model deployment</strong>. In the three LLM tabs, use <strong>Project</strong> and <strong>Model</strong>. In <strong>Usage</strong>, use <strong>User</strong>, <strong>Subscription</strong>, <strong>Model</strong>, and <strong>View by</strong>. The administrator's six-tab view is not evidence that a visitor has the same permissions; use the participant's scoped identity for their test drive.</p>
+<h2 id="800-am-traffic-latency-cache-and-replicas">8:00 a.m. — traffic, latency, cache, and replicas<a class="headerlink" href="#800-am-traffic-latency-cache-and-replicas" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Open <strong>Models</strong>, select the Qwen project and deployment, and show its row and <strong>Replica count</strong> history. A replica graph does not establish placement on distinct nodes; the deployment and recorded routing test supply that evidence.</li>
+<li>Open <strong>LLM Traffic</strong> with the same project/model. Relate the throughput and token bursts to the recorded inference rehearsal. Then switch to the Llama project/model to show the continuing load history.</li>
+<li>Open <strong>LLM Performance</strong>. Read the <strong>P50, P95, and P99</strong> legends, then compare <strong>KV cache hit rate</strong> with <strong>KV cache usage</strong>. A reuse ratio and occupied cache capacity measure different things. Idle periods can have no hit-rate sample because there were no cache queries.</li>
+<li>Open <strong>LLM Utilization</strong> and compare the replica legends in <strong>Requests running</strong> and <strong>Requests waiting</strong>. Low queue depth is expected when the bounded workload leaves interactive headroom. GPU utilization alone is not an efficiency comparison.</li>
+<li>Use the <a href="../../labs/benchmark/#measured-rehearsal-september-22-2026">measured benchmark</a> for the matched Transformers/vLLM result and the <a href="../../demos/inference/">routing rehearsal</a> for EPP evidence. The native cache chart demonstrates local prefix reuse; it does not prove distributed KV transfer or a causal routing speedup. <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/deploy_models_using_distributed_inference_with_llm-d/monitoring-llmd-deployments">Red Hat llm-d monitoring guidance</a>.</li>
+</ol>
+<p>Expand <strong>Drill-down</strong> when a technical audience wants the installed PromQL expressions. That section contains query text; it is not an additional live routing chart. GuideLLM reports remain the source for client-side errors and incomplete requests. Client TTFT through a buffered gateway is not interchangeable with engine TTFT.</p>
+<h2 id="1000-am-consumption-and-quota">10:00 a.m. — consumption and quota<a class="headerlink" href="#1000-am-consumption-and-quota" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Open <strong>Usage</strong>. Select <strong>Subscription = showroom-load</strong>, <strong>Model = redhataillama-31-8b-instruct</strong>, and <strong>View by = By model</strong>. The growing chart and single consumption-table row make the background workload identifiable.</li>
+<li>Switch explicitly to <strong>showroom-test-drive</strong> for the <a href="../../demos/maas/">quota exercise</a>. Keep the actual HTTP 200 → 429 → 200 evidence beside the chart; do not substitute an unfiltered total from unrelated subscriptions.</li>
+<li>Switch to <strong>showroom-standard</strong> to discuss the application's budget. Use the table's <strong>User</strong>, <strong>Subscription</strong>, <strong>Model</strong>, <strong>Tokens</strong>, <strong>Requests</strong>, and <strong>Rate Limited</strong> columns to explain attribution. <strong>View by = By subscription</strong> changes the chart grouping.</li>
+</ol>
+<p>Read <strong>Success rate</strong> as the installed limiter's authorized decisions divided by authorized plus rate-limited decisions. The template can also display 100% when its denominator is absent. It does not certify model responses, transport success, or answer quality. Anonymous 401 and forbidden 403 tests need their own HTTP evidence.</p>
+<p>The summary and table use the selected dashboard interval; the installed token chart uses a <strong>rolling two-hour increase</strong> at each point. Their values need not match for a six-hour selection. Counters are sampled and <code>increase()</code> can extrapolate: events before a series' first scrape may be absent from the displayed increase. Rounded <code>K</code>/<code>M</code> values are not an exact billing ledger. For multi-model subscriptions, request counts can repeat across model rows; do not sum those rows as unique requests.</p>
+<h2 id="read-the-known-panel-limits-correctly">Read the known panel limits correctly<a class="headerlink" href="#read-the-known-panel-limits-correctly" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/new-features-and-enhancements_relnotes">RHOAI 3.5 new features and enhancements</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/technology-preview-features_relnotes">Technology Preview</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/developer-preview-features_relnotes">Developer Preview, including OpenShell</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/known-issues_relnotes">Known issues</a></li>
-<li><a href="https://developers.redhat.com/articles/2026/08/26/automating-red-hat-openshift-ai-installations-with-helm-and-gitops">Installing RHOAI with Helm and GitOps</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_gitops/1.21/html-single/argo_cd_applications/index">OpenShift GitOps 1.21 Argo CD applications</a></li>
+<li><strong>Cluster → System health, Deployed models, GPU utilization</strong>, and the resource-overview charts are cluster-wide even when Project is selected. <strong>System health</strong> is the fraction of nodes reporting Ready, not an assessment of every operator or service. Its <strong>Request success rate</strong> does filter the namespace and classifies vLLM completion reasons; it does not measure MaaS authorization. Project CPU and memory breakdowns use cluster capacity as their denominator; the GPU breakdown uses the count of observed accelerator metric series, not provisioned GPU capacity. <strong>Deployed models</strong> counts metric label groups, not Kubernetes model objects or GPU cards. Its datasource does not include every deployed model. Use deployment inventory for those counts.</li>
+<li>The observed <strong>Models → CPU quota utilization</strong> cell was blank. Its query needs an exact CPU ResourceQuota series; missing data does not mean zero usage or unlimited capacity. <strong>Request success rate (requests/sec)</strong> is a throughput chart, despite its name.</li>
+<li><strong>LLM Performance → Inter-token latency</strong> is not a usable measurement in this installation. Its query expects the absent <code>kserve_vllm:time_per_output_token_seconds_bucket</code>; the runtime emits newer latency families. The displayed zero is a fallback. Skip this panel in the live sequence; use the populated TTFT and E2E charts and retained client measurements with their own definitions.</li>
+<li><strong>LLM Traffic → Error rate</strong> is errors per second from its configured inference error series. A zero line is not proof that every client request succeeded or that no authentication or quota denial occurred. The native latency queries can also fall back to zero when usable observations are absent; zero is not automatically a measured latency.</li>
+<li><strong>Predictive monitoring</strong> stays in the native model's <strong>Endpoint performance</strong> and <strong>Model bias</strong> tabs. Its OVMS latency template currently labels microsecond values as milliseconds; use the <a href="../../labs/model-monitoring/">monitoring lab's interpretation</a>, including request-versus-row counts. MLflow has its own <a href="../../labs/mlflow/">Usage and Tool calls panels</a>; those are application traces, not the six observability tabs.</li>
 </ul>
-<h2 id="security-mcp-and-data-science">Security, MCP, and data science<a class="headerlink" href="#security-mcp-and-data-science" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_the_mcp_catalog/assembly-mcp-gateway-operator-prerequisites_mcp-gateway-operator">MCP Gateway prerequisites</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_the_mcp_catalog/enabling-mcp-lifecycle-management">MCP Lifecycle</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/enabling_ai_safety_with_guardrails/enabling-ai-safety-with-nemo-guardrails_nemo-guardrails">NeMo and MCP guardrails</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_mlflow/installing-mlflow_mlflow">Installing MLflow</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/evaluating_ai_systems/evaluating-llms-with-evalhub_evaluate">EvalHub</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/experimenting_with_models_in_the_gen_ai_playground/playground-overview_rhoai-user">Playground</a></li>
-<li><a href="https://docs.nvidia.com/openshell/kubernetes/setup">NVIDIA OpenShell Kubernetes deployment</a></li>
-<li><a href="https://github.com/openshift/oauth-proxy/blob/master/README.md">OpenShift OAuth proxy</a></li>
-</ul>
-<h2 id="hardware-and-models">Hardware and models<a class="headerlink" href="#hardware-and-models" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="https://aws.amazon.com/ec2/instance-types/g6e/">AWS G6e/L40S</a></li>
-<li><a href="https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-gpus.html">NVIDIA MIG supported GPUs</a></li>
-<li><a href="https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/">vLLM automatic prefix caching</a></li>
-<li><a href="https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507">Qwen3-4B-Instruct-2507</a></li>
-<li><a href="https://huggingface.co/Qwen/Qwen3-32B">Qwen3-32B</a></li>
-</ul>
-<p>Model revisions and runtime digests are pinned in <code>gitops/components/models/models.lock.json</code>. Containerfiles pin base images, and <code>requirements-docs.txt</code> pins documentation dependencies. Individual labs include additional primary references.</p>
-<h2 id="openshell-maturity-clarification">OpenShell maturity clarification<a class="headerlink" href="#openshell-maturity-clarification" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/developer-preview-features_relnotes">OpenShift AI 3.5 Developer Preview release notes</a> explicitly list “Secure agent sandboxing and policy enforcement using OpenShell.” This is a product Developer Preview using upstream artifacts. NVIDIA separately labels its <a href="https://docs.nvidia.com/openshell/kubernetes/setup">Kubernetes Helm chart</a> experimental. This showroom has tested a private runtime with an explicit subject-authorization proxy and scoped SCC; that evidence does not change its product maturity or imply a complete NeMoClaw integration.</p>
-<h2 id="guide-design-and-typography">Guide design and typography<a class="headerlink" href="#guide-design-and-typography" title="Permanent link">&para;</a></h2>
-<p>The guide uses local Red Hat Display and Red Hat Text font files from the <a href="https://github.com/RedHatOfficial/RedHatFont">official Red Hat Font repository</a>, with its OFL license retained under <code>docs/assets/fonts</code>. Color and hierarchy decisions reference the <a href="https://ux.redhat.com/foundations/color/usage/">Red Hat design system color guidance</a> and <a href="https://ux.redhat.com/foundations/typography/type-specifics/">typography guidance</a>. The showroom mark is original; this community site does not claim to be an official Red Hat documentation site.</p>
+<p>If a chart is empty, first check identity, project/model, time interval, and whether the workload emitted the metric. Show a dated saved result when necessary and identify it as historical. Do not create replacement data or change a shared dashboard to hide a missing series.</p>
+<h2 id="acceptance-in-this-environment">Acceptance in this environment<a class="headerlink" href="#acceptance-in-this-environment" title="Permanent link">&para;</a></h2>
+<p>All six native tabs were opened in the browser. The Qwen deployment row and latency/token/cache histories rendered; GPU exporter series and queue series for both Qwen backends rendered. GPU collection began after some earlier benchmark runs, so those runs have no matching native GPU history. Cluster resource charts rendered. Filtering <strong>Usage</strong> to <code>showroom-load</code> produced one Llama consumption row and its token chart; the displayed rounded counters included <code>1M</code> tokens, <code>2K</code> requests, zero rate-limited decisions, and one active user during the review. These are dated observations, not fixed targets for the next session. The panel limitations above remain visible and documented.</p>
 
 
 

@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://weslleyrosalem.com/rhoai-showroom/operations/screen-tour/">
       
       
-        <link rel="prev" href="../../demos/sustained-load/">
+        <link rel="prev" href="../native-dashboards/">
       
       
         <link rel="next" href="../../journeys/security/">
@@ -583,6 +583,8 @@
       
         
       
+        
+      
     
     
     
@@ -702,6 +704,34 @@
     
   
     Load test and metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../native-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
   
 
     
@@ -2315,9 +2345,34 @@
 <td>Demonstrate a successful request, an intentional 429, and recovery with the documented bounded rehearsal.</td>
 </tr>
 <tr>
-<td>Observe &amp; monitor → dashboard</td>
-<td>Is the service handling real requests? Select a time range containing the GuideLLM run.</td>
-<td>Inspect requests, tokens, latency, errors, and GPU activity. Report the workload and observed errors; a busy GPU is not proof of comparative efficiency.</td>
+<td>Observe &amp; monitor → Dashboard → Cluster</td>
+<td>Is the platform healthy? Inspect System health and resource trends.</td>
+<td>System health reports Ready nodes. Cluster-wide summaries and project breakdowns have different scope; the <a href="../native-dashboards/">native dashboard guide</a> explains their denominators.</td>
+</tr>
+<tr>
+<td>Dashboard → Models</td>
+<td>Which deployment served the request? Select the project and Model deployment.</td>
+<td>Model deployments, Replica count, P90 latency, and token throughput provide the serving overview. A blank CPU quota cell is not zero usage.</td>
+</tr>
+<tr>
+<td>Dashboard → LLM Traffic</td>
+<td>How much work reached the model? Match the serving project and model to the request window.</td>
+<td>Throughput (req/s) and Token throughput (tokens/s); Error rate is a configured server-side series, not every client or access-control failure.</td>
+</tr>
+<tr>
+<td>Dashboard → LLM Performance</td>
+<td>When does generation begin, and is cache reused?</td>
+<td>Inspect TTFT, E2E, KV cache hit rate, and KV cache usage. Skip the inter-token panel: its installed query uses a missing metric and falls back to zero. Local cache reuse does not prove distributed KV transfer.</td>
+</tr>
+<tr>
+<td>Dashboard → LLM Utilization</td>
+<td>Are replicas busy or waiting?</td>
+<td>GPU utilization, Requests running, and Requests waiting; use replica legends and the recorded interval. GPU collection does not cover every earlier benchmark.</td>
+</tr>
+<tr>
+<td>Dashboard → Usage</td>
+<td>Who consumed the model under which limit? Select one subscription.</td>
+<td>Token consumption chart/table and rate-limited decisions. Success rate describes the limiter, not complete inference success; summary and chart use different time windows.</td>
 </tr>
 <tr>
 <td>OpenShift GitOps</td>
@@ -2408,6 +2463,16 @@
 <td>Parameters, graph, logs, and stored artifacts explain the result. A submitted run alone proves nothing about quality.</td>
 </tr>
 <tr>
+<td>MLflow → aurora-assistant-demo → Overview → Usage</td>
+<td>What did the application request consume? Match the trace interval.</td>
+<td>The measured six-trace snapshot has 9,950 provider-reported tokens. No cost data means no recorded price evidence, not free inference.</td>
+</tr>
+<tr>
+<td>MLflow → aurora-assistant-demo → Overview → Tool calls</td>
+<td>Which tools actually executed? Inspect usage and latency charts.</td>
+<td>Two successful calls were indexed from one request after the exporter correction. Older artifact traces were not backfilled. Follow the <a href="../../labs/mlflow/">MLflow guide</a> for a new test drive.</td>
+</tr>
+<tr>
 <td>Experiments → MLflow</td>
 <td>Can we compare and reproduce measurements? Open the Ray, native training, or explicit optimization export.</td>
 <td>Use actual parameters, metrics, and artifacts. Automatic DSPA integration created a parent run but not complete child metrics; explicit export is identified as such.</td>
@@ -2448,7 +2513,7 @@
 <tr>
 <td>AI hub → MCP servers</td>
 <td>What can an agent do? Open the Aurora Supply server and inspect its tools.</td>
-<td>Inventory lookup and policy retrieval support the recommendation. No purchase-execution tool is provided.</td>
+<td>Catalog, inventory, and forecast-backed replenishment tools support the recommendation. Policy retrieval uses Knowledge/RAG. No purchase-execution tool is provided.</td>
 </tr>
 <tr>
 <td>Gen AI studio → AI asset endpoints</td>

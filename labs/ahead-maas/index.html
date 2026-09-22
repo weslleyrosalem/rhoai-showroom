@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     
@@ -697,6 +699,34 @@
     
   
     Load test and metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/native-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native dashboard guide
   
 
     
@@ -2535,8 +2565,8 @@
 </tr>
 <tr>
 <td>27–30 min</td>
-<td>Open the existing MaaS Usage dashboard</td>
-<td>Select an <code>ahead-</code> subscription and explain actual request/token/quota counters; separate simulator and real-model traffic</td>
+<td>Open <strong>Observe &amp; monitor → Dashboard → Usage</strong></td>
+<td>Select an <code>ahead-</code> subscription and explain sampled request/token/quota counters; separate simulator and real-model traffic</td>
 </tr>
 </tbody>
 </table>
@@ -2716,12 +2746,45 @@
 <p>The installed multi-tenant implementation supports external models through the <strong>default tenant only</strong>. This registration therefore uses the existing default gateway with new <code>ahead-external</code> / <code>ahead-external-access</code> governance; it does not route through the AHEAD tenant gateway. The AHEAD copy of the provider Secret requires <code>inference.llm-d.ai/ipp-managed=true</code>. Missing that label caused an initial 500 and was corrected on the copy only.</p>
 <p>An external credential is required to repeat this step; the public guide contains none. Use the administrator's private AHEAD rehearsal script and an explicitly selected <code>ahead-external</code> subscription. This call uses a real provider and is separate from the corporate cloud simulator.</p>
 <h2 id="metrics-filter-before-interpreting">Metrics: filter before interpreting<a class="headerlink" href="#metrics-filter-before-interpreting" title="Permanent link">&para;</a></h2>
-<p>In <strong>Observe &amp; monitor → Dashboard → MaaS Usage</strong>, filter to one of the <code>ahead-</code> subscriptions. Use <code>ahead-external</code> for real external-model usage; other AHEAD subscriptions in this workshop measure simulator traffic. Aurora's <code>showroom-load</code> is the existing real Llama workload. Do not combine these as one performance benchmark.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">sum</span><span class="o">(</span><span class="nv">istio_requests_total</span><span class="p">{</span><span class="nl">gateway_name</span><span class="o">=</span><span class="p">"</span><span class="s">ahead</span><span class="p">"}</span><span class="o">)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">sum</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">subscription</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="nv">authorized_hits_total</span><span class="p">{</span><span class="nl">subscription</span><span class="o">=~</span><span class="p">"</span><span class="s">ahead-.*</span><span class="p">"}</span><span class="o">)</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">sum</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">subscription</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="nv">limited_calls_total</span><span class="p">{</span><span class="nl">subscription</span><span class="o">=~</span><span class="p">"</span><span class="s">ahead-.*</span><span class="p">"}</span><span class="o">)</span>
-</code></pre></div>
-<p>The rehearsal observed nonempty gateway, consumption and rate-limit series in the existing Thanos datasource. The native dashboard's summary follows the selected time range while its current chart uses a fixed rolling two-hour expression; their totals can differ. Prometheus sampling/<code>increase()</code> can also extrapolate. These counters are not exact per-request Loki billing records.</p>
+<p>Use the existing OpenShift AI 3.5.1 <strong>Observe &amp; monitor → Dashboard → Usage</strong> dashboard. Its displayed name is <strong>Usage</strong>; no custom dashboard or separate Grafana installation is required for this walkthrough.</p>
+<ol>
+<li>Set <strong>Subscription</strong> to <code>ahead-simulator-free</code>, <strong>User</strong> and <strong>Model</strong> to all values, and <strong>View by</strong> to <strong>By subscription</strong>. Select a time range containing the rehearsal and refresh after scraping has had time to collect new samples.</li>
+<li>Read <strong>Total tokens</strong>, <strong>Total requests</strong>, and <strong>Total rate limited</strong>, then inspect the same subscription in <strong>Token consumption table</strong> and <strong>Token consumption chart</strong>. The quota helper's HTTP result remains the direct proof of rejection and recovery.</li>
+<li>Change <strong>Subscription</strong> to <code>ahead-simulator-premium</code> to inspect the independent allowed tier. Use <code>ahead-external</code> for the real Anthropic call. Other AHEAD subscriptions measure simulator traffic; <code>showroom-load</code> measures Aurora's real Llama traffic. Keep these scenarios separate.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Native panel</th>
+<th>What it shows</th>
+<th>Interpretation boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Total tokens</strong> / <strong>Token consumption table</strong></td>
+<td>Sampled token-counter increase over the selected range</td>
+<td>Token accounting, not GPU throughput or model quality</td>
+</tr>
+<tr>
+<td><strong>Total requests</strong> / <strong>Total rate limited</strong></td>
+<td>Sampled authorized and rate-limited calls</td>
+<td>These are limiter counters, not a log of every HTTP status</td>
+</tr>
+<tr>
+<td><strong>Success rate</strong></td>
+<td>Authorized calls divided by authorized plus rate-limited calls</td>
+<td>An allowed limiter decision is not proof that inference returned 200; the panel also defaults to 100% when its denominator has no data</td>
+</tr>
+<tr>
+<td><strong>Token consumption chart</strong></td>
+<td>Rolling token increase, grouped by <strong>View by</strong></td>
+<td>The installed query uses two hours at each plotted point, regardless of the selected dashboard range</td>
+</tr>
+</tbody>
+</table>
+<p>Anonymous <strong>401</strong> and forbidden-model <strong>403</strong> outcomes are demonstrated by the HTTP rehearsal, not by expecting a corresponding increase in <strong>Total rate limited</strong>. For corporate subscriptions spanning multiple models, token rows are model-specific, but request counters are joined from subscription-level series; do not sum model rows as unique requests.</p>
+<p>The rehearsal observed nonempty gateway, consumption and rate-limit series in the existing Thanos datasource. The summary and chart can differ because of their different windows. Prometheus sampling/<code>increase()</code> can also extrapolate. These counters are not exact per-request Loki billing records. A newly appearing series needs later samples to expose an increase; do not repeat a quota burn just to make a panel change.</p>
 <p><strong>Short-burst caveat observed in the presenter review:</strong> the <code>ahead-simulator-free</code> Usage filter displayed 2 tokens, 1 request and 0 rate-limited for the selected 30 minutes. The new token series was first sampled at 108 and later 110; the limited-call series was first sampled at 1 and stayed 1. Their sampled increases therefore showed only the recovery request and no later increment in blocked calls. The HTTP rehearsal still proved 108 tokens followed by 429, premium isolation and recovery. A zero increase does not mean that no request was blocked before the first sample. Use the HTTP results as the quota acceptance evidence and the Usage panel as sampled observability. See <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#increase">Prometheus <code>increase()</code> semantics</a>.</p>
 <h2 id="preserved-state-and-deferred-extensions">Preserved state and deferred extensions<a class="headerlink" href="#preserved-state-and-deferred-extensions" title="Permanent link">&para;</a></h2>
 <p>The initial before/after comparison kept the original MaaS tenant/configuration, subscriptions, policies, model references, shared Config, DSC, DSCI and default Gateway specs and UIDs unchanged. Original Llama, scheduler, default gateway and MaaS API pod UIDs were unchanged, with zero additional restarts during that check. Later persistence work touched only AHEAD's identity service and database.</p>
