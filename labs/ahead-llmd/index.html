@@ -2323,41 +2323,60 @@
 <thead>
 <tr>
 <th>Path</th>
-<th style="text-align: right;">Concurrency</th>
-<th style="text-align: right;">Successful requests</th>
+<th style="text-align: right;">Requests</th>
 <th style="text-align: right;">P95 TTFT</th>
 <th style="text-align: right;">Prefix-hit fraction</th>
-<th>Backend success deltas</th>
-<th style="text-align: right;">EPP delta</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Single backend</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">16</td>
+<td style="text-align: right;">16/16</td>
 <td style="text-align: right;">1625.05 ms</td>
 <td style="text-align: right;">92.93%</td>
-<td>16 / 0</td>
+</tr>
+<tr>
+<td>Explicit round-robin</td>
+<td style="text-align: right;">16/16</td>
+<td style="text-align: right;">439.27 ms</td>
+<td style="text-align: right;">86.14%</td>
+</tr>
+<tr>
+<td>Native llm-d gateway</td>
+<td style="text-align: right;">16/16</td>
+<td style="text-align: right;">251.36 ms</td>
+<td style="text-align: right;">92.46%</td>
+</tr>
+</tbody>
+</table>
+<p>Concurrency was one for the single-backend observation and two for each two-backend path. Counter changes show where requests went:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th style="text-align: right;">Backend 0</th>
+<th style="text-align: right;">Backend 1</th>
+<th style="text-align: right;">EPP requests</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single backend</td>
+<td style="text-align: right;">+16</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr>
 <td>Explicit round-robin</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">16</td>
-<td style="text-align: right;">439.27 ms</td>
-<td style="text-align: right;">86.14%</td>
-<td>8 / 8</td>
+<td style="text-align: right;">+8</td>
+<td style="text-align: right;">+8</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr>
 <td>Native llm-d gateway</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">16</td>
-<td style="text-align: right;">251.36 ms</td>
-<td style="text-align: right;">92.46%</td>
-<td>0 / 16</td>
-<td style="text-align: right;">16</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">+16</td>
+<td style="text-align: right;">+16</td>
 </tr>
 </tbody>
 </table>

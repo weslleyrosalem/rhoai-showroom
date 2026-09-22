@@ -2281,6 +2281,7 @@
 <h2 id="acceptance">Acceptance<a class="headerlink" href="#acceptance" title="Permanent link">&para;</a></h2>
 <p>The source must be Connected and show exactly the three curated models, correct licenses, and preserved existing sources. The reference installation's catalog API has reported this source as <code>available</code> with those three models and all three default sources retained.</p>
 <p>A selected deployment must load the pinned revision, become Ready, and respond through its intended access path. The reference Qwen4B uses the private native-auth path documented in the <a href="../../demos/inference/">inference guide</a>, and is deliberately absent from MaaS discovery. Llama provides the shared MaaS application endpoint. The Qwen registry entry remains a candidate: successful serving does not approve safety or quality. Before connecting an agent, require a valid <code>tool_call</code> matching the intended schema. The optional CPU version of Qwen0.6B remains blocked until a CPU runtime is validated on actual hardware.</p>
+<p>The native catalog search was also inspected: the 4B result shows the <strong>Aurora Supply · Qwen curated</strong> source and opens the upstream model card. This imported card leaves tensor type and parameter size as <code>N/A</code> and offers a license agreement link. Use the pinned runtime manifest and the estimates above to discuss the actual deployment; do not turn an absent catalog field or absent safety insight into a validated score.</p>
 
 
 
