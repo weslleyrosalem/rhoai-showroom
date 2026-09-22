@@ -77,3 +77,10 @@ The absolute deadline ends load without a running laptop or an active chat. To s
 Do not add ROSA or OCM polling to the load runner, dashboards, or a monitor. In this environment, the user explicitly prohibits frequent control-plane API requests. Inspect Kubernetes nodes and workloads with `oc` only; cloud operations remain a separate, bounded activity.
 
 Primary sources: [GuideLLM v0.7.4 release](https://github.com/vllm-project/guidellm/releases/tag/v0.7.4), [pinned CLI and profile documentation](https://github.com/vllm-project/guidellm/blob/v0.7.4/README.md), [output and sampling options](https://github.com/vllm-project/guidellm/blob/v0.7.4/docs/guides/outputs.md), and [local tokenizer setup](https://github.com/vllm-project/guidellm/blob/v0.7.4/docs/examples/custom-jsonl-dataset.md).
+
+
+## Readiness snapshot — September 22, 06:40 UTC
+
+The existing Job was active with no load-container restarts. Its latest completed 10-minute block recorded **60 successful requests, zero errors, and zero incomplete requests** at 0.1 requests/s, with 7,680 output tokens and 2.787-second mean latency. The next block was running at 0.25 requests/s and concurrency two. This is a dated observation, not a promise about future blocks.
+
+The retained history contained 1,394 successful requests, 17 errors, and six incomplete requests, including earlier failed qualification attempts. Keep those failures visible when summarizing the full run. The latest clean block does not make the entire history error-free. The 5Gi results claim remained Bound and mounted, with 19 segment directories and 13 JSON reports available at that check. The protected presentation window and absolute stop time above were verified against the live runner configuration.

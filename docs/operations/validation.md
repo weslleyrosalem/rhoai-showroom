@@ -5,15 +5,15 @@ Validation started on **September 22, 2026 UTC**. This record separates actual f
 | Area | Observed evidence | Status |
 |---|---|---|
 | Namespace and storage | ai-showroom, quota, RBAC, and S3 storage are available | Deployed |
-| MLflow | Available; training/evaluation artifacts exported; real application trace fetched with span data | Integrated persistence passed |
+| MLflow | Training/evaluation artifacts exported; current English app traces show retrieval, two actual tools, LLM tokens, and output policy checks | Persisted trace data, native timeline, usage, and two post-fix native tool calls validated; two actual responses await human review |
 | Tempo | Ready, persistent storage, 168-hour retention | Service ready; workload spans need verification |
-| GitOps | Synced/Healthy after native feature integration; cosmetic namespace drift restored within a 32-second observation window | Reconciliation and self-heal passed |
-| GuideLLM | Actual pilot: seven successful requests, zero errors; persisted reports; interactive control HTTP200 in 1.102s during load | Sustained run active, deadline September 23 at 15:59 UTC |
+| GitOps | Synced/Healthy at source revision `6888e2f`; cosmetic namespace drift restored within a 32-second observation window | Reconciliation and self-heal passed |
+| GuideLLM | At 06:40 UTC: latest block: 60 successes, 0 errors, 0 incomplete requests; persisted reports; prior interactive control HTTP 200 in 1.102 s during load | Sustained run active, deadline September 23 at 15:59 UTC |
 | MaaS | Anonymous 401; standard 200; limited subscription 200→429; recovery 200 | Functional test passed |
 | NeMo | Valid inputs/outputs allowed; synthetic email/secret/override blocked | Direct checks passed |
 | MCP and IPP | Public SDK tools; 14 auth/input cases; unsafe output 403; checker outage 503; private bypass denials | Functional security gates passed |
 | MCP catalog and lifecycle | Catalog source visible; native MCPServer handshake; isolated lifecycle protocol and denial tests | Functional gates passed |
-| Aurora web app | Authenticated English response, sources, tools, live model, Ray forecast, MLflow trace; synthetic email blocked | Public test drive passed |
+| Aurora web app | Authenticated English response, sources, tools, live model, Ray forecast, MLflow trace; synthetic email blocked | Functional flow passed; a later factual prose error is preserved in the human-review queue, with the deterministic proposal still correct |
 | Workbench and DSPA | Running; actual distributed jobs and native optimization pipeline results inspected | Individual notebook and pipeline paths passed |
 | Native Playground | Qwen chat; returns policy with clickable citation; unsupported facts rejected; actual MCP stock and proposal results | Browser test drive passed; temporary scoped MCP credential expires September 22 at 17:57 UTC |
 | Native Trainer | Two CPU workers on distinct hosts; complete job, resource/pod/log tabs inspected; holdout MAE0.82070 vs baseline1.33036 | Distributed training and native Jobs UI passed |

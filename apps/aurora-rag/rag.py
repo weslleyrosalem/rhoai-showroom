@@ -143,6 +143,8 @@ def configure_tracing():
     description = "Current English showroom test drive. Historical setup traces remain in aurora-assistant."
     if experiment.tags.get("mlflow.note.content") != description:
         mlflow.MlflowClient().set_experiment_tag(experiment.experiment_id, "mlflow.note.content", description)
+    from trace_export import configure_span_metrics
+    configure_span_metrics(mlflow, experiment.experiment_id, token_from_serviceaccount)
     return mlflow
 
 
