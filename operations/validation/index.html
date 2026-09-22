@@ -1104,6 +1104,8 @@
       
         
       
+        
+      
     
     
     
@@ -1884,6 +1886,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/live-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Live inference comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/ahead-llmd/" class="md-nav__link">
         
   
@@ -2302,6 +2332,11 @@
 <td>Workbench inference and MaaS notebooks</td>
 <td>September 22, 13:38–13:40 UTC: configurable 07 passed its test and six-request loop; real GuideLLM 08 completed 3/3 with no errors or incomplete requests; MaaS 09 discovery and one chat returned 200 with 156 provider-reported tokens</td>
 <td>All three executed in the persistent Aurora Inference Demo kernel. GuideLLM observed 0.802 s mean latency and 40.46 ms client streaming TTFT across three requests; functional observation, not capacity or causal llm-d evidence</td>
+</tr>
+<tr>
+<td>In-cluster comparison app</td>
+<td>September 22, 14:32 UTC: authenticated browser returned both responses with normal stop, 332 input / 26 output tokens each; measured TTFT of 37.7/62.2 ms and total time of 0.34/0.36 s; two earlier short pairs also passed; anonymous/spoofed-header Route requests redirected to login</td>
+<td>Functional test and actual UI passed; final defaults corrected after detecting truncation. Shared-cache/overhead limits apply; this observation does not establish a llm-d speedup</td>
 </tr>
 <tr>
 <td>Live llm-d notebook</td>
