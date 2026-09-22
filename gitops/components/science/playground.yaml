@@ -152,12 +152,12 @@ data:
     \ responses\n  file_processors:\n  - provider_id: pypdf\n    provider_type: inline::pypdf\n\
     \    config: {}\n  files:\n  - provider_id: localfs-files\n    provider_type:\
     \ inline::localfs\n    config:\n      metadata_store:\n        backend: sql_default\n\
-    \        table_name: files_metadata\n      storage_dir: /opt/app-root/src/.llama/distributions/rh/files\n\
+    \        table_name: files_metadata\n      storage_dir: /opt/app-root/src/.ogx/distributions/rh/files\n\
     \  tool_runtime:\n  - provider_id: file-search\n    provider_type: inline::file-search\n\
     \    config: {}\n  - provider_id: model-context-protocol\n    provider_type: remote::model-context-protocol\n\
-    \    config: {}\nmetadata_store:\n  type: sqlite\n  db_path: /opt/app-root/src/.llama/distributions/rh/inference_store.db\n\
-    storage:\n  backends:\n    kv_default:\n      db_path: /opt/app-root/src/.llama/distributions/rh/kvstore.db\n\
-    \      type: kv_sqlite\n    sql_default:\n      db_path: /opt/app-root/src/.llama/distributions/rh/sql_store.db\n\
+    \    config: {}\nmetadata_store:\n  type: sqlite\n  db_path: /opt/app-root/src/.ogx/distributions/rh/inference_store.db\n\
+    storage:\n  backends:\n    kv_default:\n      db_path: /opt/app-root/src/.ogx/distributions/rh/kvstore.db\n\
+    \      type: kv_sqlite\n    sql_default:\n      db_path: /opt/app-root/src/.ogx/distributions/rh/sql_store.db\n\
     \      type: sql_sqlite\n  stores:\n    connectors:\n      backend: sql_default\n\
     \      table_name: connectors\n    conversations:\n      backend: sql_default\n\
     \      table_name: openai_conversations\n    inference:\n      backend: sql_default\n\
@@ -232,7 +232,7 @@ spec:
   workload:
     storage:
       size: 5Gi
-      mountPath: /opt/app-root/src/.llama/distributions/rh
+      mountPath: /opt/app-root/src/.ogx/distributions/rh
     replicas: 1
     resources:
       requests:
