@@ -13,7 +13,10 @@ The acceptance process follows the customer journey: open a screen, perform a me
 | OpenShell authenticated a token without constraining its administrative subject | Added an exact-subject TokenReview gate and restricted backend reachability | Another valid service-account token denied; authorizer outage failed closed |
 | A catalog entry did not automatically populate native Playground assets | Added a separate merge-based asset configuration | Native connection still requires a scoped identity and its own tool test |
 | Feature Store and Playground runtimes were Ready but absent from native discovery | Added each module's required discovery label and preserved scoped backend access | Actual native screens populated after GitOps reconciliation |
-| The guide gave similar visual weight to every feature | Put presentation routes first and used clear documentation hierarchy | Published desktop layout and keyboard skip-link/action navigation passed; mobile viewport verification remains open |
+| The guide gave similar visual weight to every feature | Put presentation routes first and used clear documentation hierarchy | Published desktop and keyboard navigation passed; a 390-pixel generated-site check also passed, as scoped below |
+| The test drive implied that native Playground requests created the demonstrated MLflow traces | Separated Playground citation/tool inspection from Aurora application tracing | Each exercise now names its validated application path |
+| A GitOps step implied that a policy edit alone rebuilt the application | Replaced it with the documented ConfigMap annotation, self-heal, and revert exercise | The script no longer depends on an unconfigured image-build trigger |
+| Tempo readiness could be mistaken for demonstrated Aurora tracing | Queried its authenticated API and qualified the architecture and validation record | The six-hour search returned no traces; the demonstrated application flow uses MLflow |
 
 These are engineering and simulated customer reviews. They are not testimonials or feedback attributed to an actual customer.
 
@@ -33,4 +36,8 @@ Feedback is public. Use synthetic examples and sanitized errors. Credentials, pr
 
 ## Website acceptance
 
-The published guide was inspected on desktop after the September 22 release. Its keyboard skip link moves focus to the content, and Tab/Enter reaches and opens the presentation action. The requested 390-pixel browser override did not change the measured viewport; mobile testing is therefore **not yet verified**, rather than assumed from responsive CSS. The override was reset after the check.
+The published guide was inspected on desktop after the September 22 release. Its keyboard skip link moves focus to the content, and Tab/Enter reaches and opens the presentation action.
+
+The same generated site artifact was also served locally inside a **390-pixel browsing context**. Home and inference pages each measured 390 pixels for both viewport and document width, with no horizontal page overflow. The drawer opened, returned to its top-level menu, and navigated to the inference presentation. Search returned the MLflow lab, and opening that result reached the expected page. Text, headings, and search results wrapped within the narrow layout.
+
+This verifies the tested responsive layout and navigation. It does not emulate a physical phone, touch input, or every browser. The earlier browser-wide viewport override did not take effect and was reset; it was not counted as a passed test.

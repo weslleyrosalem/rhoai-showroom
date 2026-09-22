@@ -4,13 +4,15 @@ Choose an experience and confirm the lab prerequisites. Use `ai-showroom` and sy
 
 ## 1. Ask for an answer with evidence
 
-In the Playground or Aurora application, try:
+In the Aurora application, try:
 
 > Prepare next week's replenishment proposal. Check inventory for AS-001, compare it with the forecast, and cite the policy you used. Prepare a proposal only; do not place an order.
 
 Observe the tool calls, supporting documents, and forecast. The answer should distinguish inventory facts, statistical forecasts, and the LLM's explanation.
 
 **Change one thing:** choose another SKU. Confirm that the tool queried that SKU and that the sources remain relevant. Open the trace for the new question.
+
+For the separate [native Playground test drive](../labs/playground.md), select Qwen, connect the approved MCP server, and add the policy knowledge source. Inspect its tool-response and citation panels. The MLflow trace instructions above apply to the Aurora application, whose tracing path has been validated.
 
 ## 2. Test an access boundary
 
@@ -32,7 +34,9 @@ Record parameters and results in MLflow. Do not select a model based only on tra
 
 ## 5. Watch a GitOps change arrive
 
-On a branch of your fork, change a synthetic policy or demonstration setting. Review the diff before synchronization. After sync, repeat the question that depends on the changed data and inspect the version used.
+Follow the [GitOps reconciliation test drive](gitops.md#reconciliation-test-drive). On a branch of your fork, add a harmless demonstration annotation to a showroom-owned ConfigMap. Review the diff and merge it into the revision tracked by your Argo CD Application, then watch synchronization.
+
+Temporarily change that managed annotation in the console and observe OutOfSync followed by self-heal. Revert the exercise commit to restore the documented state. This demonstrates reconciliation without changing business data or rebuilding the application.
 
 Follow [Reset the test drive](reset.md) when finished. Reverting a presentation change should not delete experiment data, operators, or shared models.
 

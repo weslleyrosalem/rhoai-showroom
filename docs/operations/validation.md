@@ -6,9 +6,9 @@ Validation started on **September 22, 2026 UTC**. This record separates actual f
 |---|---|---|
 | Namespace and storage | ai-showroom, quota, RBAC, and S3 storage are available | Deployed |
 | MLflow | Training/evaluation artifacts exported; current English app traces show retrieval, two actual tools, LLM tokens, and output policy checks | Persisted trace data, native timeline, usage, and two post-fix native tool calls validated; two actual responses await human review |
-| Tempo | Ready, persistent storage, 168-hour retention | Service ready; workload spans need verification |
-| GitOps | Synced/Healthy at source revision `6888e2f`; cosmetic namespace drift restored within a 32-second observation window | Reconciliation and self-heal passed |
-| GuideLLM | At 06:40 UTC: latest block: 60 successes, 0 errors, 0 incomplete requests; persisted reports; prior interactive control HTTP 200 in 1.102 s during load | Sustained run active, deadline September 23 at 15:59 UTC |
+| Tempo | Ready, 5 GiB persistent storage, 168-hour retention; authenticated query API passed at 07:27 UTC, with no traces in the six-hour search window | Workload integration not demonstrated; the validated Aurora trace path uses MLflow |
+| GitOps | At 07:20 UTC: Synced/Healthy at source revision `d806cde`; cosmetic namespace drift restored within a 32-second observation window | Reconciliation and self-heal passed |
+| GuideLLM | At 07:19 UTC: latest completed block: 60 successes, 0 errors, 0 incomplete requests; persisted reports; prior interactive control HTTP 200 in 1.102 s during load | Sustained run active, deadline September 23 at 15:59 UTC |
 | MaaS | Anonymous 401; standard 200; limited subscription 200→429; recovery 200 | Functional test passed |
 | NeMo | Valid inputs/outputs allowed; synthetic email/secret/override blocked | Direct checks passed |
 | MCP and IPP | Public SDK tools; 14 auth/input cases; unsafe output 403; checker outage 503; private bypass denials | Functional security gates passed |

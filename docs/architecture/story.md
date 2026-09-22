@@ -14,8 +14,10 @@ The customer scenario is concrete: select products, check availability, understa
 | Check the forecast | Model trained with Ray | Version, horizon, test metrics, and MLflow run |
 | Generate an explanation | Local or external model through MaaS | Response, usage, and provider identity |
 | Apply controls | AuthPolicy, quota, and NeMo | Positive/negative tests, status, and observable reason |
-| Investigate the result | MLflow, metrics, and Tempo | A new trace or current time series with source and time range |
+| Investigate the result | MLflow and metrics | A new Aurora application trace or current time series with source and time range |
 | Improve the experience | Prompt, data, or manifest in Git | Diff, Argo CD sync, repeated test, and rollback |
+
+The validated application trace path uses MLflow. Tempo has persistent storage and a working authenticated query API, but the six-hour acceptance search found no traces. Aurora workload integration with Tempo remains a follow-on exercise. Native Playground tool and citation panels are a separate inspection path.
 
 Tools return structured data. The language model is not the source of truth for inventory, quotas, prices, or forecasts. Tests compare these values with the synthetic source artifacts.
 
