@@ -2373,7 +2373,7 @@
 <tr>
 <td>13–20 min</td>
 <td>Native <strong>LLM Performance</strong>, then the recorded repeated-prefix evidence</td>
-<td>Select Project <code>ai-showroom</code> and Model <code>aurora-qwen-4b</code>; start with the six-hour rehearsal window. Explain <strong>KV cache hit rate</strong>, <strong>KV cache usage</strong>, <strong>Time to first token (TTFT)</strong>, and <strong>E2E request latency</strong>. A new controlled pair is optional and requires the bounded helper below.</td>
+<td>Select Project <code>ai-showroom</code> and Model <code>aurora-qwen-4b</code>; use <strong>Last 12 hours</strong> during the morning presentation, or a custom interval containing the overnight rehearsal. Explain <strong>KV cache hit rate</strong>, <strong>KV cache usage</strong>, <strong>Time to first token (TTFT)</strong>, and <strong>E2E request latency</strong>. A new controlled pair is optional and requires the bounded helper below.</td>
 </tr>
 <tr>
 <td>20–25 min</td>
@@ -2420,7 +2420,7 @@
 </tr>
 </tbody>
 </table>
-<p>Recheck the visible Project, Model, and time range after every tab change. The model selection can reset, and the URL does not reliably encode every active filter. Use the six-hour window to discuss recorded Qwen bursts; use a recent window for ongoing Llama load. Do not imply Qwen is receiving GuideLLM traffic. The native <strong>Cluster</strong> overview is a separate infrastructure view: several cards remain cluster-wide despite the Project selector, and <strong>Deployed models</strong> counts metric label groups rather than all model resources.</p>
+<p>Recheck the visible Project, Model, and time range after every tab change. The model selection can reset, and the URL does not reliably encode every active filter. Use <strong>Last 12 hours</strong> during the 8:00 a.m. presentation to retain the overnight Qwen bursts; a six-hour window inspected earlier in preparation will move forward by presentation time. Use a recent window for ongoing Llama load. Do not imply Qwen is receiving GuideLLM traffic. The native <strong>Cluster</strong> overview is a separate infrastructure view: several cards remain cluster-wide despite the Project selector, and <strong>Deployed models</strong> counts metric label groups rather than all model resources.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oc<span class="w"> </span>get<span class="w"> </span>llminferenceservice<span class="w"> </span>-n<span class="w"> </span>maas-how-to
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oc<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>maas-how-to<span class="w"> </span>-o<span class="w"> </span>wide
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>oc<span class="w"> </span>get<span class="w"> </span>inferencepool<span class="w"> </span>-n<span class="w"> </span>maas-how-to
