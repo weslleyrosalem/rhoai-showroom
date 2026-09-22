@@ -7,6 +7,11 @@ metadata:
     app.kubernetes.io/part-of: rhoai-showroom
     app.kubernetes.io/component: private-inference
 data:
+  # Keep the inherited GatewayClass HPA consistent with this fixed-size demo gateway.
+  horizontalPodAutoscaler: |
+    spec:
+      minReplicas: 1
+      maxReplicas: 1
   service: |
     spec:
       type: ClusterIP
