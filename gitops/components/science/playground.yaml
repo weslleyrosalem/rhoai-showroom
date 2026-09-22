@@ -208,6 +208,10 @@ spec:
             matchLabels: {kubernetes.io/metadata.name: redhat-ods-applications}
           podSelector:
             matchLabels: {deployment: autorag-ui}
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: redhat-ods-applications}
+          podSelector:
+            matchLabels: {deployment: gen-ai-ui}
       ports:
         - {port: 8321, protocol: TCP}
     - from:
@@ -223,6 +227,7 @@ metadata:
   namespace: ai-showroom
   labels:
     app.kubernetes.io/part-of: rhoai-showroom
+    opendatahub.io/dashboard: 'true'
 spec:
   distribution:
     name: rh
