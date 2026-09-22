@@ -1,0 +1,71 @@
+apiVersion: feast.dev/v1
+kind: FeatureStore
+metadata:
+  name: aurora-features
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+spec:
+  feastProject: aurora_supply
+  feastProjectDir:
+    git:
+      url: https://github.com/weslleyrosalem/rhoai-showroom.git
+      ref: main
+      featureRepoPath: data/feast
+  authz:
+    kubernetes:
+      roles: [aurora-feast-reader, aurora-feast-writer]
+  services:
+    deploymentStrategy:
+      type: Recreate
+    onlineStore:
+      persistence:
+        file:
+          path: online.db
+          pvc:
+            create:
+              resources:
+                requests: {storage: 1Gi}
+            mountPath: /data/online
+      server:
+        resources:
+          requests: {cpu: 100m, memory: 256Mi}
+          limits: {cpu: '1', memory: 1Gi}
+    registry:
+      local:
+        persistence:
+          file:
+            path: registry.db
+            pvc:
+              create:
+                resources:
+                  requests: {storage: 1Gi}
+              mountPath: /data/registry
+        server:
+          restAPI: true
+          grpc: true
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {cpu: '1', memory: 1Gi}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aurora-feast-reader
+  namespace: ai-showroom
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: Role, name: aurora-feast-reader}
+subjects:
+  - {kind: Group, apiGroup: rbac.authorization.k8s.io, name: showroom-visitors}
+  - {kind: Group, apiGroup: rbac.authorization.k8s.io, name: showroom-data-scientists}
+  - {kind: ServiceAccount, name: aurora-lab, namespace: ai-showroom}
+  - {kind: ServiceAccount, name: aurora-science, namespace: ai-showroom}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aurora-feast-writer
+  namespace: ai-showroom
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: Role, name: aurora-feast-writer}
+subjects:
+  - {kind: Group, apiGroup: rbac.authorization.k8s.io, name: showroom-platform-admins}
+  - {kind: ServiceAccount, name: feast-aurora-features, namespace: ai-showroom}
