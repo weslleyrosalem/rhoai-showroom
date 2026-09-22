@@ -1,0 +1,11 @@
+FROM registry.access.redhat.com/ubi9/python-312@sha256:d2eb0af16469bf0f64568f9b372c3cfb038569440c7e0b44db63b112ec29e7cb
+USER 0
+WORKDIR /app
+COPY apps/aurora-compare/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+COPY apps/aurora-compare/ /app/
+RUN chgrp -R 0 /app && chmod -R g=u /app
+USER 1001
+ENV PYTHONUNBUFFERED=1 HOME=/tmp
+EXPOSE 8080
+CMD ["uvicorn", "server:app", "--host", "127.0.0.1", "--port", "8080", "--workers", "1", "--no-access-log", "--log-level", "warning", "--no-proxy-headers"]

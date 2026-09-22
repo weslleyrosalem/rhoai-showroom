@@ -95,6 +95,7 @@ nav:
   - AHEAD MaaS workshop: labs/ahead-maas.md
   - Hardware and MIG: labs/hardware.md
   - Benchmark: labs/benchmark.md
+  - Live inference comparison: labs/live-comparison.md
   - AHEAD llm-d workshop: labs/ahead-llmd.md
 - Operations:
   - GitOps and portability: operations/gitops.md

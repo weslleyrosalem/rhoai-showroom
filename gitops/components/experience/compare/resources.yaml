@@ -1,0 +1,259 @@
+# Optional profile. The core overlay does not reconcile these resources.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: aurora-compare
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"aurora-compare"}}'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: aurora-compare-inference
+rules:
+- apiGroups: [""]
+  resources: [endpoints]
+  resourceNames: [aurora-qwen-4b-kserve-workload-svc]
+  verbs: [get]
+- apiGroups: [serving.kserve.io]
+  resources: [llminferenceservices]
+  resourceNames: [aurora-qwen-4b]
+  verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aurora-compare-inference
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: aurora-compare-inference
+subjects:
+- kind: ServiceAccount
+  name: aurora-compare
+  namespace: ai-showroom
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: aurora-compare
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: aurora-compare
+spec:
+  runPolicy: Serial
+  source:
+    type: Git
+    git:
+      uri: https://github.com/weslleyrosalem/rhoai-showroom.git
+      ref: main
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: apps/aurora-compare/Containerfile
+  output:
+    to: {kind: ImageStreamTag, name: 'aurora-compare:latest'}
+  resources:
+    requests: {cpu: 250m, memory: 512Mi}
+    limits: {cpu: '1', memory: 1Gi}
+  successfulBuildsHistoryLimit: 2
+  failedBuildsHistoryLimit: 2
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aurora-compare-settings
+data:
+  # Replace in a private overlay with the exact admitted HTTPS Route origin.
+  PUBLIC_ORIGIN: https://compare.example.invalid
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aurora-compare
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: {app: aurora-compare}
+  template:
+    metadata:
+      labels:
+        app: aurora-compare
+        app.kubernetes.io/part-of: rhoai-showroom
+    spec:
+      serviceAccountName: aurora-compare
+      terminationGracePeriodSeconds: 20
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: app
+        image: image-registry.openshift-image-registry.svc:5000/ai-showroom/aurora-compare:latest
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef: {name: aurora-compare-settings}
+        env:
+        - {name: QWEN_CA_FILE, value: /etc/qwen-ca/ca.crt}
+        resources:
+          requests: {cpu: 100m, memory: 128Mi}
+          limits: {cpu: '1', memory: 512Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: [ALL]}
+        readinessProbe:
+          exec:
+            command: [python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz', timeout=2).read()"]
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 3
+        volumeMounts:
+        - {name: qwen-ca, mountPath: /etc/qwen-ca, readOnly: true}
+        - {name: tmp, mountPath: /tmp}
+      - name: oauth-proxy
+        image: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:c1b77e5d09514955014fdea72271e5db53fec265fd7717d4e92fc89d08f93579
+        args:
+        - --provider=openshift
+        - --openshift-service-account=aurora-compare
+        - '--openshift-sar={"namespace":"ai-showroom","resource":"services","resourceName":"aurora-compare","verb":"get"}'
+        - --upstream=http://127.0.0.1:8080
+        - --http-address=
+        - --https-address=:8443
+        - --tls-cert=/etc/tls/tls.crt
+        - --tls-key=/etc/tls/tls.key
+        - --cookie-secret-file=/etc/cookie/cookie-secret
+        - --cookie-secure=true
+        - --cookie-expire=2h
+        - --cookie-samesite=lax
+        - --pass-access-token=false
+        - --pass-user-bearer-token=false
+        - --skip-provider-button=true
+        - --openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        - --openshift-ca=/etc/service-ca/service-ca.crt
+        ports:
+        - {name: https, containerPort: 8443}
+        resources:
+          requests: {cpu: 50m, memory: 64Mi}
+          limits: {cpu: 500m, memory: 256Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: {drop: [ALL]}
+        readinessProbe:
+          httpGet: {path: /oauth/healthz, port: https, scheme: HTTPS}
+          initialDelaySeconds: 5
+        volumeMounts:
+        - {name: tls, mountPath: /etc/tls, readOnly: true}
+        - {name: cookie, mountPath: /etc/cookie, readOnly: true}
+        - {name: service-ca, mountPath: /etc/service-ca, readOnly: true}
+      volumes:
+      - name: qwen-ca
+        secret:
+          secretName: aurora-qwen-4b-kserve-self-signed-certs
+          items:
+          - {key: ca.crt, path: ca.crt}
+      - {name: tls, secret: {secretName: aurora-compare-tls}}
+      - {name: cookie, secret: {secretName: aurora-compare-cookie}}
+      - {name: service-ca, configMap: {name: showroom-service-ca}}
+      - {name: tmp, emptyDir: {sizeLimit: 32Mi}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aurora-compare
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: aurora-compare-tls
+spec:
+  selector: {app: aurora-compare}
+  ports:
+  - {name: https, port: 8443, targetPort: https}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: aurora-compare
+  annotations:
+    haproxy.router.openshift.io/timeout: 120s
+spec:
+  to: {kind: Service, name: aurora-compare}
+  port: {targetPort: https}
+  tls:
+    termination: reencrypt
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-compare-private
+spec:
+  podSelector:
+    matchLabels: {app: aurora-compare}
+  policyTypes: [Ingress, Egress]
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels: {kubernetes.io/metadata.name: openshift-ingress}
+    ports:
+    - {port: 8443, protocol: TCP}
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels: {kubernetes.io/metadata.name: openshift-dns}
+    ports:
+    - {port: 53, protocol: UDP}
+    - {port: 53, protocol: TCP}
+    - {port: 5353, protocol: UDP}
+    - {port: 5353, protocol: TCP}
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: aurora-qwen-4b
+          kserve.io/component: workload
+    ports:
+    - {port: 8000, protocol: TCP}
+  - to:
+    - podSelector:
+        matchLabels: {gateway.networking.k8s.io/gateway-name: showroom-inference}
+    ports:
+    - {port: 8080, protocol: TCP}
+  # OpenShift API and OAuth endpoints. RBAC and fixed application destinations
+  # bound API use; this port rule is not a destination-specific egress firewall.
+  - ports:
+    - {port: 443, protocol: TCP}
+    - {port: 6443, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-compare-qwen-baseline
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: aurora-qwen-4b
+      kserve.io/component: workload
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels: {app: aurora-compare}
+    ports:
+    - {port: 8000, protocol: TCP}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-compare-qwen-gateway
+spec:
+  podSelector:
+    matchLabels: {gateway.networking.k8s.io/gateway-name: showroom-inference}
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels: {app: aurora-compare}
+    ports:
+    - {port: 8080, protocol: TCP}

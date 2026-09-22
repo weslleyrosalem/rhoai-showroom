@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurora | Live inference comparison</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>AURORA <strong>AI SHOWROOM</strong></span></div>
+    <div class="session"><span id="session-dot" class="dot"></span><span id="session-state">Checking session</span><button id="refresh-session" type="button">Refresh session</button></div>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="title">
+      <div><p class="eyebrow">OPENSHIFT AI · LIVE EXPERIMENT</p><h1 id="title">Same question.<br>Two inference paths.</h1>
+      <p class="intro">Compare explicit round-robin routing with llm-d scheduling on the same two Qwen backends. Change the prompt, run a pair, and inspect the actual responses and timing.</p></div>
+      <aside class="experiment-card" aria-label="Experiment configuration">
+        <span class="live-label">REAL REQUESTS</span>
+        <dl><div><dt>Model</dt><dd id="model-name">aurora-qwen-4b</dd></div><div><dt>Backends</dt><dd>2 × Qwen · NVIDIA L40S</dd></div><div><dt>Execution</dt><dd>Sequential · first path alternates</dd></div><div><dt>Sampling</dt><dd id="temperature">Same settings on both paths</dd></div></dl>
+      </aside>
+    </section>
+
+    <section class="workspace" aria-label="Prompt and comparison">
+      <form id="comparison-form" class="prompt-card">
+        <div class="section-heading"><div><p class="eyebrow">01 / COMPOSE</p><h2>Set the shared context</h2></div><span class="badge">Synthetic Aurora scenario</span></div>
+        <label for="system-prompt">System prompt <span class="label-hint">Shared prefix for both paths</span></label>
+        <textarea id="system-prompt" name="system" rows="9" maxlength="12000" required spellcheck="false"></textarea>
+        <div class="field-meta"><span>Reuse this exact context to explore prefix-cache behavior.</span><span id="system-count">0 / 12,000</span></div>
+        <label for="user-message">User message</label>
+        <textarea id="user-message" name="message" rows="3" maxlength="2000" required>In one sentence, state the current stock, proposed replenishment, and whether human approval is required before an order can be submitted.</textarea>
+        <div class="field-meta"><span>The same content is sent to both paths.</span><span id="message-count">0 / 2,000</span></div>
+        <div class="controls">
+          <div class="token-control"><label for="max-tokens">Maximum output tokens</label><input id="max-tokens" name="max_tokens" type="number" min="1" max="128" step="1" value="64" required></div>
+          <div class="actions"><button id="run-button" class="primary" type="submit">Run comparison <span aria-hidden="true">→</span></button><button id="repeat-button" type="button" disabled>Repeat last pair</button><button id="stop-button" class="stop" type="button" disabled>Stop</button></div>
+        </div>
+        <p class="small-note">Each click runs one bounded pair. Repeating uses the exact last submitted prompts and token limit, even if the fields have since changed. There is no automatic load loop.</p>
+      </form>
+
+      <div class="run-strip" role="status" aria-live="polite"><span id="run-status">Waiting for the session check.</span><span id="run-detail">No comparison has been run.</span></div>
+      <p id="error-message" class="error-banner" role="alert" hidden></p>
+
+      <section class="results" aria-label="Live response comparison">
+        <article class="response-card" id="card-vllm">
+          <div class="response-heading"><div><span class="path-label">PATH A</span><h2>vLLM + round-robin</h2><p>Explicit alternating backend selection</p></div><span class="state-badge" id="vllm-state">Not run</span></div>
+          <div class="path-meta"><span id="vllm-backend">Backend: not selected</span><span id="vllm-time">No start time</span></div>
+          <div id="vllm-output" class="response-text" tabindex="0" aria-label="Round-robin response">Your live response will appear here.</div>
+          <dl class="metrics"><div><dt>Streaming TTFT</dt><dd id="vllm-ttft">—</dd></div><div><dt>Total time</dt><dd id="vllm-elapsed">—</dd></div><div><dt>Input / output tokens</dt><dd id="vllm-tokens">—</dd></div></dl>
+          <p id="vllm-error" class="side-error" hidden></p>
+          <p id="vllm-finish" class="path-meta" hidden></p>
+        </article>
+        <article class="response-card" id="card-llmd">
+          <div class="response-heading"><div><span class="path-label">PATH B</span><h2>vLLM + llm-d</h2><p>Gateway and endpoint-picker scheduling</p></div><span class="state-badge" id="llmd-state">Not run</span></div>
+          <div class="path-meta"><span id="llmd-backend">Selected backend: not traced</span><span id="llmd-time">No start time</span></div>
+          <div id="llmd-output" class="response-text" tabindex="0" aria-label="llm-d response">Your live response will appear here.</div>
+          <dl class="metrics"><div><dt>Streaming TTFT</dt><dd id="llmd-ttft">—</dd></div><div><dt>Total time</dt><dd id="llmd-elapsed">—</dd></div><div><dt>Input / output tokens</dt><dd id="llmd-tokens">—</dd></div></dl>
+          <p id="llmd-error" class="side-error" hidden></p>
+          <p id="llmd-finish" class="path-meta" hidden></p>
+        </article>
+      </section>
+    </section>
+
+    <section class="interpretation" aria-labelledby="interpret-title">
+      <div><p class="eyebrow">02 / INTERPRET</p><h2 id="interpret-title">Observe the behavior.<br>Keep the conclusion precise.</h2></div>
+      <div class="interpret-grid"><div><h3>Explore repeated context</h3><p>Repeat a pair with the same system prompt. Prefix reuse can affect timings, but cache state, current traffic, scoring policies, and overhead also contribute. Neither path is guaranteed to win.</p></div><div><h3>Read the timing correctly</h3><p>TTFT appears only when the server observes streamed content. Missing measurements stay unavailable. Total time, token counts, failures, and execution order provide context for each sample.</p></div><div><h3>Understand the limits</h3><p>The baseline and llm-d paths have different routing and authentication overhead. Sequential runs reduce direct contention but encounter different cache states. This is not an isolated scheduler benchmark or a cross-node KV-transfer demonstration.</p></div><div><h3>Correlate native charts</h3><p>Open <strong>Observe &amp; monitor → Dashboard</strong>. Recheck project <strong>ai-showroom</strong> and model <strong>aurora-qwen-4b</strong> on each tab. Native charts include all callers and may miss short bursts. No per-call cache-hit or selected-pod claim is inferred here.</p></div></div>
+    </section>
+    <footer>Aurora Supply · Supervised AI platform demonstration <span>Actual observations. No prerecorded answers.</span></footer>
+  </main>
+</body>
+</html>
