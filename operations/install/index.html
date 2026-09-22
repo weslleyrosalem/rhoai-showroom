@@ -1121,6 +1121,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1293,6 +1301,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1537,6 +1573,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/automl/" class="md-nav__link">
         
   
@@ -1761,6 +1825,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/hardware/" class="md-nav__link">
         
   
@@ -1797,6 +1889,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2228,6 +2348,7 @@
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>oc<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>gitops/components/science
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>oc<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>gitops/components/experience
 </code></pre></div>
+<p>The science component also creates the separate <code>ai-showroom-monitoring</code> project for the supported OVMS/TrustyAI exercise. Complete the <a href="../../labs/model-monitoring/#deployment-and-tls-prerequisite">logger TLS prerequisite</a> with a private backup before sending its reference and scenario batches. This explicit shared ConfigMap adjustment is not silently managed by the Application. Verify capture, authorization, and metric history before presenting predictive monitoring.</p>
 <p>The RAG BuildConfig and Workbench clone this repository. In a fork, update both URLs and the AppProject/Application repository references. Follow <a href="../../labs/ray/">Ray</a> and <a href="../../labs/pipelines/">pipelines</a> to upload data and submit experiments. Jobs are explicit actions and are not continuously recreated by GitOps.</p>
 <p>Complete <a href="../gitops/">GitOps adoption</a>, run the <a href="../test-drive/">test drives</a>, and maintain a validation record for your installation. GPU and MIG profiles require coordinated cloud capacity changes; the default overlay does not provision them.</p>
 <h2 id="installation-acceptance">Installation acceptance<a class="headerlink" href="#installation-acceptance" title="Permanent link">&para;</a></h2>

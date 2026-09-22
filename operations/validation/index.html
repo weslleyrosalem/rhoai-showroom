@@ -1055,6 +1055,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1227,6 +1235,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1471,6 +1507,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/automl/" class="md-nav__link">
         
   
@@ -1695,6 +1759,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/hardware/" class="md-nav__link">
         
   
@@ -1731,6 +1823,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2122,9 +2242,14 @@
 <td>Public test drive passed</td>
 </tr>
 <tr>
-<td>Workbench, DSPA, Playground</td>
-<td>Services Running; native pipeline runs submitted</td>
-<td>Individual services ready; complete journeys under test</td>
+<td>Workbench and DSPA</td>
+<td>Running; actual distributed jobs and native optimization pipeline results inspected</td>
+<td>Individual notebook and pipeline paths passed</td>
+</tr>
+<tr>
+<td>Native Playground</td>
+<td>Qwen chat; returns policy with clickable citation; unsupported facts rejected; actual MCP stock and proposal results</td>
+<td>Browser test drive passed; temporary scoped MCP credential expires September 22 at 17:57 UTC</td>
 </tr>
 <tr>
 <td>Native Trainer</td>
@@ -2134,7 +2259,7 @@
 <tr>
 <td>Feature Store</td>
 <td>Feast0.65 Ready; eight-SKU materialization; authenticated200 and anonymous401</td>
-<td>Runtime passed; native UI review in progress</td>
+<td>Runtime and native overview, lineage, features, historical dataset, and connected Aurora Workbench passed</td>
 </tr>
 <tr>
 <td>Prompt registry</td>
@@ -2149,7 +2274,7 @@
 <tr>
 <td>GPU models</td>
 <td>Two Qwen4B replicas Ready on distinct hosts; 8/8 authorized requests, EPP +8, backend successful counts +2/+6; anonymous401</td>
-<td>Two-node routing and backend use passed; comparative efficiency not measured</td>
+<td>Two-node routing passed; matched same-GPU engine comparison passed (48/48 requests); no causal distributed-routing efficiency claim</td>
 </tr>
 <tr>
 <td>AutoML</td>
@@ -2163,8 +2288,8 @@
 </tr>
 <tr>
 <td>EvalHub/Garak</td>
-<td>A real quick evaluation completed; one probe, attack_success_rate 1, benchmark pass=false</td>
-<td>Completed marker test; meaningful security assessment under review</td>
+<td><a href="../../labs/owasp-evaluations/">Matched OWASP pair</a>:33 responses per target;both 42.42% ASR,14 detector hits;benchmark and overall Fail</td>
+<td>Complete raw JSONL/HTML downloaded from MLflow and hash-verified;NeMo blocked 0/33 in this broader corpus;four probes, not all ten risks</td>
 </tr>
 <tr>
 <td>Model onboarding/scoring</td>
@@ -2177,6 +2302,11 @@
 <td>Private administrator-led preview passed the documented gates</td>
 </tr>
 <tr>
+<td>Predictive TrustyAI</td>
+<td>Native Project Settings shows installed; actual OVMS capture; baseline SPD0/DIR1, promotion SPD−0.30/DIR0.6667; demand drift measured</td>
+<td>Functional metrics passed; native chart collection under final review</td>
+</tr>
+<tr>
 <td>MIG / NeMoClaw</td>
 <td>Prerequisites and pinned deployment options researched</td>
 <td>Not yet validated</td>
@@ -2184,7 +2314,7 @@
 </tbody>
 </table>
 <p>The active cloud configuration has a conservative maximum of 11 physical GPUs, including every pool maximum and upgrade surge. The user-authorized hard ceiling is 16. These are allocation bounds, not the number of GPUs running continuously, and optional profiles cannot be combined without recalculating them.</p>
-<p>The original Garak quick run used a DAN marker detector with one example. A matched marker is not sufficient evidence of harmful behavior; its result is being replaced by a better documented assessment with retained responses. The UI percentage is the attack-success metric, not a safety score. The aggregate evaluation status and per-benchmark result disagreed; use the per-benchmark result. The complete result JSON was explicitly exported through the MLflow SDK and confirmed in S3. Automatic report delivery is being checked separately from recorded metrics.</p>
+<p>The original Garak quick run used a one-example DAN marker detector. A marker alone does not establish harmful behavior. The final <a href="../../labs/owasp-evaluations/">matched OWASP pair</a> has complete per-response evidence and explicit matching thresholds: lower ASR is better; a zero-hit benchmark gate corresponds to an overall transformed score threshold of 1.0. Both final results fail consistently. The current deterministic NeMo regex rules do not improve the selected 33-response corpus. This is a four-probe subset mapped to the 2025 taxonomy, with separate controls and untested gaps for all ten risks; it is not full OWASP coverage. Report JSONL and HTML were explicitly uploaded through the workspace-aware MLflow SDK, then downloaded and SHA256-verified.</p>
 <h2 id="journey-acceptance-criteria">Journey acceptance criteria<a class="headerlink" href="#journey-acceptance-criteria" title="Permanent link">&para;</a></h2>
 <p><strong>Security:</strong> authenticated initialize/tools-list/tools-call; anonymous and unauthorized identities denied; allowed and blocked inputs; observable decisions. Direct NeMo checks and MCP IPP enforcement are separate tests. Backend traces currently identify a shared service account, not an individual visitor.</p>
 <p><strong>Platform:</strong> responsive models, enforced quotas, curated catalog, converged Argo state, and measured benchmarks with complete configurations. Multi-node claims require evidence of distinct nodes.</p>

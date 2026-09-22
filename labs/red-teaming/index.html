@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://weslleyrosalem.com/rhoai-showroom/labs/red-teaming/">
       
       
-        <link rel="prev" href="../trustyai/">
+        <link rel="prev" href="../model-monitoring/">
       
       
         <link rel="next" href="../rag/">
@@ -983,6 +983,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1158,6 +1166,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1471,6 +1507,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../automl/" class="md-nav__link">
         
   
@@ -1695,6 +1759,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../hardware/" class="md-nav__link">
         
   
@@ -1731,6 +1823,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2063,7 +2183,7 @@
 <h1 id="security-evaluation-with-evalhub-and-garak">Security evaluation with EvalHub and Garak<a class="headerlink" href="#security-evaluation-with-evalhub-and-garak" title="Permanent link">&para;</a></h1>
 <p>Garak probes model behavior, NeMo enforces configured rails, and MCP Gateway controls tool access. An evaluation score does not certify universal safety. OpenShift AI 3.5 provides evaluation providers through EvalHub; its MCP interface is Technology Preview. See <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/evaluating_ai_systems/evaluating-llms-with-evalhub_evaluate">EvalHub</a> and <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/evaluating_ai_systems/evalhub-mcp-server_evaluate">EvalHub MCP</a>.</p>
 <h2 id="prepare-the-experiment">Prepare the experiment<a class="headerlink" href="#prepare-the-experiment" title="Permanent link">&para;</a></h2>
-<p>Use an authorized synthetic target, an available model endpoint, and a healthy EvalHub database. Discover provider and benchmark IDs from the installed API; do not assume an old example matches the current request schema. Follow the <a href="../evaluation/">evaluation lab</a> for this showroom's actual runs.</p>
+<p>Use an authorized synthetic target, an available model endpoint, and a healthy EvalHub database. Discover provider and benchmark IDs from the installed API; do not assume an old example matches the current request schema. Follow the <a href="../owasp-evaluations/">matched OWASP lab</a> for the actual 33-response baseline/NeMo pair, precise detector interpretation, and all ten 2025 risks with explicit gaps.</p>
 <p>Compare two runs only when model, version, sampling, parameters, and test set match:</p>
 <table>
 <thead>

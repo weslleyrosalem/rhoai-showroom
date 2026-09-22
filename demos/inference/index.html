@@ -774,6 +774,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#extend-the-test-drive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extend the test drive
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1110,6 +1121,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1282,6 +1301,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1526,6 +1573,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/automl/" class="md-nav__link">
         
   
@@ -1750,6 +1825,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/hardware/" class="md-nav__link">
         
   
@@ -1786,6 +1889,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2150,6 +2281,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#extend-the-test-drive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extend the test drive
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2210,8 +2352,8 @@
 </tr>
 <tr>
 <td>25–30 min</td>
-<td>Hardware profiles and capacity guard</td>
-<td>Explain how one GPU, four-GPU tensor parallelism, and multiple replicas change deployment choices. Show prepared manifests and their honest readiness status; discuss what the next controlled comparison would measure.</td>
+<td>Measured engine comparison and hardware profiles</td>
+<td>Show the same-L40S Transformers reference versus vLLM results in the benchmark lab. Explain serialized versus continuous batching, then distinguish measured TP1 results from the unmeasured TP4 and eight-GPU plans.</td>
 </tr>
 </tbody>
 </table>
@@ -2234,13 +2376,14 @@
 <h2 id="recorded-rehearsal-and-interpretation">Recorded rehearsal and interpretation<a class="headerlink" href="#recorded-rehearsal-and-interpretation" title="Permanent link">&para;</a></h2>
 <p>The September 22 rehearsal completed six successful requests. The final repeated prompt generated <strong>1,840 local prefix-cache hit tokens from 1,853 query tokens</strong> in its isolated counter window. Five earlier windows overlapped science traffic and must not be used as an isolated comparison. The runtime reported prefix caching enabled. External prefix-cache counter deltas were zero.</p>
 <p>Client-observed SSE first-token arrival nearly matched total response arrival, suggesting buffering along the gateway path. Show those values as <strong>client-observed timing</strong>, not engine TTFT. Use vLLM histograms for engine behavior. Do not calculate a headline speedup from six shared-instance requests.</p>
+<p>The native LLM Traffic dashboard discovers projects from actual <code>kserve_vllm:num_requests_running</code> series. In this installation, collectors expose the model project as <code>exported_namespace</code>, while the collecting namespace is <code>redhat-ods-monitoring</code>. Both Qwen backends and the private Gateway were successfully scraped after scoped monitoring ingress was applied. Refresh the project selector after new target discovery; do not invent namespace labels to populate a graph.</p>
 <p>Useful Prometheus metrics include <code>vllm:prefix_cache_hits_total</code>, <code>vllm:prefix_cache_queries_total</code>, <code>vllm:kv_cache_usage_perc</code>, <code>vllm:num_requests_running</code>, <code>vllm:num_requests_waiting</code>, request latency, and token counters. GPU utilization comes from the installed NVIDIA/DCGM integration; verify the metric and labels available in this cluster.</p>
 <h2 id="claims-to-keep-precise">Claims to keep precise<a class="headerlink" href="#claims-to-keep-precise" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Local prefix cache:</strong> demonstrated by the measured token-counter delta.</li>
 <li><strong>llm-d request processing:</strong> demonstrated on the private Qwen listener with two successful authenticated responses and a matching picker-counter increase. The counter also counted the rejected anonymous request, so it is not itself a successful-inference count. A shared MaaS request without an explicit model header bypassed EPP during testing. Adding <code>X-Gateway-Model-Name</code> with the exact same publisher model ID as the JSON body returned a complete 200 response and increased the Llama picker counter. However, repeated GuideLLM streaming with that header later failed with empty response payloads under both HTTP/2 and HTTP/1.1. The sustained runner and cache rehearsal therefore use the working standard MaaS path without the header. Do not attribute their traffic to successful EPP processing.</li>
 <li><strong>KV disaggregation or transfer:</strong> not demonstrated by a local prefix hit. Show only after a configured connector and transfer counters prove it.</li>
-<li><strong>vLLM versus Transformers:</strong> not measured in this rehearsal. A valid comparison uses the same GPU, model revision, precision, token lengths, concurrency, and measurement window.</li>
+<li><strong>vLLM versus Transformers:</strong> a separate controlled single-repetition comparison used the same L40S, Qwen revision, BF16, image, resources, prompts, and output cap with prefix caching disabled. vLLM output throughput was 2.58× the serialized batch-one reference at concurrency 1 and 4.53× at concurrency 2. All 48 measured requests succeeded. Show the <a href="../../labs/benchmark/#measured-rehearsal-september-22-2026">raw results and limitations</a>; this is not a claim about every optimized Transformers stack or an llm-d routing benefit.</li>
 <li><strong>Multiple replicas versus llm-d:</strong> reserve equal GPU capacity and use the same workload. Compare achieved throughput, errors, latency distributions, and cache behavior, including warmup and routing evidence.</li>
 </ul>
 <p>If additional GPUs remain unavailable, complete the working single-GPU sequence and show the capacity guard blocking the larger topology. Do not poll ROSA or OCM during the demo; monitor node and workload readiness with <code>oc</code> only.</p>
@@ -2255,7 +2398,7 @@
 </code></pre></div>
 <p>Use <code>--require-backends 1</code> for the single-node rehearsal. A two-node result requires two Ready backends on distinct nodes. The optional placement measurement sends eight additional requests with concurrency two, then records per-backend request and cache counter deltas. During the September 22 rehearsal, all eight succeeded; the picker counted eight and the two backends handled two and six requests. Local prefix hits increased by 16 and 1,136 tokens. These observations establish actual serving on both hosts; they do not compare routing algorithms, prove a speedup, or demonstrate cross-node KV transfer.</p>
 <h2 id="private-qwen-access">Private Qwen access<a class="headerlink" href="#private-qwen-access" title="Permanent link">&para;</a></h2>
-<p>Use an operator-authorized port-forward; the Gateway has no public endpoint and its NetworkPolicy admits only the specifically selected native Playground OGX pods on TCP8080; other pods remain denied. The OGX hop is same-namespace HTTP, while browser ingress and operator port-forward use TLS separately. The native KServe AuthPolicy still requires a valid Kubernetes identity with model access. Do not use the MaaS API key for this separate native-auth path.</p>
+<p>Use an operator-authorized port-forward; the Gateway has no public endpoint and its NetworkPolicy admits only the specifically selected native Playground OGX pods on TCP8080; other inference clients remain denied. Exact RHOAI collectors can separately scrape Gateway TCP15020. The raw Qwen TCP8000 backend accepts only its Gateway, endpoint picker, and those collectors, preventing direct application access around the Gateway authorization check. The OGX hop is same-namespace HTTP, while browser ingress and operator port-forward use TLS separately. The native KServe AuthPolicy still requires a valid Kubernetes identity with model access. Do not use the MaaS API key for this separate native-auth path.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>oc<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>ai-showroom<span class="w"> </span>service/showroom-inference-maas-gateway-class<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="m">28080</span>:8080<span class="w"> </span>--address<span class="w"> </span><span class="m">127</span>.0.0.1
 </code></pre></div>
@@ -2263,6 +2406,8 @@
 <h2 id="shared-maas-route-and-picker">Shared MaaS route and picker<a class="headerlink" href="#shared-maas-route-and-picker" title="Permanent link">&para;</a></h2>
 <p>The demonstrated client-side routing requirement is <code>X-Gateway-Model-Name: &lt;the exact model ID in the JSON body&gt;</code>. With the Llama publisher ID, the unmodified <code>/v1/chat/completions</code> endpoint returned a complete response with usage and increased <code>llm_d_epp_request_total</code>; a streaming check returned 32 content chunks and usage. The otherwise identical request without that header succeeded but did not increment EPP. The header selects the route; MaaS still validates the key, model access, subscription, and quota.</p>
 <p>Do not use the tested publisher-prefixed path as an interchangeable substitute: it returned 403 under the installed MaaS policy. The namespace-prefixed Llama path returned an empty 200 response. The one-off header result did not qualify the path for sustained traffic: later repeated GuideLLM streaming returned mostly empty responses. The sustained demonstration uses the working standard endpoint without that header; the separate private Qwen listener provides the llm-d request-path demonstration. These are observed integration behaviors, not universal behavior for every RHOAI installation.</p>
+<h2 id="extend-the-test-drive">Extend the test drive<a class="headerlink" href="#extend-the-test-drive" title="Permanent link">&para;</a></h2>
+<p>The <a href="../../labs/ahead-llmd/">AHEAD llm-d workshop</a> walks through the existing two-backend deployment, an explicit round-robin observation, and the authenticated prefix-scoring path. The short rehearsal completed 48/48 requests and recorded routing and cache counters. Use its exact limitations when interpreting latency; the measurement does not isolate a causal routing speedup.</p>
 
 
 

@@ -1,0 +1,222 @@
+{
+  "status": "MEASURED",
+  "started_at": "2026-09-22T06:10:00.425901+00:00",
+  "finished_at": "2026-09-22T06:11:30.087371+00:00",
+  "topology": {
+    "ready_backends": 2,
+    "distinct_gpu_nodes": 2,
+    "gpu_type": "NVIDIA L40S",
+    "model": {
+      "name": "aurora-qwen-4b",
+      "uri": "hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554"
+    },
+    "runtime_image": "registry.redhat.io/rhaii/vllm-cuda-rhel9@sha256:c056e61672b6aea489ad5dde0bd2f8497230f5333e87f7cf6c494eba3bfdc808",
+    "scheduler_image": "registry.redhat.io/rhoai/odh-llm-d-router-endpoint-picker-rhel9@sha256:14e57b536479e7d8b7d495000d8402ca780997994096277d131b56e6a9bcf27f",
+    "scheduler_config": "apiVersion: llm-d.ai/v1alpha1\nkind: EndpointPickerConfig\nplugins:\n- type: single-profile-handler\n- type: queue-scorer\n- type: kv-cache-utilization-scorer\n- type: prefix-cache-scorer\n- type: no-hit-lru-scorer\n- type: max-score-picker\n- parameters:\n    scheme: https\n  type: metrics-data-source\nschedulingProfiles:\n- name: default\n  plugins:\n  - pluginRef: queue-scorer\n    weight: 2\n  - pluginRef: kv-cache-utilization-scorer\n    weight: 2\n  - pluginRef: prefix-cache-scorer\n    weight: 3\n  - pluginRef: no-hit-lru-scorer\n    weight: 2\n  - pluginRef: max-score-picker\n"
+  },
+  "workload": {
+    "seconds_per_mode": 30,
+    "concurrency": {
+      "single": 1,
+      "round-robin": 2,
+      "llmd": 2
+    },
+    "output_tokens": 32,
+    "guidellm_version": "0.6.0",
+    "prompt_rows": 16,
+    "unique_questions": 4
+  },
+  "limitations": [
+    "Administrator-only loopback port-forwards bypass normal backend network access for baseline measurements.",
+    "The llm-d path includes native Gateway authentication and scheduling; baseline bypasses both.",
+    "Shared live backends, short windows, and no cache flush preclude causal routing-speedup or statistically robust tail claims.",
+    "Distinct fresh prefix salts reduce cross-mode carryover; workload shapes match, prompt bytes differ.",
+    "Two existing Qwen3 4B L40S backends replace the source lab four Llama 8B GPUs.",
+    "Local prefix caching is not cross-node KV transfer or prefill/decode disaggregation."
+  ],
+  "authentication": {
+    "anonymous_status": 401,
+    "authorized_status": 200
+  },
+  "source_workshop": {
+    "repository": "https://github.com/rhpds/llm-d-showroom",
+    "revision": "e4d63c30252ce42fa783b1a08a1706d3cda20761"
+  },
+  "runs": [
+    {
+      "mode": "single",
+      "duration_seconds": 30.0,
+      "requests": {
+        "successful": 16,
+        "errored": 0,
+        "incomplete": 0,
+        "total": 16
+      },
+      "guidellm_report_sha256": "defc1392b4367172b3d4fe9b750cbd778e0e2870a1d78d7a7ba409462dcf5aba",
+      "prompt_sha256": "990f33079fa7be43c83071d651bcaf05383c85c1342d81085977fc67933a9e23",
+      "broker_requests": 16,
+      "broker_upstream_errors": 0,
+      "client_disconnects": 0,
+      "backend_success_deltas": [
+        16.0,
+        0.0
+      ],
+      "backend_prefix_queries_delta": 9504.0,
+      "backend_prefix_hits_delta": 8832.0,
+      "observed_cache_hit_fraction": 0.9292929292929293,
+      "epp_request_delta": 0.0,
+      "broker_assignment_counts": {
+        "0": 16,
+        "1": 0,
+        "picker": 0
+      },
+      "time_to_first_token_ms": {
+        "mean": 320.58487832546234,
+        "p50": 216.43900871276855,
+        "p95": 1625.0450611114502
+      },
+      "request_latency": {
+        "mean": 0.694240540266037,
+        "p50": 0.592400074005127,
+        "p95": 1.9999289512634277
+      },
+      "requests_per_second": {
+        "mean": 0.5333333333333333,
+        "p50": 0.10270277761739284,
+        "p95": 1.6998461171220132
+      },
+      "output_tokens_per_second": {
+        "mean": 47.059926468058464,
+        "p50": 81.74756373275123,
+        "p95": 82.95860282046718
+      },
+      "prompt_token_count": {
+        "mean": 594.0,
+        "p50": 594.0,
+        "p95": 594.0
+      },
+      "output_token_count": {
+        "mean": 32.0,
+        "p50": 32.0,
+        "p95": 32.0
+      }
+    },
+    {
+      "mode": "round-robin",
+      "duration_seconds": 30.0,
+      "requests": {
+        "successful": 16,
+        "errored": 0,
+        "incomplete": 0,
+        "total": 16
+      },
+      "guidellm_report_sha256": "af0e297472730f8564d7ac9dad1cf9d98eb78aac7e719d1d8c0051a118e432d3",
+      "prompt_sha256": "3bd2b06f334d8dc05e618a2070261977cfcc90fe374f742731af6adfd9bb3010",
+      "broker_requests": 16,
+      "broker_upstream_errors": 0,
+      "client_disconnects": 0,
+      "backend_success_deltas": [
+        8.0,
+        8.0
+      ],
+      "backend_prefix_queries_delta": 9584.0,
+      "backend_prefix_hits_delta": 8256.0,
+      "observed_cache_hit_fraction": 0.8614357262103506,
+      "epp_request_delta": 0.0,
+      "broker_assignment_counts": {
+        "0": 8,
+        "1": 8,
+        "picker": 0
+      },
+      "time_to_first_token_ms": {
+        "mean": 263.1041556596756,
+        "p50": 231.77504539489746,
+        "p95": 439.26501274108887
+      },
+      "request_latency": {
+        "mean": 0.6298225522041321,
+        "p50": 0.6088640689849854,
+        "p95": 0.7253100872039795
+      },
+      "requests_per_second": {
+        "mean": 0.5333333333333334,
+        "p50": 0.08003258773198896,
+        "p95": 3.3109127479057667
+      },
+      "output_tokens_per_second": {
+        "mean": 104.63784519727639,
+        "p50": 161.0901409532588,
+        "p95": 196.65716429107277
+      },
+      "prompt_token_count": {
+        "mean": 599.0,
+        "p50": 599.0,
+        "p95": 599.0
+      },
+      "output_token_count": {
+        "mean": 32.0,
+        "p50": 32.0,
+        "p95": 32.0
+      }
+    },
+    {
+      "mode": "llmd",
+      "duration_seconds": 30.0,
+      "requests": {
+        "successful": 16,
+        "errored": 0,
+        "incomplete": 0,
+        "total": 16
+      },
+      "guidellm_report_sha256": "5f9fc253987d6e52e228932e999161f3df12be96e378417d37afe5708fd4e7f9",
+      "prompt_sha256": "e2b6d15d4e383725b367796079be32538b37b2e3210b7d865044d8faa48fcafe",
+      "broker_requests": 16,
+      "broker_upstream_errors": 0,
+      "client_disconnects": 0,
+      "backend_success_deltas": [
+        0.0,
+        16.0
+      ],
+      "backend_prefix_queries_delta": 9552.0,
+      "backend_prefix_hits_delta": 8832.0,
+      "observed_cache_hit_fraction": 0.9246231155778895,
+      "epp_request_delta": 16.0,
+      "broker_assignment_counts": {
+        "0": 0,
+        "1": 0,
+        "picker": 16
+      },
+      "time_to_first_token_ms": {
+        "mean": 192.54252314567566,
+        "p50": 183.17317962646484,
+        "p95": 251.36089324951172
+      },
+      "request_latency": {
+        "mean": 0.5829637348651886,
+        "p50": 0.5784199237823486,
+        "p95": 0.6366100311279297
+      },
+      "requests_per_second": {
+        "mean": 0.5333333333333333,
+        "p50": 0.07894344362555498,
+        "p95": 3.485893708725406
+      },
+      "output_tokens_per_second": {
+        "mean": 115.75649822040882,
+        "p50": 157.05474425222798,
+        "p95": 162.7465466397641
+      },
+      "prompt_token_count": {
+        "mean": 597.0,
+        "p50": 597.0,
+        "p95": 597.0
+      },
+      "output_token_count": {
+        "mean": 32.0,
+        "p50": 32.0,
+        "p95": 32.0
+      }
+    }
+  ],
+  "interpretation": "Functional inference, authentication, two-backend use, installed prefix scoring, and observed cache reuse. Short shared-environment end-to-end samples do not establish a causal llm-d speedup or four-GPU scalability."
+}

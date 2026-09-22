@@ -983,6 +983,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1130,6 +1138,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#native-browser-acceptance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native browser acceptance
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1238,6 +1257,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1482,6 +1529,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../automl/" class="md-nav__link">
         
   
@@ -1706,6 +1781,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../hardware/" class="md-nav__link">
         
   
@@ -1742,6 +1845,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2062,6 +2193,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#native-browser-acceptance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native browser acceptance
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2097,10 +2239,10 @@
 <p>The native upload uses the actual IBM Granite 125M English embedding model with 768 dimensions and pgvector. The previously validated AutoRAG index uses MiniLM with 384 dimensions and remains separate. Its optimization score does not automatically apply to this Qwen/Granite combination.</p>
 <h2 id="mcp-test-drive">MCP test drive<a class="headerlink" href="#mcp-test-drive" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Connect <strong>Aurora Supply</strong> from the MCP asset list using your own short-lived OpenShift token in the native connection dialog. Do not paste tokens into chat, source files, or the ConfigMap. The current release uses an explicit MCP connection token; it does not automatically reuse the dashboard login for this connection.</li>
+<li>Connect <strong>Aurora Supply</strong> from the MCP asset list using your own short-lived OpenShift token or the administrator-issued, scoped showroom visitor token in the native connection dialog. Do not paste tokens into chat, source files, or the ConfigMap. The current release uses an explicit MCP connection token; it does not automatically reuse the dashboard login for this connection.</li>
 <li>Inspect and enable the read-only stock and replenishment tools.</li>
 <li>Ask: <strong>Use the Aurora tools to check stock and the replenishment recommendation for AS-001. State the proposed quantity, total, and approver. Do not create an order.</strong></li>
-<li>Inspect both tool calls. The current historical fixture returns <strong>346 units</strong>, <strong>14,532 demo currency units</strong>, and <strong>operations manager</strong> approval. The result must say that no order was created.</li>
+<li>Inspect the stock tool response, then ask <strong>Call aurora_get_replenishment_recommendation for AS-001 and show the calculation and approval role.</strong> Inspect that tool response in the new turn. The current UI may display only one tool-response panel when a turn calls multiple tools. The current historical fixture returns <strong>346 units</strong>, <strong>14,532 demo currency units</strong>, and <strong>operations manager</strong> approval. The result must say that no order was created.</li>
 <li>Change the SKU and inspect how the grounded tool result changes. Explain why caller authorization, model behavior, and human approval are separate controls.</li>
 </ol>
 <p>The gateway validates the actual caller and applies the existing MCP/NeMo controls. The default OGX service account is not granted tool access. Native Qwen serving also performs TokenReview and model-specific authorization; its placeholder provider credential cannot authorize a request.</p>
@@ -2109,6 +2251,9 @@
 <p>On September 22, 2026, real user-authenticated <code>/v1/responses</code> calls completed with <strong>file_search_call + message</strong> in 5.35 seconds and <strong>mcp_list_tools + two mcp_call items + message</strong> in 2.03 seconds. These are individual acceptance timings, not performance benchmarks. The policy response contained the correct deadline and a raw document identifier; inspect the actual source chunk if the UI does not render a clickable citation.</p>
 <p>The original Llama runtime returns a specific vLLM 400 for automatic tool choice because its parser flags are absent. The upstream streaming path exposed that as OGX 500. Selecting the tested Qwen model resolves this capability mismatch without restarting the original model. Plain Llama Responses generation remains valid.</p>
 <p>Sources: <a href="https://huggingface.co/ibm-granite/granite-embedding-125m-english">IBM Granite embedding model</a>, <a href="https://github.com/opendatahub-io/odh-dashboard/tree/main/packages/gen-ai">official OpenShift AI dashboard source</a>.</p>
+<h2 id="native-browser-acceptance">Native browser acceptance<a class="headerlink" href="#native-browser-acceptance" title="Permanent link">&para;</a></h2>
+<p>The actual dashboard test drive passed on September 22, 2026: Qwen chat; TXT upload and retrieval; a clickable citation with the exact 30-day policy chunk; refusal to invent an absent bank-account number; and authenticated stock/replenishment tool use with the scoped <code>showroom-visitor</code> identity. The tool panels showed stock 45, forecast 130.26, target stock 391, proposal 346, total 14,532, <code>operations_manager</code>, the recorded MLflow run, and <code>order_created: false</code>. The forecast origin is December 31, 2025.</p>
+<p>Before the exercise, set the Prompt tab to explain that all business data is synthetic and historical, answers require sources or tools, missing evidence must be acknowledged, and purchase execution requires human approval. Keep the model display's individual response timings separate from GuideLLM benchmark measurements.</p>
 
 
 

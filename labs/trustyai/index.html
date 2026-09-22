@@ -16,7 +16,7 @@
         <link rel="prev" href="../guardrails/">
       
       
-        <link rel="next" href="../red-teaming/">
+        <link rel="next" href="../model-monitoring/">
       
       
         
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#trustyai-controls-and-evaluation" class="md-skip">
+        <a href="#trustyai-predictive-monitoring-controls-and-evaluation" class="md-skip">
           Skip to content
         </a>
       
@@ -983,6 +983,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1247,6 +1255,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../red-teaming/" class="md-nav__link">
         
   
@@ -1451,6 +1487,34 @@
     
   
     Evaluations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
   
 
     
@@ -1695,6 +1759,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../hardware/" class="md-nav__link">
         
   
@@ -1731,6 +1823,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2060,7 +2180,8 @@
   
 
 
-<h1 id="trustyai-controls-and-evaluation">TrustyAI: controls and evaluation<a class="headerlink" href="#trustyai-controls-and-evaluation" title="Permanent link">&para;</a></h1>
+<h1 id="trustyai-predictive-monitoring-controls-and-evaluation">TrustyAI: predictive monitoring, controls, and evaluation<a class="headerlink" href="#trustyai-predictive-monitoring-controls-and-evaluation" title="Permanent link">&para;</a></h1>
+<p>The <a href="../model-monitoring/">predictive monitoring lab</a> configures the native project <strong>TrustyAI service</strong> with an OVMS inventory policy and measured warehouse service-level disparity and drift. That service is separate from the GenAI components below.</p>
 <p>The Aurora security journey uses the TrustyAI-managed NeMo Guardrails and EvalHub components. They connect explicit content policies with repeatable evaluation evidence. The installed operator, each service, and the results of the complete application must be checked separately.</p>
 <table>
 <thead>
@@ -2084,12 +2205,12 @@
 <tr>
 <td>EvalHub</td>
 <td>Submit, inspect, and export an evaluation</td>
-<td>Real Garak run and exported result JSON</td>
+<td>Matched baseline/guarded runs; raw reports and readable reviews persisted</td>
 </tr>
 <tr>
 <td>Garak</td>
 <td>Explain the probe, observed attack success, and limitations</td>
-<td>The unguarded model failed the executed quick benchmark</td>
+<td>Both final 33-response runs failed the zero-hit gate at 42.42% ASR; limited regex rules blocked none of this corpus</td>
 </tr>
 <tr>
 <td>MLflow</td>
@@ -2106,7 +2227,7 @@
 <p>Inspect the TrustyAI component's <code>managementState</code> and the service conditions. This reference configuration uses <code>mcpGuardrailsMode: false</code>, which allows EvalHub alongside NeMo in the tested release. Bootstrap stops if a different shared setting exists; review current consumers before adopting this configuration.</p>
 <p>Then execute the <a href="../guardrails/">guardrail checks</a> and inspect the <a href="../evaluation/">evaluation</a> and <a href="../model-score/">model-score</a> records. A Ready operator does not establish model quality or policy coverage. NeMo's demonstration regex rules are explicit examples, not a claim to stop every prompt injection or detect every kind of sensitive data.</p>
 <h2 id="broader-trustyai-capabilities">Broader TrustyAI capabilities<a class="headerlink" href="#broader-trustyai-capabilities" title="Permanent link">&para;</a></h2>
-<p>A standalone <code>TrustyAIService</code> for predictive-model fairness, explainability, or drift is a separate deployment and evaluation path. This showroom has not validated that path yet. Do not label the forecast accuracy metrics or GenAI guardrail results as a fairness or drift assessment.</p>
+<p>The isolated <code>ai-showroom-monitoring</code> project now contains a native <code>TrustyAIService</code>, persistent reference and inference records, and a real CPU OVMS deployment. The controlled promotion exercise measured SPD −0.30, DIR 0.6667, and demand drift against its fixed reference. These are synthetic service-level measurements, not causal discrimination findings or fairness certification. Follow the <a href="../model-monitoring/">model-monitoring lab</a> for exact windows, native screens, interpretation, and implementation limits. Do not label forecast accuracy or GenAI guardrail results as this separate assessment.</p>
 <p>The <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/evaluating_ai_systems/index">OpenShift AI 3.5 evaluation documentation</a> describes the native evaluation workflow. Use the <a href="../../operations/validation/">validation record</a> to decide which sections are ready for a live demonstration.</p>
 
 

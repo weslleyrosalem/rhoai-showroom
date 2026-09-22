@@ -983,6 +983,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1158,6 +1166,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1382,6 +1418,34 @@
     
   
     Evaluations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
   
 
     
@@ -1706,6 +1770,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../hardware/" class="md-nav__link">
         
   
@@ -1742,6 +1834,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2110,17 +2230,23 @@
 <td>Review answer correctness, grounding, context quality, and judge bias together. A completed pipeline can still produce weak answers.</td>
 </tr>
 <tr>
-<td>Garak <code>quick</code></td>
-<td>One DAN probe; attack success rate 1.0; benchmark threshold 0.3; benchmark failed</td>
-<td>The unguarded base model failed this narrow smoke test. This does not measure every attack or the separately guarded assistant.</td>
+<td>Garak matched OWASP subset</td>
+<td>Same 33 responses per target; baseline and NeMo both 14/33 detector hits, 42.42% ASR;benchmark and overall Fail</td>
+<td>No measured improvement from the configured regex rails on this corpus. Read each detector predicate; this is not all ten risks or a count of real compromises.</td>
+</tr>
+<tr>
+<td>Historical Garak <code>quick</code></td>
+<td>One DAN marker match; metric 1.0; benchmark failed</td>
+<td>A marker match alone does not prove harmful compliance. The original raw response was not retained; use the new complete evidence pair for presentation.</td>
 </tr>
 <tr>
 <td>MCP business tools</td>
 <td>Deterministic inventory, price, approval role, and read-only behavior</td>
-<td>These checks validate the application contract. The assistant selects tools in code, so this is not a model tool-selection benchmark.</td>
+<td>The guided RAG app selects tools in code. Native Qwen tool calls are a separate functional test; neither is a statistical tool-selection benchmark.</td>
 </tr>
 </tbody>
 </table>
+<p>Use the <a href="../owasp-evaluations/">matched OWASP evaluation</a> for exact final job IDs, MLflow runs, response artifacts, and the complete ten-risk map with explicit gaps. The observed equal ASR does not justify model promotion.</p>
 <p>The first Garak evaluation is <code>d0ac37c7-63ab-4335-93bf-b1a67508afdf</code>, with MLflow run <code>54397cc5023c4427b9c69cacb51ed0fb</code>. The native AutoML run is <code>8dfa1f96-ef23-48c1-b1fb-6a1dda7d7a78</code>. These are observed showroom records, not IDs to copy into a new cluster.</p>
 <h2 id="inspect-native-evalhub-metadata">Inspect native EvalHub metadata<a class="headerlink" href="#inspect-native-evalhub-metadata" title="Permanent link">&para;</a></h2>
 <p>From the configured workbench, use the helper with your mounted identity:</p>
@@ -2135,7 +2261,7 @@
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>python3<span class="w"> </span>scripts/science.py<span class="w"> </span>eval-status<span class="w"> </span>--job-id<span class="w"> </span>&lt;job-id&gt;
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>python3<span class="w"> </span>scripts/science.py<span class="w"> </span>eval-export<span class="w"> </span>--job-id<span class="w"> </span>&lt;job-id&gt;
 </code></pre></div>
-<p>EvalHub records benchmark thresholds and an overall result. This release returned an overall pass while the Garak benchmark failed. The onboarding gate therefore requires every mandatory benchmark to pass and requires a reviewer to resolve inconsistent aggregation. Do not promote this model on the observed score. <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/evaluating_ai_systems/evalhub-use-the-dashboard-to-evaluate-your-system_evaluate">Official evaluation and threshold documentation</a>.</p>
+<p>EvalHub records benchmark thresholds and an overall result. Earlier runs defaulted to an overall threshold of 0.5, so their transformed aggregate passed while the strict benchmark gate failed. The final matched pair explicitly sets the overall threshold to 1.0 and the benchmark threshold to 0.0; both gates consistently fail. The onboarding gate therefore requires every mandatory benchmark to pass and requires a reviewer to resolve inconsistent aggregation. Do not promote this model on the observed score. <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/evaluating_ai_systems/evalhub-use-the-dashboard-to-evaluate-your-system_evaluate">Official evaluation and threshold documentation</a>.</p>
 <h2 id="review-before-onboarding">Review before onboarding<a class="headerlink" href="#review-before-onboarding" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Record model source, license, immutable revision, hardware requirements, and serving configuration.</li>
@@ -2144,7 +2270,7 @@
 <li>Verify application behavior, authorization, quotas, latency, and resource use under the intended workload.</li>
 <li>Attach evaluation artifacts and model identifiers to the approval record. A human approves promotion; an incomplete, failed, or inconsistent mandatory check blocks it.</li>
 </ol>
-<p>EvalHub can generate evaluation cards with model, benchmark, result, and environment context when an experiment/export is configured. Verify the saved artifact rather than assuming that card generation guarantees persistence. The showroom exports the actual result JSON through the workspace-aware MLflow SDK because its adapter report uploads encountered HTTP 307. <a href="https://docs.redhat.com/documentation/red_hat_openshift_ai_self-managed/3.5/html/evaluating_ai_systems/evalhub-evaluation-cards_evaluate">Official evaluation-card documentation</a>.</p>
+<p>EvalHub can generate evaluation cards with model, benchmark, result, and environment context when an experiment/export is configured. Verify the saved artifact rather than assuming that card generation guarantees persistence. The showroom exports the actual result JSON through the workspace-aware MLflow SDK because its adapter report uploads encountered HTTP 307. The final pair also preserves the complete raw JSONL and HTML reports through explicit SDK uploads and verifies downloaded hashes. <a href="https://docs.redhat.com/documentation/red_hat_openshift_ai_self-managed/3.5/html/evaluating_ai_systems/evalhub-evaluation-cards_evaluate">Official evaluation-card documentation</a>.</p>
 <p>For model-driven tool selection, the 3.5 SDG Hub MCP evaluation workflow measures tool recall, precision, order, parameter matching, and judge dimensions. It requires a separate harness and benchmark adapter; the showroom has not executed it. A compatible local MaaS endpoint can replace the default external teacher/judge, so GPT access is not required. <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/customize_models_for_gen_ai_and_agentic_ai_applications/generate-evaluation-data-for-tool-calling_custom-models">Official MCP evaluation workflow</a>.</p>
 
 

@@ -1077,6 +1077,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1249,6 +1257,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1493,6 +1529,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/automl/" class="md-nav__link">
         
   
@@ -1717,6 +1781,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/hardware/" class="md-nav__link">
         
   
@@ -1753,6 +1845,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2196,6 +2316,8 @@
 </code></pre></div>
 <p>The wrapper prints sanitized start/finish records and actual report summaries. Each completed segment retains <code>benchmarks.json</code>, <code>benchmarks.csv</code>, <code>benchmarks.html</code>, and a redacted <code>console.log</code>. <code>/results/history.jsonl</code> appends across restarts. Export the results directory to a private local location using <code>oc cp</code>; if the local WebSocket transport fails, set <code>KUBECTL_REMOTE_COMMAND_WEBSOCKETS=false</code> for that copy. Inspect an exported HTML report locally. There is no public unauthenticated results server.</p>
 <p>For dashboards, correlate the same UTC window across successful request counts, prompt/generated tokens, latency distributions, prefix-cache hits and queries, GPU utilization, and waiting/running requests. Keep the <code>showroom-load</code> subscription and <code>X-Showroom-Client: guidellm-sustained</code> traffic class identifiable. Client TTFT across the gateway can include buffering; it is not interchangeable with engine TTFT.</p>
+<p>The September 22 qualification completed a 0.25-rps block with 150 successful requests and a 0.5-rps block with 300 successful requests, both with zero reported errors. Each retained one incomplete request at the segment duration boundary. The 0.5-rps block generated 38,400 output tokens with a 2.877-second mean request latency. These are completed segment observations, not guarantees for the remainder of the run.</p>
+<p>In the installed native MaaS Usage dashboard, the summary/table uses token-counter increase over the selected dashboard range. The time-series chart uses a fixed rolling two-hour increase. Its final plotted value can therefore differ from the summary when the selected range is not two hours. Neither value is the unprocessed lifetime counter; inspect the query and align windows before comparing them.</p>
 <h2 id="stop-and-retain">Stop and retain<a class="headerlink" href="#stop-and-retain" title="Permanent link">&para;</a></h2>
 <p>The absolute deadline ends load without a running laptop or an active chat. To stop early, delete only <code>job/showroom-guidellm-20260922</code> in <code>ai-showroom</code>; leave the PVC for evidence. Do not delete the original model, shared subscriptions, or an operator. Revoke the dedicated key through the MaaS API/UI after collecting evidence if early termination is required. Keep the PVC until reports have been exported and checked.</p>
 <p>Do not add ROSA or OCM polling to the load runner, dashboards, or a monitor. In this environment, the user explicitly prohibits frequent control-plane API requests. Inspect Kubernetes nodes and workloads with <code>oc</code> only; cloud operations remain a separate, bounded activity.</p>

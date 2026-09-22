@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://weslleyrosalem.com/rhoai-showroom/labs/evaluation/">
+        <link rel="canonical" href="https://weslleyrosalem.com/rhoai-showroom/labs/model-monitoring/">
       
       
-        <link rel="prev" href="../mlflow/">
+        <link rel="prev" href="../trustyai/">
       
       
-        <link rel="next" href="../owasp-evaluations/">
+        <link rel="next" href="../red-teaming/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Evaluations - OpenShift AI Showroom</title>
+        <title>Predictive model monitoring - OpenShift AI Showroom</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#evalhub-and-garak" class="md-skip">
+        <a href="#monitor-aurora-inventory-service-levels" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Evaluations
+              Predictive model monitoring
             
           </span>
         </div>
@@ -1183,10 +1183,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../model-monitoring/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1202,6 +1229,81 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-business-scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The business scenario
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-screens-and-test-drive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native screens and test drive
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measured-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured results
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-and-tls-prerequisite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment and TLS prerequisite
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#access-and-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access and limits
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1407,37 +1509,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Evaluations
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../evaluation/" class="md-nav__link">
         
   
   
@@ -1453,48 +1528,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#interpretation-and-observed-release-limitations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Interpretation and observed release limitations
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#preserve-the-measured-result" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Preserve the measured result
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2139,10 +2172,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#interpretation-and-observed-release-limitations" class="md-nav__link">
+  <a href="#the-business-scenario" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Interpretation and observed release limitations
+        The business scenario
       
     </span>
   </a>
@@ -2150,10 +2183,43 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#preserve-the-measured-result" class="md-nav__link">
+  <a href="#native-screens-and-test-drive" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Preserve the measured result
+        Native screens and test drive
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measured-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured results
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-and-tls-prerequisite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment and TLS prerequisite
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#access-and-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access and limits
       
     </span>
   </a>
@@ -2180,23 +2246,80 @@
   
 
 
-<h1 id="evalhub-and-garak">EvalHub and Garak<a class="headerlink" href="#evalhub-and-garak" title="Permanent link">&para;</a></h1>
-<p>EvalHub is deployed in the platform namespace after MLflow. PostgreSQL credentials stay outside Git. The showroom namespace is labeled as an EvalHub tenant. TrustyAI must use its full RHOAI mode: <code>mcpGuardrailsMode=false</code> includes both NeMo and EvalHub; <code>true</code> enables only the NeMo controller.</p>
-<p>Set <code>EVALHUB_URL</code> to the discovered EvalHub Route, and set <code>MAAS_BASE_URL</code> and <code>MAAS_MODEL_ID</code> from your model connection. The evaluation references <code>showroom-maas-key</code>; do not paste an API key into a notebook or request file.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python3<span class="w"> </span>scripts/science.py<span class="w"> </span>eval-submit
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>python3<span class="w"> </span>scripts/science.py<span class="w"> </span>eval-status<span class="w"> </span>--job-id<span class="w"> </span>&lt;job-id&gt;
+<h1 id="monitor-aurora-inventory-service-levels">Monitor Aurora inventory service levels<a class="headerlink" href="#monitor-aurora-inventory-service-levels" title="Permanent link">&para;</a></h1>
+<p><strong>Customer question:</strong> Does an apparently neutral allocation policy still treat Aurora's warehouse demand consistently when a promotion changes the workload?</p>
+<p>Use the <strong>AI Showroom — Predictive Monitoring</strong> project (<code>ai-showroom-monitoring</code>). This separate project contains a native <code>TrustyAIService</code>, its persistent data, and one real OpenVINO Model Server (OVMS) deployment. OpenShift AI 3.5 supports this predictive-model monitoring integration with OVMS; its documentation warns against mixing unsupported model deployments into the same monitoring namespace. The original generative models remain in their own projects. <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/monitoring_your_ai_systems/configuring-trustyai_monitor">Red Hat monitoring documentation</a>.</p>
+<h2 id="the-business-scenario">The business scenario<a class="headerlink" href="#the-business-scenario" title="Permanent link">&para;</a></h2>
+<p>The deployed <strong>Aurora inventory — expedited review policy</strong> is a transparent ONNX classifier. It returns <code>1</code> when seven-day demand exceeds available stock. That result requests expedited human review; it never creates an order. Warehouse zone has zero weight in the graph. This is a deterministic demonstration model, not the learned Ray demand forecast or a production allocation recommendation.</p>
+<p>Each test sends 100 real OVMS predictions, with 50 East and 50 West warehouse observations. Normal inventory produces the same expedited-review rate in both groups. In the promotion scenario, only East demand increases by 60 units. The native KServe agent captures the actual requests and responses over verified TLS; TrustyAI computes the metrics from those records.</p>
+<p>A change in group outcome rates shows a service-level disparity in this synthetic workload. It does not establish causal discrimination, legal fairness, a model-quality guarantee, or a reason to equalize decisions despite different operational needs. Inspect the changed demand and inventory conditions before deciding what action is appropriate.</p>
+<h2 id="native-screens-and-test-drive">Native screens and test drive<a class="headerlink" href="#native-screens-and-test-drive" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Open <strong>Projects → AI Showroom — Predictive Monitoring → Settings</strong> and inspect the configured <strong>TrustyAI service</strong>.</li>
+<li>Inspect the project's OVMS model deployment. Explain its three inputs: warehouse zone, seven-day demand, and available units; its output is expedited review.</li>
+<li>In the Aurora Workbench terminal, use the published repository helper to send a normal batch, then a promotion batch. Inspect the returned group rates, actual inference count, capture confirmation, and TrustyAI results.</li>
+<li>Inspect the scheduled metrics and their history. Statistical parity difference (SPD) is a difference in outcome proportions; disparate impact ratio (DIR) is a ratio. Their neutral references are <code>0</code> and <code>1</code>, respectively. For this request, SPD is West minus East and DIR is West divided by East. The installed service's generated prose reverses its group labels; use the observed rates and arithmetic below.</li>
+<li>Restore the normal batch after discussing the effect. This changes the last 100 observations without deleting the history.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>scripts/trustyai_metrics.py<span class="w"> </span>baseline<span class="w"> </span>--schedule
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>python<span class="w"> </span>scripts/trustyai_metrics.py<span class="w"> </span>promotion
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>python<span class="w"> </span>scripts/trustyai_metrics.py<span class="w"> </span>baseline
 </code></pre></div>
-<p>For the customer walkthrough, use the <a href="../owasp-evaluations/">matched OWASP evaluation and ten-risk map</a>. It has explicit expectations, complete per-probe evidence, and consistent overall/benchmark gates.</p>
-<p>The installed Garak provider exposes benchmark <code>quick</code>. The API request uses <code>benchmarks[].id</code>, not <code>benchmark_id</code>. The historical smoke test runs one DAN probe against the local LLM and records its detector metric in MLflow. Use the documented OWASP pair for the main demonstration.</p>
-<h2 id="interpretation-and-observed-release-limitations">Interpretation and observed release limitations<a class="headerlink" href="#interpretation-and-observed-release-limitations" title="Permanent link">&para;</a></h2>
-<p>Lower attack success rate is better. In the original DAN smoke run, a measured rate of 1.0 means its string detector matched a DAN marker. This fails that benchmark threshold, but a marker match alone does not establish harmful compliance or a successful attack. The original response must be reviewed; its raw report was not retained. Inspect each benchmark's <code>test.pass</code>; the observed aggregate pass flag was inconsistent with that benchmark.</p>
-<p>The adapter reported HTML/JSONL artifact upload success while its MLflow PUT requests returned HTTP 307 and the S3 prefix was empty. Metrics and EvalHub results were present. Do not claim reports were persisted without checking the artifact store. MLflow with workspaces rejects a client-specified <code>artifact_location</code>, so disabling workspace isolation is not used as a workaround.</p>
-<p><a href="https://github.com/eval-hub/eval-hub">EvalHub API source</a> and <a href="https://github.com/opendatahub-io/trustyai-service-operator">TrustyAI operator</a>.</p>
-<h2 id="preserve-the-measured-result">Preserve the measured result<a class="headerlink" href="#preserve-the-measured-result" title="Permanent link">&para;</a></h2>
-<p>Observed job <code>d0ac37c7-63ab-4335-93bf-b1a67508afdf</code> completed on September 22, 2026. Its benchmark metrics were recorded in MLflow run <code>54397cc5023c4427b9c69cacb51ed0fb</code>. The following workaround persisted and verified the actual EvalHub result JSON:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python3<span class="w"> </span>scripts/science.py<span class="w"> </span>eval-export<span class="w"> </span>--job-id<span class="w"> </span>&lt;job-id&gt;
+<p>From a laptop, also pass <code>--expected-server</code> and <code>--expected-user</code> for every mutating phase. The helper verifies the target model ownership before forwarding the current token. In the Workbench, the mounted cluster identity and fixed showroom model are used directly.</p>
+<p>The first setup requires a reference batch before those steps:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>scripts/trustyai_metrics.py<span class="w"> </span>reference
 </code></pre></div>
-<p>Run it from the configured workbench with <code>EVALHUB_URL=https://evalhub.redhat-ods-applications.svc:8443</code> and <code>EVALHUB_CA=/etc/service-ca/service-ca.crt</code>. The artifact is <code>evaluation/evalhub-result.json</code>. Original HTML/JSONL reports remain unavailable in this observed run. See <a href="../model-score/">model scores and onboarding gates</a> for how failed or incomplete evidence affects promotion.</p>
+<p>Run <code>reference</code> once per new dataset. The script preserves the actual OVMS predictions in a named <code>AURORA_REFERENCE</code> dataset. Repeated calls append observations; they do not erase history. Run these batches exclusively; concurrent traffic to the same model can satisfy an aggregate count check. The helper waits for 100 additional captured observations before calculating the current batch. A capture timeout stops the demonstration rather than displaying stale metrics.</p>
+<p>MeanShift compares the current numeric distribution with that reference. A low p-value is evidence against its no-shift hypothesis under the test's assumptions, <strong>not</strong> the probability that the model is unsafe or that the hypothesis is true. The deliberately simple, partly discrete synthetic fixture is useful for demonstrating a controlled change; use distribution-appropriate tests and representative reference data for real monitoring.</p>
+<h2 id="measured-results">Measured results<a class="headerlink" href="#measured-results" title="Permanent link">&para;</a></h2>
+<p>The actual September 22, 2026 acceptance run produced:</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th style="text-align: right;">East expedited review</th>
+<th style="text-align: right;">West expedited review</th>
+<th style="text-align: right;">SPD, West − East</th>
+<th style="text-align: right;">DIR, West / East</th>
+<th style="text-align: right;">Demand MeanShift p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Normal inventory</td>
+<td style="text-align: right;">60%</td>
+<td style="text-align: right;">60%</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">1.0</td>
+</tr>
+<tr>
+<td>East promotion</td>
+<td style="text-align: right;">90%</td>
+<td style="text-align: right;">60%</td>
+<td style="text-align: right;">−0.30</td>
+<td style="text-align: right;">0.6667</td>
+<td style="text-align: right;">6.445 × 10⁻⁹</td>
+</tr>
+</tbody>
+</table>
+<p>Fairness metrics use the latest 100 captured predictions. The reported drift comparison uses all 300 recorded unlabeled inferences against 100 fixed reference observations, so its window is intentionally different. Stock and warehouse-zone distributions remained unchanged, both with p = 1.0. A new batch changes these cumulative results. The installed PVC implementation's bounded tag-filtered drift request initially selected older records; the helper explicitly requests the full observed dataset for the reported cumulative comparison. The scheduled drift series uses the latest 100 rows (observed promotion demand p = 0 at reported numeric precision); the one-time API result uses cumulative history. They therefore use different windows; label the chart's window when presenting it.</p>
+<p>The native <code>outsideBounds</code> field for MeanShift was also true for the unchanged baseline. Read the per-column p-values and documented test assumptions; do not present that aggregate flag as an accurate overall alarm for this fixture.</p>
+<h2 id="deployment-and-tls-prerequisite">Deployment and TLS prerequisite<a class="headerlink" href="#deployment-and-tls-prerequisite" title="Permanent link">&para;</a></h2>
+<p>The resource manifest is <code>gitops/components/science/trustyai.yaml</code>. Apply it first: it includes the isolated namespace, official pinned OVMS runtime, checked ONNX artifact, TrustyAI service with a 1 GiB PVC, scrape service account, and scoped network policies. The guarded helper below creates the controller-populated scrape token Secret outside Git; the Argo project intentionally prohibits managing Secrets. Regenerate the model with <code>onnx==1.19.1</code> and <code>python data/trustyai/generate.py</code>; update the ConfigMap artifact if changing the graph.</p>
+<p>The documented KServe logger prerequisite adds its service CA bundle and enables certificate verification. Review the current cluster and pass its independently verified identity to the guarded helper:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python<span class="w"> </span>scripts/configure_trustyai.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--expected-server<span class="w"> </span><span class="s1">'&lt;verified Kubernetes API URL&gt;'</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--expected-user<span class="w"> </span><span class="s1">'&lt;verified oc identity&gt;'</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>--backup<span class="w"> </span><span class="s1">'&lt;new private path outside this repository&gt;'</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span>--apply
+</code></pre></div>
+<p>This preserves the existing logger image and resources. It adds <code>opendatahub.io/managed: 'false'</code> to the shared <code>inferenceservice-config</code> ConfigMap because otherwise the operator restores its defaults. The helper saves an exclusive mode-0600 prepatch backup outside Git and tests the resource version before changing anything. The opt-out affects the <strong>whole shared ConfigMap</strong>, not only its logger field. No other operator or DSC reconciliation is disabled. Review that ConfigMap during upgrades so new operator defaults are not silently missed. To roll back, compare the private backup with the current ConfigMap, restore only these owned logger fields and the previous management annotation, and re-enable reconciliation deliberately. Do not blindly replace unrelated changes from a newer snapshot. The helper never restarts a model. When enabling capture on an existing monitored deployment, recreate only its predictor pod after the prerequisite is in place. <a href="https://github.com/trustyai-explainability/odh-trustyai-demos/blob/main/1-Installation/README.md">Primary TrustyAI installation example</a>.</p>
+<h2 id="access-and-limits">Access and limits<a class="headerlink" href="#access-and-limits" title="Permanent link">&para;</a></h2>
+<p>The model has no public Route and requires native KServe authorization on port 8443. Network policies prevent the Workbench from reaching raw OVMS, logger, or TrustyAI backend ports. The showroom policy permits only its OVMS predictor to deliver events to the internal TLS capture port. The native operator also creates a policy for local InferenceService pods and monitoring namespaces; Kubernetes adds these permissions together. The effective native policy allows monitoring namespaces to scrape the internal HTTP metrics endpoint and exposes port 8443 through its authenticated proxy. Our policy cannot override those operator allowances. The native TrustyAI API uses a coarse <code>get services</code> permission check for its API, including write operations: project participants permitted to use it can also upload demo data and schedule metrics. This is <strong>not</strong> an application-level read-only permission. Keep this project limited to the synthetic exercise.</p>
+<p>The installed capture parser rejects the optional KServe request <code>id</code> field, so the helper omits it. The fixture uses FP64 inputs: FP32 group values exposed a numeric-equality issue in the installed fairness implementation, yielding <code>NaN</code>; those setup-probe results are not valid fairness measurements. The checked fixture avoids that mismatch. Do not silently replace a non-finite result with zero.</p>
+<p>The secure metrics monitors use a dedicated service account with only the permissions needed by the native model and TrustyAI proxies. Its controller-populated service-account token Secret follows the installed KServe monitor convention; its value is never in Git. The OVMS policy permits only the exact user-workload Prometheus pods for its authenticated scrape. TrustyAI also retains the operator policy described above; its authentication remains mandatory on 8443.</p>
+<p>The service data is persistent. Validate scheduled requests after a service restart, and rerun <code>baseline --schedule</code> if required. Evaluation results in EvalHub and NeMo guardrail decisions remain separate from these model-monitoring metrics.</p>
 
 
 

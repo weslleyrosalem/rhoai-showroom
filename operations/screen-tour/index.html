@@ -1099,6 +1099,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1271,6 +1279,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1515,6 +1551,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/automl/" class="md-nav__link">
         
   
@@ -1739,6 +1803,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/hardware/" class="md-nav__link">
         
   
@@ -1775,6 +1867,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2153,7 +2273,7 @@
 <p>Use this as a route through the native dashboard. A screen earns a place in the presentation when it answers a customer question and exposes evidence the customer can inspect. The <a href="../validation/">validation record</a> distinguishes browser acceptance from API tests and unresolved work.</p>
 <h2 id="start-with-the-outcome">Start with the outcome<a class="headerlink" href="#start-with-the-outcome" title="Permanent link">&para;</a></h2>
 <p>Open the Aurora application, ask for the AS-001 replenishment review, and inspect its sources, inventory tool, forecast, and trace. Ask the customer to change the SKU to AS-002 and explain why the recommendation changes. Then follow one of the three journeys below to inspect the platform behind the answer.</p>
-<p>Do not equate the forecast alone with the purchase quantity: the application also applies stock, lead time, and policy. Do not present December 2025 fixtures as current inventory.</p>
+<p>Do not equate the forecast alone with the purchase quantity: the application also applies stock, reorder point, and the 21-day coverage policy. Do not present December 2025 fixtures as current inventory.</p>
 <h2 id="platform-and-inference">Platform and inference<a class="headerlink" href="#platform-and-inference" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -2315,6 +2435,16 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>Projects → AI Showroom — Predictive Monitoring → Settings</td>
+<td>Is predictive monitoring configured? Inspect <strong>TrustyAI installed</strong>.</td>
+<td>The separate OVMS project avoids mixing unsupported deployment types into this monitoring namespace.</td>
+</tr>
+<tr>
+<td>Predictive Monitoring → deployment → Model bias</td>
+<td>Does changed demand change service-level outcomes? Select the named SPD and DIR metrics and inspect configuration.</td>
+<td>Baseline0/1; promotion−0.30/0.6667. Explain the synthetic workload, group arithmetic, and distinct drift window in the <a href="../../labs/model-monitoring/">monitoring lab</a>.</td>
+</tr>
 <tr>
 <td>AI hub → MCP servers</td>
 <td>What can an agent do? Open the Aurora Supply server and inspect its tools.</td>

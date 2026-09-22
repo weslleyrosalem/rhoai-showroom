@@ -983,6 +983,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1214,6 +1222,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#measured-coverage-limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured coverage limit
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1238,6 +1257,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1482,6 +1529,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../automl/" class="md-nav__link">
         
   
@@ -1706,6 +1781,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../hardware/" class="md-nav__link">
         
   
@@ -1742,6 +1845,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2062,6 +2193,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#measured-coverage-limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured coverage limit
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2107,6 +2249,8 @@
 <li>On a validated integrated path, place the same synthetic pattern in a tool argument and observe 403 before backend execution.</li>
 </ol>
 <p>Regex can miss paraphrases and can reject harmless text. Adding semantic detectors, Presidio, or a safety model changes capacity, latency, dependencies, and evaluation requirements. Record equivalent test cases before and after each change.</p>
+<h2 id="measured-coverage-limit">Measured coverage limit<a class="headerlink" href="#measured-coverage-limit" title="Permanent link">&para;</a></h2>
+<p>The <a href="../owasp-evaluations/">matched OWASP evaluation</a> produced 14 of 33 detector matches on both the direct-model and NeMo-adapter paths. The deployed regex rails allowed all 33 requests in that selected corpus. This does not contradict the synthetic-pattern blocking tests above: the broader report-injection/template cases do not match those configured rules. Do not present the guardrail configuration as a general semantic attack detector.</p>
 
 
 

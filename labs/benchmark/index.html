@@ -16,7 +16,7 @@
         <link rel="prev" href="../hardware/">
       
       
-        <link rel="next" href="../../operations/gitops/">
+        <link rel="next" href="../ahead-llmd/">
       
       
         
@@ -983,6 +983,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1158,6 +1166,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1402,6 +1438,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../automl/" class="md-nav__link">
         
   
@@ -1626,6 +1690,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../hardware/" class="md-nav__link">
         
   
@@ -1725,6 +1817,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#measured-rehearsal-september-22-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured rehearsal: September 22, 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#required-metadata" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1794,6 +1897,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2085,6 +2216,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#measured-rehearsal-september-22-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured rehearsal: September 22, 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#required-metadata" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2200,6 +2342,52 @@
 </tbody>
 </table>
 <p>The engine comparison does not prove an llm-d benefit. Two TP4 replicas represent horizontal scaling, not a single model split across nodes. PCIe/Ethernet overhead can offset scaling gains; measured results decide.</p>
+<h2 id="measured-rehearsal-september-22-2026">Measured rehearsal: September 22, 2026<a class="headerlink" href="#measured-rehearsal-september-22-2026" title="Permanent link">&para;</a></h2>
+<p>The following <strong>single-repetition</strong> results used the same physical L40S and the same temporary Pod for both engines. Qwen3-4B-Instruct-2507 weights, BF16 precision, image, tokenizer/template, 4-CPU limit, 32Gi memory limit, prompts, seed, warmup, and output cap were held constant. Prefix caching was disabled. Each row contains 12 measured requests plus two separate warmups, with a maximum of 64 output tokens per request. All rows completed 12/12 requests successfully and returned 766 total output tokens. The measurements used a localhost port-forward to the engine, excluding the MaaS and llm-d gateway path.</p>
+<table>
+<thead>
+<tr>
+<th>Engine</th>
+<th style="text-align: right;">Client concurrency</th>
+<th style="text-align: right;">Output tokens/s</th>
+<th style="text-align: right;">Latency p50 / p95</th>
+<th style="text-align: right;">Client TTFT p50</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transformers, serialized batch-one reference</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">26.01</td>
+<td style="text-align: right;">2,453 / 2,478 ms</td>
+<td style="text-align: right;">184 ms</td>
+</tr>
+<tr>
+<td>vLLM, continuous batching</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">67.18</td>
+<td style="text-align: right;">944 / 995 ms</td>
+<td style="text-align: right;">177 ms</td>
+</tr>
+<tr>
+<td>Transformers, serialized batch-one reference</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">27.47</td>
+<td style="text-align: right;">4,629 / 4,725 ms</td>
+<td style="text-align: right;">2,358 ms</td>
+</tr>
+<tr>
+<td>vLLM, continuous batching</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">124.51</td>
+<td style="text-align: right;">1,007 / 1,125 ms</td>
+<td style="text-align: right;">192 ms</td>
+</tr>
+</tbody>
+</table>
+<p>In this workload, vLLM delivered <strong>2.58×</strong> the reference output throughput at concurrency 1 and <strong>4.53×</strong> at concurrency 2. The second comparison deliberately illustrates the queueing cost of a serialized reference. It does not represent every Transformers optimization, prove an llm-d routing advantage, or establish a universal performance multiplier. The run order was Transformers first, then vLLM; repetitions and alternating order remain required before a performance recommendation or approval.</p>
+<p>The <a href="../../results/engine-ab-20260922.json">sanitized raw measurements</a> include individual request timing, immutable image/model pins, workload/template hashes, errors, usage, and comparison output. No response text is included, so generation quality has not been evaluated by this benchmark. The registry’s separate performance qualification gate remains <code>NOT_RUN</code>; this one rehearsal has not promoted the candidate or completed its repeated-run acceptance criteria. The original Llama and its GuideLLM traffic remained active. One Qwen replica continued serving; the temporary benchmark resources were removed and the second Qwen replica was restored afterward.</p>
+<p>For a scheduled maintenance window, the <a href="https://github.com/weslleyrosalem/rhoai-showroom/tree/main/gitops/components/platform/engine-benchmark">optional engine rehearsal helper</a> provides a guarded PLAN and temporary reuse of one existing Qwen GPU, with automatic restoration and cleanup reporting. Its generalized APPLY path has not been rerun after the measured private predecessor; the source documents that validation boundary. It creates no cloud capacity. Keep the live demonstration on the restored two-replica endpoint.</p>
 <h2 id="required-metadata">Required metadata<a class="headerlink" href="#required-metadata" title="Permanent link">&para;</a></h2>
 <p>Create a private JSON file from the workload actually running:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
@@ -2231,7 +2419,7 @@
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span>--prefix-mode<span class="w"> </span>repeated-prefix<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span>--output<span class="w"> </span>/private/directory/vllm-run-1.json
 </code></pre></div>
-<p>The workload contains policies and 48 fictional SKUs. <code>repeated-prefix</code> preserves the prefix; <code>distinct-prefix</code> changes an identifier at its beginning. Character lengths are controlled; actual token counts come from endpoint usage. Output includes timestamps, HTTP status, latency, TTFT, approximate TPOT, usage, and prompt hashes. It excludes responses and credentials.</p>
+<p>The workload contains Aurora policies and the eight versioned products (<code>AS-001</code> through <code>AS-008</code>), with a frozen historical demand scenario and a 21-day coverage policy. <code>repeated-prefix</code> preserves the prefix; <code>distinct-prefix</code> changes an identifier at its beginning. Character lengths are controlled; actual token counts come from endpoint usage. Output includes timestamps, HTTP status, latency, TTFT, approximate TPOT, usage, and prompt hashes. It excludes responses and credentials.</p>
 <p>TTFT measures the first nonempty SSE text/reasoning content received by the client, not internal engine latency. TPOT divides elapsed time after that content by output tokens minus one. Since SSE can combine tokens, this is an approximation.</p>
 <p>Hard limits: 200 measured requests, 16 concurrent requests, 256 output tokens/request, 600 seconds for the measurement stage, 120 seconds/request, and 10 separate warmup requests. Responses are additionally limited to 4MiB total and 64KiB per SSE line; chunked reads enforce the request deadline even if a server never finishes a line. Calls already running may finish after the stage deadline. Start small to confirm the endpoint and subscription.</p>
 <h2 id="executable-transformers-baseline">Executable Transformers baseline<a class="headerlink" href="#executable-transformers-baseline" title="Permanent link">&para;</a></h2>

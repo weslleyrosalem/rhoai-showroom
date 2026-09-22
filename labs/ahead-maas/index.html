@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://weslleyrosalem.com/rhoai-showroom/labs/evaluation/">
+        <link rel="canonical" href="https://weslleyrosalem.com/rhoai-showroom/labs/ahead-maas/">
       
       
-        <link rel="prev" href="../mlflow/">
+        <link rel="prev" href="../maas/">
       
       
-        <link rel="next" href="../owasp-evaluations/">
+        <link rel="next" href="../hardware/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Evaluations - OpenShift AI Showroom</title>
+        <title>AHEAD MaaS workshop - OpenShift AI Showroom</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#evalhub-and-garak" class="md-skip">
+        <a href="#ahead-isolated-maas-governance-workshop" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Evaluations
+              AHEAD MaaS workshop
             
           </span>
         </div>
@@ -1407,37 +1407,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Evaluations
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../evaluation/" class="md-nav__link">
         
   
   
@@ -1453,48 +1426,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#interpretation-and-observed-release-limitations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Interpretation and observed release limitations
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#preserve-the-measured-result" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Preserve the measured result
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1756,10 +1687,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../ahead-maas/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1775,6 +1733,164 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is ready
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-30-minute-walkthrough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A 30-minute walkthrough
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preflight-and-a-reproducible-smoke-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preflight and a reproducible smoke test
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#group-priority-and-an-individual-cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Group priority and an individual cap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#corporate-access-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Corporate access matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-accounts-and-external-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service accounts and external identity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Service accounts and external identity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cached-signing-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cached signing keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persistent-lab-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persistent lab identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-real-external-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A real external model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics-filter-before-interpreting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics: filter before interpreting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preserved-state-and-deferred-extensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preserved state and deferred extensions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources-and-related-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sources and related paths
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2139,10 +2255,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#interpretation-and-observed-release-limitations" class="md-nav__link">
+  <a href="#what-is-ready" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Interpretation and observed release limitations
+        What is ready
       
     </span>
   </a>
@@ -2150,10 +2266,126 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#preserve-the-measured-result" class="md-nav__link">
+  <a href="#a-30-minute-walkthrough" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Preserve the measured result
+        A 30-minute walkthrough
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preflight-and-a-reproducible-smoke-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preflight and a reproducible smoke test
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#group-priority-and-an-individual-cap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Group priority and an individual cap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#corporate-access-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Corporate access matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-accounts-and-external-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service accounts and external identity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Service accounts and external identity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cached-signing-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cached signing keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persistent-lab-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persistent lab identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-real-external-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A real external model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics-filter-before-interpreting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics: filter before interpreting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preserved-state-and-deferred-extensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preserved state and deferred extensions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources-and-related-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sources and related paths
       
     </span>
   </a>
@@ -2180,23 +2412,319 @@
   
 
 
-<h1 id="evalhub-and-garak">EvalHub and Garak<a class="headerlink" href="#evalhub-and-garak" title="Permanent link">&para;</a></h1>
-<p>EvalHub is deployed in the platform namespace after MLflow. PostgreSQL credentials stay outside Git. The showroom namespace is labeled as an EvalHub tenant. TrustyAI must use its full RHOAI mode: <code>mcpGuardrailsMode=false</code> includes both NeMo and EvalHub; <code>true</code> enables only the NeMo controller.</p>
-<p>Set <code>EVALHUB_URL</code> to the discovered EvalHub Route, and set <code>MAAS_BASE_URL</code> and <code>MAAS_MODEL_ID</code> from your model connection. The evaluation references <code>showroom-maas-key</code>; do not paste an API key into a notebook or request file.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python3<span class="w"> </span>scripts/science.py<span class="w"> </span>eval-submit
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>python3<span class="w"> </span>scripts/science.py<span class="w"> </span>eval-status<span class="w"> </span>--job-id<span class="w"> </span>&lt;job-id&gt;
+<h1 id="ahead-isolated-maas-governance-workshop">AHEAD — isolated MaaS governance workshop<a class="headerlink" href="#ahead-isolated-maas-governance-workshop" title="Permanent link">&para;</a></h1>
+<p>AHEAD lets platform teams demonstrate model access, token budgets and external identity without changing the existing Aurora inference service. Three small CPU simulators make policy outcomes repeatable; a separately registered Anthropic endpoint demonstrates a real external-model call.</p>
+<p>Use this workshop for the question <strong>“How do different teams safely consume the same model platform?”</strong> Use the <a href="../benchmark/">inference lab</a> for measured engine behavior and the <a href="../../demos/maas/">main MaaS test drive</a> for Aurora's real Llama path. Simulator traffic is not GPU performance evidence.</p>
+<h2 id="what-is-ready">What is ready<a class="headerlink" href="#what-is-ready" title="Permanent link">&para;</a></h2>
+<p>The September 22, 2026 rehearsal verified the core lab path on OpenShift AI 3.5.1: deployments, API keys, inference, access denials, quota isolation/recovery, OIDC, group and individual tiers, service accounts, corporate access rules, cached JWT verification, external inference and sampled usage metrics. The native <strong>Projects → AHEAD</strong> page showed three Ready deployments.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+<th>Location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ahead-simulator</code></td>
+<td>Shared general-purpose policy target</td>
+<td><code>ahead</code></td>
+</tr>
+<tr>
+<td><code>ahead-code-simulator</code></td>
+<td>Second model in the corporate access matrix</td>
+<td><code>ahead</code></td>
+</tr>
+<tr>
+<td><code>ahead-cloud-simulator</code></td>
+<td>Simulated cloud-cost policy target</td>
+<td><code>ahead</code></td>
+</tr>
+<tr>
+<td><code>ahead-claude-sonnet</code></td>
+<td>Real external Anthropic inference</td>
+<td><code>ahead</code>, default MaaS gateway</td>
+</tr>
+<tr>
+<td><code>AITenant/ahead</code></td>
+<td>Dedicated tenant and gateway association</td>
+<td><code>ai-tenants</code></td>
+</tr>
+<tr>
+<td>AHEAD subscriptions and authorization policies</td>
+<td>Dedicated governance</td>
+<td><code>ai-tenant-ahead</code></td>
+</tr>
+<tr>
+<td>Keycloak realm <code>ahead</code></td>
+<td>Separate lab identities and groups</td>
+<td><code>ahead</code></td>
+</tr>
+<tr>
+<td><code>ahead-keycloak-db</code></td>
+<td>Persistent Keycloak database, 1Gi PVC</td>
+<td><code>ahead</code></td>
+</tr>
+</tbody>
+</table>
+<p>The namespace is lowercase <code>ahead</code>; the project display name is <strong>AHEAD</strong>. The operator also creates <code>ai-tenant-ahead</code> and per-tenant infrastructure resources. No new GPU, cloud load balancer or machine pool was provisioned. The gateway uses a ClusterIP service behind an OpenShift Route.</p>
+<p><strong>Execution boundaries:</strong> optional global Loki usage logging and Redis persistence for the shared Limitador are deferred because they modify shared services and can affect other demonstrations. Provider/model choices in the source guide are alternatives: this workshop uses CPU simulators and the available Anthropic provider, not every listed GPU model and cloud provider. Multi-tenancy and external identity/model capabilities retain their documented Technology Preview maturity.</p>
+<p><a href="../../results/ahead-maas/validation.json">Download the sanitized validation record</a>. Its statuses distinguish verified behavior, deferred changes and known limitations.</p>
+<h2 id="a-30-minute-walkthrough">A 30-minute walkthrough<a class="headerlink" href="#a-30-minute-walkthrough" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Action</th>
+<th>Expected observation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–4 min</td>
+<td>Open <strong>Projects → AHEAD → Overview / Deployments</strong></td>
+<td>Three Ready resources explicitly named CPU, code and cloud <strong>simulators</strong></td>
+</tr>
+<tr>
+<td>4–9 min</td>
+<td>Run authentication and quota rehearsal</td>
+<td>Anonymous/invalid 401; authenticated 200; free 429; premium still 200; free recovery after its window</td>
+</tr>
+<tr>
+<td>9–14 min</td>
+<td>Inspect group and individual subscriptions</td>
+<td>Carol gets the team tier; Alice and Bob get their named overrides</td>
+</tr>
+<tr>
+<td>14–18 min</td>
+<td>Compare the two priority-demo users</td>
+<td>The larger set of group allowances does not accumulate; the selected priority determines one entitlement</td>
+</tr>
+<tr>
+<td>18–23 min</td>
+<td>Exercise the three corporate identities</td>
+<td>Sales sees one model, Products two, Engineering three; forbidden calls return 403</td>
+</tr>
+<tr>
+<td>23–27 min</td>
+<td>Show service-account and OIDC evidence</td>
+<td>In-cluster token-based inference, scoped external identities, and JWT validation during an isolated IdP outage</td>
+</tr>
+<tr>
+<td>27–30 min</td>
+<td>Open the existing MaaS Usage dashboard</td>
+<td>Select an <code>ahead-</code> subscription and explain actual request/token/quota counters; separate simulator and real-model traffic</td>
+</tr>
+</tbody>
+</table>
+<p>Do not display passwords, API keys, Secret YAML or browser request headers. The scoped OIDC users create keys through the API; native dashboard authentication remains OpenShift OAuth. The existing <a href="../playground/">Playground</a> and Aurora test drive remain separate customer experiences.</p>
+<h2 id="preflight-and-a-reproducible-smoke-test">Preflight and a reproducible smoke test<a class="headerlink" href="#preflight-and-a-reproducible-smoke-test" title="Permanent link">&para;</a></h2>
+<p>Download the <a href="../../results/ahead-maas/rehearse.py">standalone Python rehearsal helper</a>. It uses the standard library and <code>oc</code>, discovers the AHEAD hostname/model, validates HTTPS, refuses redirects, creates only short-lived AHEAD keys, prints no credentials, and revokes its temporary keys. It does not install resources or change subscriptions.</p>
+<p>Set <code>EXPECTED_OPENSHIFT_SERVER</code> from your approved environment inventory before invoking the helper. Do not derive the expected value blindly from an unverified current context.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oc<span class="w"> </span>whoami
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oc<span class="w"> </span>get<span class="w"> </span>aitenant<span class="w"> </span>ahead<span class="w"> </span>-n<span class="w"> </span>ai-tenants
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>oc<span class="w"> </span>get<span class="w"> </span>llminferenceservice,maasmodelref<span class="w"> </span>-n<span class="w"> </span>ahead
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>oc<span class="w"> </span>get<span class="w"> </span>maassubscription,maasauthpolicy<span class="w"> </span>-n<span class="w"> </span>ai-tenant-ahead
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>oc<span class="w"> </span>get<span class="w"> </span>keycloak,keycloakrealmimport,pvc<span class="w"> </span>-n<span class="w"> </span>ahead
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>python3<span class="w"> </span>rehearse.py<span class="w"> </span>status<span class="w"> </span>--expected-server<span class="w"> </span><span class="s2">"</span><span class="nv">$EXPECTED_OPENSHIFT_SERVER</span><span class="s2">"</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>python3<span class="w"> </span>rehearse.py<span class="w"> </span>smoke<span class="w"> </span>--expected-server<span class="w"> </span><span class="s2">"</span><span class="nv">$EXPECTED_OPENSHIFT_SERVER</span><span class="s2">"</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>python3<span class="w"> </span>rehearse.py<span class="w"> </span>quota<span class="w"> </span>--recover<span class="w"> </span>--expected-server<span class="w"> </span><span class="s2">"</span><span class="nv">$EXPECTED_OPENSHIFT_SERVER</span><span class="s2">"</span>
 </code></pre></div>
-<p>For the customer walkthrough, use the <a href="../owasp-evaluations/">matched OWASP evaluation and ten-risk map</a>. It has explicit expectations, complete per-probe evidence, and consistent overall/benchmark gates.</p>
-<p>The installed Garak provider exposes benchmark <code>quick</code>. The API request uses <code>benchmarks[].id</code>, not <code>benchmark_id</code>. The historical smoke test runs one DAN probe against the local LLM and records its detector metric in MLflow. Use the documented OWASP pair for the main demonstration.</p>
-<h2 id="interpretation-and-observed-release-limitations">Interpretation and observed release limitations<a class="headerlink" href="#interpretation-and-observed-release-limitations" title="Permanent link">&para;</a></h2>
-<p>Lower attack success rate is better. In the original DAN smoke run, a measured rate of 1.0 means its string detector matched a DAN marker. This fails that benchmark threshold, but a marker match alone does not establish harmful compliance or a successful attack. The original response must be reviewed; its raw report was not retained. Inspect each benchmark's <code>test.pass</code>; the observed aggregate pass flag was inconsistent with that benchmark.</p>
-<p>The adapter reported HTML/JSONL artifact upload success while its MLflow PUT requests returned HTTP 307 and the S3 prefix was empty. Metrics and EvalHub results were present. Do not claim reports were persisted without checking the artifact store. MLflow with workspaces rejects a client-specified <code>artifact_location</code>, so disabling workspace isolation is not used as a workaround.</p>
-<p><a href="https://github.com/eval-hub/eval-hub">EvalHub API source</a> and <a href="https://github.com/opendatahub-io/trustyai-service-operator">TrustyAI operator</a>.</p>
-<h2 id="preserve-the-measured-result">Preserve the measured result<a class="headerlink" href="#preserve-the-measured-result" title="Permanent link">&para;</a></h2>
-<p>Observed job <code>d0ac37c7-63ab-4335-93bf-b1a67508afdf</code> completed on September 22, 2026. Its benchmark metrics were recorded in MLflow run <code>54397cc5023c4427b9c69cacb51ed0fb</code>. The following workaround persisted and verified the actual EvalHub result JSON:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python3<span class="w"> </span>scripts/science.py<span class="w"> </span>eval-export<span class="w"> </span>--job-id<span class="w"> </span>&lt;job-id&gt;
+<p>The default expected identity is the lab administrator <code>aiadmin</code>; override <code>--expected-user</code> only for another explicitly authorized identity. A status mismatch makes the helper exit nonzero. <code>quota --recover</code> deliberately spends the small free tier and waits 65 seconds before verifying recovery. Keep this separate from a customer's immediate free-tier request. The published helper itself passed its live rehearsal: three free requests consumed 108 simulator tokens, the next returned 429, premium remained 200, free recovered to 200, and both temporary keys were revoked with 200.</p>
+<table>
+<thead>
+<tr>
+<th>Subscription</th>
+<th>Owner</th>
+<th style="text-align: right;">Priority</th>
+<th style="text-align: right;">Budget</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ahead-simulator-free</code></td>
+<td>Lab administrator</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">100 tokens/minute</td>
+</tr>
+<tr>
+<td><code>ahead-simulator-premium</code></td>
+<td>Lab administrator</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">100,000 tokens/minute</td>
+</tr>
+<tr>
+<td><code>ahead-team-standard</code></td>
+<td><code>ahead-demo-users</code></td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">200 tokens/minute</td>
+</tr>
+<tr>
+<td><code>ahead-alice-gold</code></td>
+<td><code>alice</code></td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">5,000 tokens/minute</td>
+</tr>
+<tr>
+<td><code>ahead-bob-throttled</code></td>
+<td><code>bob</code></td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">20 tokens/minute</td>
+</tr>
+</tbody>
+</table>
+<p>A request can finish beyond the nominal token threshold: completed response usage is accounted for, and the next request is rejected. Issuing a second key did not reset Bob's quota. A consumer selecting a subscription they did not own received <strong>400 <code>invalid_subscription</code></strong>, with no key issued; this build did not return 403 for that API operation.</p>
+<h2 id="group-priority-and-an-individual-cap">Group priority and an individual cap<a class="headerlink" href="#group-priority-and-an-individual-cap" title="Permanent link">&para;</a></h2>
+<p>Both <code>dual-user</code> and <code>capped-user</code> belong to <code>quota-standard</code> and <code>quota-bulk</code>. API-key creation without a requested subscription selects the highest-priority applicable tier.</p>
+<table>
+<thead>
+<tr>
+<th>Subscription</th>
+<th>Matches</th>
+<th style="text-align: right;">Priority</th>
+<th style="text-align: right;">Budget</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ahead-quota-bulk</code></td>
+<td>Group <code>quota-bulk</code></td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20,000 tokens/hour</td>
+</tr>
+<tr>
+<td><code>ahead-quota-standard</code></td>
+<td>Group <code>quota-standard</code></td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">10,000 tokens/hour</td>
+</tr>
+<tr>
+<td><code>ahead-quota-individual</code></td>
+<td>User <code>capped-user</code></td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">5,000 tokens/hour</td>
+</tr>
+</tbody>
+</table>
+<p>The real token-accounting rehearsal reached <strong>10,025 tokens then 429</strong> for <code>dual-user</code>, and <strong>5,213 tokens then 429</strong> for <code>capped-user</code>. These are simulator tokens used to prove quota enforcement, not model throughput or quality measurements. The first two group budgets did not sum to 30,000. A per-user rule wins here because of its higher priority, not merely because it names a user.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>oc<span class="w"> </span>get<span class="w"> </span>maassubscription<span class="w"> </span>-n<span class="w"> </span>ai-tenant-ahead<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>ahead-quota-bulk<span class="w"> </span>ahead-quota-standard<span class="w"> </span>ahead-quota-individual<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>-o<span class="w"> </span><span class="s1">'custom-columns=NAME:.metadata.name,PRIORITY:.spec.priority,LIMIT:.spec.modelRefs[0].tokenRateLimits[0].limit,WINDOW:.spec.modelRefs[0].tokenRateLimits[0].window'</span>
 </code></pre></div>
-<p>Run it from the configured workbench with <code>EVALHUB_URL=https://evalhub.redhat-ods-applications.svc:8443</code> and <code>EVALHUB_CA=/etc/service-ca/service-ca.crt</code>. The artifact is <code>evaluation/evalhub-result.json</code>. Original HTML/JSONL reports remain unavailable in this observed run. See <a href="../model-score/">model scores and onboarding gates</a> for how failed or incomplete evidence affects promotion.</p>
+<p>The evidence records the initial partial burn and its continuation. Do not repeat the hour-long burn immediately before presenting an interactive request with these same subscriptions.</p>
+<h2 id="corporate-access-matrix">Corporate access matrix<a class="headerlink" href="#corporate-access-matrix" title="Permanent link">&para;</a></h2>
+<p>All three backends in this scenario are simulators, including the model called “cloud.” Each division gets one subscription spanning its allowed models.</p>
+<table>
+<thead>
+<tr>
+<th>Division / sample user</th>
+<th>General simulator</th>
+<th>Code simulator</th>
+<th>Cloud simulator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sales / <code>sales-1</code></td>
+<td>200; 500 tokens/min</td>
+<td>403</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Products / <code>prod-1</code></td>
+<td>200; 500 tokens/min</td>
+<td>200; 500 tokens/min</td>
+<td>403</td>
+</tr>
+<tr>
+<td>Engineering / <code>eng-1</code></td>
+<td>200; 500 tokens/min</td>
+<td>200; 1,000 tokens/min</td>
+<td>200, then 429 at 20 tokens/min</td>
+</tr>
+</tbody>
+</table>
+<p>The discovery catalogs contained exactly one, two and three models respectively. When Engineering's cloud budget was exhausted, its code-model request still returned 200. A second Engineering key did not bypass the cloud quota.</p>
+<p>Subscriptions are <code>ahead-corp-sales</code>, <code>ahead-corp-products</code> and <code>ahead-corp-engineering</code>. Corresponding authorization policies end in <code>-access</code>. OIDC groups are <code>corp-sales</code>, <code>corp-products</code> and <code>corp-engineering</code>; no cluster-wide OAuth provider or user membership was rewritten for this scenario.</p>
+<h2 id="service-accounts-and-external-identity">Service accounts and external identity<a class="headerlink" href="#service-accounts-and-external-identity" title="Permanent link">&para;</a></h2>
+<p>Two workloads use their service-account tokens directly, with access authorized for the namespace and separate per-workload subscriptions:</p>
+<table>
+<thead>
+<tr>
+<th>Service account</th>
+<th>Subscription</th>
+<th style="text-align: right;">Budget</th>
+<th>Observed result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>batch-scorer</code></td>
+<td><code>ahead-sa-batch-scorer</code></td>
+<td style="text-align: right;">120 tokens/min</td>
+<td>200, including the mounted token in an actual Job</td>
+</tr>
+<tr>
+<td><code>report-writer</code></td>
+<td><code>ahead-sa-report-writer</code></td>
+<td style="text-align: right;">15 tokens/min</td>
+<td>200, then 429</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>oc<span class="w"> </span>get<span class="w"> </span>job<span class="w"> </span>ahead-service-account-proof<span class="w"> </span>-n<span class="w"> </span>ahead
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>oc<span class="w"> </span>logs<span class="w"> </span>job/ahead-service-account-proof<span class="w"> </span>-n<span class="w"> </span>ahead
+</code></pre></div>
+<p>The Job prints the simulator response and HTTP status, not its token. It completed successfully. Non-overlapping service-account subscriptions avoid the direct-token ambiguity described by the source guide.</p>
+<p>The dedicated Keycloak realm contains <code>maas-user</code> in <code>data-scientists</code> and <code>ml-engineers</code>, and <code>restricted-user</code> in <code>data-scientists</code>. Both performed OIDC login, discovered their permitted model, obtained an API key and received inference 200. Issued keys can retain the group snapshot from issuance; revoke/reissue keys after membership changes.</p>
+<h3 id="cached-signing-keys">Cached signing keys<a class="headerlink" href="#cached-signing-keys" title="Permanent link">&para;</a></h3>
+<p>The JWKS proof issued fresh JWTs before a temporary outage but did not present them to the gateway. It then restricted only the AHEAD Keycloak HTTP endpoint. Discovery became unreachable from both the administrator's machine and an in-cluster probe. All three previously unseen JWTs still created API keys with <strong>201</strong>, after which the Keycloak network configuration was restored and discovery returned <strong>200</strong>.</p>
+<p>An altered JWT was denied with <strong>500 during the IdP outage</strong> and <strong>401 after recovery</strong>. The 500 is a known error-handling limitation of this installed path; it is not reported as a successful 401 test. No key was issued to the altered token. The shared Authorino egress policy was not changed.</p>
+<h3 id="persistent-lab-identity">Persistent lab identity<a class="headerlink" href="#persistent-lab-identity" title="Permanent link">&para;</a></h3>
+<p>Keycloak's initial ephemeral PostgreSQL was migrated into a dedicated <strong>1Gi gp3 PVC</strong> with a private backup. Before/after counts matched: <strong>2 realms, 14 users and 14 clients</strong>, including administrative records. Three sample identities retained their subject IDs and group memberships. After an additional PostgreSQL rollout, the counts still matched, a fresh OIDC login returned <strong>200</strong>, and an existing API key still inferred with <strong>200</strong>. This validates the tested restart path, not disaster recovery or high availability.</p>
+<h2 id="a-real-external-model">A real external model<a class="headerlink" href="#a-real-external-model" title="Permanent link">&para;</a></h2>
+<p><code>ahead-claude-sonnet</code> is a separate Anthropic registration. A bounded request returned <strong>200</strong>, the expected text and <strong>27 total tokens</strong>. The original Claude resource and provider Secret were preserved.</p>
+<p>The installed multi-tenant implementation supports external models through the <strong>default tenant only</strong>. This registration therefore uses the existing default gateway with new <code>ahead-external</code> / <code>ahead-external-access</code> governance; it does not route through the AHEAD tenant gateway. The AHEAD copy of the provider Secret requires <code>inference.llm-d.ai/ipp-managed=true</code>. Missing that label caused an initial 500 and was corrected on the copy only.</p>
+<p>An external credential is required to repeat this step; the public guide contains none. Use the administrator's private AHEAD rehearsal script and an explicitly selected <code>ahead-external</code> subscription. This call uses a real provider and is separate from the corporate cloud simulator.</p>
+<h2 id="metrics-filter-before-interpreting">Metrics: filter before interpreting<a class="headerlink" href="#metrics-filter-before-interpreting" title="Permanent link">&para;</a></h2>
+<p>In <strong>Observe &amp; monitor → Dashboard → MaaS Usage</strong>, filter to one of the <code>ahead-</code> subscriptions. Use <code>ahead-external</code> for real external-model usage; other AHEAD subscriptions in this workshop measure simulator traffic. Aurora's <code>showroom-load</code> is the existing real Llama workload. Do not combine these as one performance benchmark.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">sum</span><span class="o">(</span><span class="nv">istio_requests_total</span><span class="p">{</span><span class="nl">gateway_name</span><span class="o">=</span><span class="p">"</span><span class="s">ahead</span><span class="p">"}</span><span class="o">)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">sum</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">subscription</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="nv">authorized_hits_total</span><span class="p">{</span><span class="nl">subscription</span><span class="o">=~</span><span class="p">"</span><span class="s">ahead-.*</span><span class="p">"}</span><span class="o">)</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">sum</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">subscription</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="nv">limited_calls_total</span><span class="p">{</span><span class="nl">subscription</span><span class="o">=~</span><span class="p">"</span><span class="s">ahead-.*</span><span class="p">"}</span><span class="o">)</span>
+</code></pre></div>
+<p>The rehearsal observed nonempty gateway, consumption and rate-limit series in the existing Thanos datasource. The native dashboard's summary follows the selected time range while its current chart uses a fixed rolling two-hour expression; their totals can differ. Prometheus sampling/<code>increase()</code> can also extrapolate. These counters are not exact per-request Loki billing records.</p>
+<h2 id="preserved-state-and-deferred-extensions">Preserved state and deferred extensions<a class="headerlink" href="#preserved-state-and-deferred-extensions" title="Permanent link">&para;</a></h2>
+<p>The initial before/after comparison kept the original MaaS tenant/configuration, subscriptions, policies, model references, shared Config, DSC, DSCI and default Gateway specs and UIDs unchanged. Original Llama, scheduler, default gateway and MaaS API pod UIDs were unchanged, with zero additional restarts during that check. Later persistence work touched only AHEAD's identity service and database.</p>
+<table>
+<thead>
+<tr>
+<th>Deferred option</th>
+<th>Why it remains outside the live path</th>
+<th>Procedure for a later coordinated window</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Global Loki usage logs</td>
+<td>Requires shared MaaS <code>Config/default.spec.usageLogging</code>, collectors/storage and generated logging configuration</td>
+<td>Prepare dedicated storage, validate operator/version compatibility, preserve current Config, review generated changes, enable in a scheduled window, confirm per-request records and existing demo health</td>
+</tr>
+<tr>
+<td>Redis for shared Limitador</td>
+<td>Changing storage restarts the shared limiter and changes counter continuity for all tenants</td>
+<td>Preserve active quota evidence, prepare durable Redis and its Secret, coordinate with load/demo owners, change storage in a scheduled window, test persistence and recovery before resuming load</td>
+</tr>
+</tbody>
+</table>
+<p>Neither option is marked passed or silently enabled. Cleanup removes only owned temporary probes and rehearsal keys; persistent lab resources remain for presentations. Do not run the source guide's broad setup or cleanup scripts against this shared environment.</p>
+<h2 id="sources-and-related-paths">Sources and related paths<a class="headerlink" href="#sources-and-related-paths" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://rh-aiservices-bu.github.io/rhoai-maas-guide/modules/main/index.html">Companion MaaS guide</a>, source commit <code>ea53fed1827eb1180a0f36c1255b232a582bf944</code>.</li>
+<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/govern_llm_access_with_models-as-a-service/index">Red Hat OpenShift AI 3.5 MaaS documentation</a>.</li>
+<li><a href="../maas/">Aurora MaaS lab</a>, <a href="../../demos/maas/">MaaS presentation</a>, <a href="../benchmark/">inference benchmarks</a>, and <a href="../../operations/validation/">validation status</a>.</li>
+</ul>
 
 
 

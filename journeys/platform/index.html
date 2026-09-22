@@ -1099,6 +1099,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1271,6 +1279,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1515,6 +1551,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/automl/" class="md-nav__link">
         
   
@@ -1739,6 +1803,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../labs/ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../labs/hardware/" class="md-nav__link">
         
   
@@ -1775,6 +1867,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../labs/ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2182,7 +2302,7 @@
 <ol>
 <li><strong>0–3 minutes: show the connected experience.</strong> Open <code>ai-showroom</code>. The same Aurora workflow connects RAG policies, MCP inventory, demand forecasts, and an assistant. Explain the project boundary and shared platform services.</li>
 <li><strong>3–6 minutes: curate.</strong> Open the Qwen source in Model Catalog. Let the visitor select an included model, read its license, and inspect the hardware profile. A catalog entry does not guarantee available GPUs.</li>
-<li><strong>6–10 minutes: take a test drive.</strong> Ask an inventory question in Playground. Show the model, subscription, and metrics. The existing-cluster experience reuses the Llama in <code>maas-how-to</code>; the separate private inference rehearsal uses the Ready <code>aurora-qwen-4b</code> deployment through native Kubernetes authentication, without advertising it as a public MaaS endpoint.</li>
+<li><strong>6–10 minutes: take a test drive.</strong> Ask an inventory and policy question with Aurora Qwen in native Playground; inspect the read-only tools and cited policy. This path uses the visitor’s authorized Kubernetes identity. Then open Aurora Supply to connect the shared Llama in <code>maas-how-to</code> with its MaaS subscription and metrics. The Ready <code>aurora-qwen-4b</code> deployment also supplies the private inference rehearsal and is not advertised as a public MaaS endpoint.</li>
 <li><strong>10–14 minutes: govern consumption.</strong> Use keys issued explicitly for <code>showroom-test-drive</code> and <code>showroom-standard</code>. Show 401 without a key, 200 when authorized, 429 after the short quota, the standard subscription still working, and recovery after the window. Keep keys off-screen.</li>
 <li><strong>14–18 minutes: operate.</strong> Relate the request to token, latency, and GPU metrics. Distinguish the current request from a previously recorded experiment. Application traces and infrastructure metrics answer different questions.</li>
 <li><strong>18–20 minutes: use GitOps.</strong> Show a small diff and the reconciled resource. Explain the catalog's concurrency-protected merge and environment-owned credentials.</li>
@@ -2195,7 +2315,7 @@
 <li><strong>3 minutes:</strong> repeat a controlled prefix and inspect local cache hits. Distinguish local prefix reuse from cross-node KV transfer; only the former has recorded evidence.</li>
 <li><strong>2 minutes:</strong> review the current 11-GPU infrastructure maximum including surge and the user ceiling of 16. Explain autoscaling and the separate H100/A100 MIG plans; no MIG execution claim is made.</li>
 </ul>
-<p>A fair Transformers/vLLM engine benchmark and an eight-GPU routing comparison are future extensions until their raw results and identical configurations are measured. Do not substitute a Llama8B/Qwen4B comparison. Larger TP4 topologies remain source examples with explicit capacity gates. Use the <a href="../../demos/inference/">inference</a> and <a href="../../demos/maas/">MaaS</a> cue sheets for the currently demonstrated path.</p>
+<p>The <a href="../../labs/benchmark/#measured-rehearsal-september-22-2026">engine benchmark</a> now contains a measured same-L40S Qwen4B comparison: vLLM versus a serialized Transformers reference, 12 successful requests per configuration, and explicit single-repetition limits. Show those results as a separate experiment; the sustained Llama traffic does not establish that comparison. An eight-GPU routing comparison remains unmeasured, and larger TP4 topologies remain source examples with explicit capacity gates. Use the <a href="../../demos/inference/">inference</a> and <a href="../../demos/maas/">MaaS</a> cue sheets for the currently demonstrated path.</p>
 <h2 id="connect-each-screen-to-a-customer-decision">Connect each screen to a customer decision<a class="headerlink" href="#connect-each-screen-to-a-customer-decision" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

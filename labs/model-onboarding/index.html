@@ -983,6 +983,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1158,6 +1166,34 @@
     
   
     TrustyAI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive model monitoring
   
 
     
@@ -1382,6 +1418,34 @@
     
   
     Evaluations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../owasp-evaluations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OWASP evaluation evidence
   
 
     
@@ -1739,6 +1803,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ahead-maas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD MaaS workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../hardware/" class="md-nav__link">
         
   
@@ -1775,6 +1867,34 @@
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ahead-llmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AHEAD llm-d workshop
   
 
     
@@ -2149,7 +2269,7 @@
 
 
 <h1 id="model-onboarding-from-candidate-to-governed-service">Model onboarding: from candidate to governed service<a class="headerlink" href="#model-onboarding-from-candidate-to-governed-service" title="Permanent link">&para;</a></h1>
-<p><strong>Status:</strong> the curated catalog and native registry candidate onboarding are verified. GPU deployment and the complete promotion rehearsal remain separate validation gates. Candidate registration does not mean a model has passed evaluation or is approved for customer use.</p>
+<p><strong>Status:</strong> the curated catalog and native registry candidate onboarding are verified. The Qwen GPU deployment and native tool-calling/routing checks also passed; the complete promotion rehearsal remains a separate gate. Candidate registration does not mean a model has passed evaluation or is approved for customer use.</p>
 <p>Use the Aurora replenishment assistant as the acceptance scenario. Start with <code>Qwen/Qwen3-4B-Instruct-2507</code>, pinned to the revision in <code>gitops/components/models/models.lock.json</code>. Its initial role is a candidate alternative to the existing demonstration model.</p>
 <h2 id="follow-one-version-through-the-process">Follow one version through the process<a class="headerlink" href="#follow-one-version-through-the-process" title="Permanent link">&para;</a></h2>
 <table>
@@ -2277,7 +2397,7 @@
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--evidence<span class="w"> </span>/private/directory/qwen-runtime-NEW-DATE.json
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Review the PLAN, then repeat with --apply.</span>
 </code></pre></div>
-<p>Expected identity values must come from the independently approved environment record. The report path must be new and outside the repository. PLAN is read-only; APPLY performs a native-auth request for <code>get_stock({"sku":"AS-001"})</code>, verifies a successful structured response and picker activity, writes the private report, and updates runtime evidence only. It preserves candidate lifecycle, immutable provenance, safety status, and performance status. A failed runtime check never updates the registry. Existing failures must not be replaced with a green overall score.</p>
+<p>Expected identity values must come from the independently approved environment record. The report path must be new and outside the repository. PLAN is read-only; APPLY performs a native-auth request for <code>get_stock({"sku":"AS-001"})</code>, verifies a successful structured response and picker activity consistent with that request (concurrent traffic prevents unique per-request attribution), writes the private report, and updates runtime evidence only. It preserves candidate lifecycle, immutable provenance, safety status, and performance status. A failed runtime check never updates the registry. Existing failures must not be replaced with a green overall score.</p>
 <p>Use a single editor window for this version. The helper re-reads metadata immediately before the PATCH and aborts if it changed during measurement; the registry API does not provide a Kubernetes resourceVersion compare-and-swap transaction. Keep concurrent promotion/evaluation writers paused for this short update.</p>
 <p>On September 22, 2026, version 2 recorded <code>PASSED_PROTOCOL_TOOL_AND_ROUTING</code> with a timestamp and SHA-256 evidence reference. Its lifecycle remained <code>candidate</code>; safety and performance remained <code>NOT_RUN</code>. Fresh registrations still initialize all three checks as <code>NOT_RUN</code>. This is acceptance of the native serving protocol, not model quality, a benchmark result, or promotion.</p>
 
