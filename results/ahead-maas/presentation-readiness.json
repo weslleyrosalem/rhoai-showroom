@@ -1,0 +1,321 @@
+{
+  "startedAt": "2026-09-22T06:22:45.768166+00:00",
+  "namespace": "ahead",
+  "checks": [
+    {
+      "name": "resource-count-ahead",
+      "passed": true,
+      "count": 10,
+      "expected": 10
+    },
+    {
+      "name": "LLMInferenceService/ahead-cloud-simulator",
+      "passed": true
+    },
+    {
+      "name": "LLMInferenceService/ahead-code-simulator",
+      "passed": true
+    },
+    {
+      "name": "LLMInferenceService/ahead-simulator",
+      "passed": true
+    },
+    {
+      "name": "MaaSModelRef/ahead-claude-sonnet",
+      "passed": true
+    },
+    {
+      "name": "MaaSModelRef/ahead-cloud-simulator",
+      "passed": true
+    },
+    {
+      "name": "MaaSModelRef/ahead-code-simulator",
+      "passed": true
+    },
+    {
+      "name": "MaaSModelRef/ahead-simulator",
+      "passed": true
+    },
+    {
+      "name": "ExternalModel/ahead-claude-sonnet",
+      "passed": true
+    },
+    {
+      "name": "Keycloak/keycloak",
+      "passed": true
+    },
+    {
+      "name": "PersistentVolumeClaim/ahead-keycloak-db",
+      "passed": true
+    },
+    {
+      "name": "resource-count-ai-tenant-ahead",
+      "passed": true,
+      "count": 23,
+      "expected": 23
+    },
+    {
+      "name": "MaaSSubscription/ahead-alice-gold",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-bob-throttled",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-corp-engineering",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-corp-products",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-corp-sales",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-oidc-data-scientists",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-oidc-ml-engineers",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-quota-bulk",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-quota-individual",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-quota-standard",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-sa-batch-scorer",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-sa-report-writer",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-simulator-free",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-simulator-premium",
+      "passed": true
+    },
+    {
+      "name": "MaaSSubscription/ahead-team-standard",
+      "passed": true
+    },
+    {
+      "name": "MaaSAuthPolicy/ahead-corp-engineering-access",
+      "passed": true
+    },
+    {
+      "name": "MaaSAuthPolicy/ahead-corp-products-access",
+      "passed": true
+    },
+    {
+      "name": "MaaSAuthPolicy/ahead-corp-sales-access",
+      "passed": true
+    },
+    {
+      "name": "MaaSAuthPolicy/ahead-oidc-access",
+      "passed": true
+    },
+    {
+      "name": "MaaSAuthPolicy/ahead-priority-access",
+      "passed": true
+    },
+    {
+      "name": "MaaSAuthPolicy/ahead-service-account-access",
+      "passed": true
+    },
+    {
+      "name": "MaaSAuthPolicy/ahead-simulator-access",
+      "passed": true
+    },
+    {
+      "name": "MaaSAuthPolicy/ahead-user-level-access",
+      "passed": true
+    },
+    {
+      "name": "AITenant/ahead",
+      "passed": true
+    },
+    {
+      "name": "mounted-service-account-job",
+      "passed": true
+    },
+    {
+      "name": "ahead-gateway-health",
+      "passed": true,
+      "http": 200
+    },
+    {
+      "name": "default-gateway-health",
+      "passed": true,
+      "http": 200
+    },
+    {
+      "name": "oidc-discovery",
+      "passed": true,
+      "http": 200
+    },
+    {
+      "name": "presenter-smoke",
+      "passed": true,
+      "expected": [
+        401,
+        401,
+        200
+      ],
+      "actual": [
+        401,
+        401,
+        200
+      ]
+    },
+    {
+      "name": "presenter-oidc",
+      "passed": true,
+      "expected": [
+        200,
+        200
+      ],
+      "actual": [
+        200,
+        200
+      ]
+    },
+    {
+      "name": "presenter-users",
+      "passed": true,
+      "expected": [
+        200,
+        200,
+        200
+      ],
+      "actual": [
+        200,
+        200,
+        200
+      ]
+    },
+    {
+      "name": "individual-and-group-selection",
+      "passed": true,
+      "selected": {
+        "carol": "ahead-team-standard",
+        "alice": "ahead-alice-gold",
+        "bob": "ahead-bob-throttled"
+      }
+    },
+    {
+      "name": "presenter-service-account",
+      "passed": true,
+      "expected": [
+        200,
+        200
+      ],
+      "actual": [
+        200,
+        200
+      ]
+    },
+    {
+      "name": "priority-selection",
+      "passed": true,
+      "selected": {
+        "dual-user": "ahead-quota-standard",
+        "capped-user": "ahead-quota-individual"
+      }
+    },
+    {
+      "name": "corporate-matrix",
+      "passed": true,
+      "expected": [
+        200,
+        403,
+        403,
+        200,
+        200,
+        200,
+        200,
+        200,
+        403
+      ],
+      "actual": [
+        200,
+        403,
+        403,
+        200,
+        200,
+        200,
+        200,
+        200,
+        403
+      ]
+    },
+    {
+      "name": "corporate-discovery",
+      "passed": true,
+      "counts": {
+        "sales-1": 1,
+        "eng-1": 3,
+        "prod-1": 2
+      }
+    },
+    {
+      "name": "real-external-model",
+      "passed": true,
+      "http": 200,
+      "totalTokens": 27
+    },
+    {
+      "name": "gateway-usage-and-limit-metrics",
+      "passed": true,
+      "seriesCounts": [
+        1,
+        14,
+        6
+      ]
+    },
+    {
+      "name": "pre-existing-control-resources-preserved",
+      "passed": true,
+      "count": 15
+    }
+  ],
+  "scope": "Current AHEAD presentation paths; bounded simulator calls and one real Anthropic call",
+  "documentedBoundaries": [
+    "Shared Loki and Redis remain deferred to preserve other demonstrations.",
+    "The cached-JWKS outage experiment is recorded evidence, not repeated by this check.",
+    "An altered JWT returned 500 during the isolated IdP outage; access was denied.",
+    "Priority exhaustion is recorded evidence; hourly budgets are not burned again.",
+    "CPU simulators demonstrate policy; they do not measure GPU model quality or performance."
+  ],
+  "completedAt": "2026-09-22T06:23:08.736322+00:00",
+  "passed": true,
+  "passedChecks": 51,
+  "totalChecks": 51,
+  "nativeUsageReview": {
+    "subscription": "ahead-simulator-free",
+    "window": "30m",
+    "displayedTokens": 2,
+    "displayedRequests": 1,
+    "displayedRateLimited": 0,
+    "firstTokenSample": 108,
+    "lastTokenSample": 110,
+    "firstLimitedSample": 1,
+    "lastLimitedSample": 1,
+    "interpretation": "The first observed sample already contained the short burst; sampled increases do not reconstruct events before that sample. HTTP outcomes remain the quota acceptance evidence."
+  }
+}

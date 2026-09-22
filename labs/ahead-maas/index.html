@@ -1772,6 +1772,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#presenter-readiness-and-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Presenter readiness and fallback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#preflight-and-a-reproducible-smoke-test" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2277,6 +2288,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#presenter-readiness-and-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Presenter readiness and fallback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#preflight-and-a-reproducible-smoke-test" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2519,6 +2541,11 @@
 </tbody>
 </table>
 <p>Do not display passwords, API keys, Secret YAML or browser request headers. The scoped OIDC users create keys through the API; native dashboard authentication remains OpenShift OAuth. The existing <a href="../playground/">Playground</a> and Aurora test drive remain separate customer experiences.</p>
+<h2 id="presenter-readiness-and-fallback">Presenter readiness and fallback<a class="headerlink" href="#presenter-readiness-and-fallback" title="Permanent link">&para;</a></h2>
+<p>The final presenter-command rehearsal completed at <strong>06:23 UTC on September 22, 2026</strong>, with <strong>51 of 51 checks passed</strong>. It executed the actual private administrator commands used for smoke tests, OIDC, user tiers, priority selection, service accounts, corporate discovery/access, a real Anthropic request and sampled metrics. All 33 owned resources were ready/active/bound, the tenant was Ready, the mounted-token Job was complete, both gateways and OIDC discovery returned 200, and 15 pre-existing control resources retained their specs and UIDs. <a href="../../results/ahead-maas/presentation-readiness.json">Download the dated presentation-readiness record</a>.</p>
+<p>Before presenting, run the <code>status</code> and <code>smoke</code> commands below in the approved context. The private presenter package additionally provides <code>presenter-check.py</code> and a step-by-step runbook; that check stops with a nonzero exit if an allowed call does not return 200 or a denied call differs from its expected status. It makes one bounded real Anthropic request. Run it once; repeated rehearsals can consume the small per-user and cloud-simulator quotas.</p>
+<p>Use the quota helper with recovery as one deliberate live step. Present hourly exhaustion, cached-JWKS outage and database restart as dated recorded evidence; do not rerun these disruptive or longer experiments during the default walkthrough. If an ordinary allowed request returns 429, let its minute-long budget recover before retrying once. If it returns 5xx or times out, pause that step and show the dated evidence as a previous run, not as a current live success. Do not alter shared services during the presentation.</p>
+<p>The readiness result applies to the documented presentation scope at its recorded time. The optional shared Loki/Redis changes and JWT-outage error-handling limitation below remain explicit; this is not production certification or a claim that all alternative providers/models passed.</p>
 <h2 id="preflight-and-a-reproducible-smoke-test">Preflight and a reproducible smoke test<a class="headerlink" href="#preflight-and-a-reproducible-smoke-test" title="Permanent link">&para;</a></h2>
 <p>Download the <a href="../../results/ahead-maas/rehearse.py">standalone Python rehearsal helper</a>. It uses the standard library and <code>oc</code>, discovers the AHEAD hostname/model, validates HTTPS, refuses redirects, creates only short-lived AHEAD keys, prints no credentials, and revokes its temporary keys. It does not install resources or change subscriptions.</p>
 <p>Set <code>EXPECTED_OPENSHIFT_SERVER</code> from your approved environment inventory before invoking the helper. Do not derive the expected value blindly from an unverified current context.</p>
@@ -2695,6 +2722,7 @@
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">sum</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">subscription</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="nv">limited_calls_total</span><span class="p">{</span><span class="nl">subscription</span><span class="o">=~</span><span class="p">"</span><span class="s">ahead-.*</span><span class="p">"}</span><span class="o">)</span>
 </code></pre></div>
 <p>The rehearsal observed nonempty gateway, consumption and rate-limit series in the existing Thanos datasource. The native dashboard's summary follows the selected time range while its current chart uses a fixed rolling two-hour expression; their totals can differ. Prometheus sampling/<code>increase()</code> can also extrapolate. These counters are not exact per-request Loki billing records.</p>
+<p><strong>Short-burst caveat observed in the presenter review:</strong> the <code>ahead-simulator-free</code> Usage filter displayed 2 tokens, 1 request and 0 rate-limited for the selected 30 minutes. The new token series was first sampled at 108 and later 110; the limited-call series was first sampled at 1 and stayed 1. Their sampled increases therefore showed only the recovery request and no later increment in blocked calls. The HTTP rehearsal still proved 108 tokens followed by 429, premium isolation and recovery. A zero increase does not mean that no request was blocked before the first sample. Use the HTTP results as the quota acceptance evidence and the Usage panel as sampled observability. See <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#increase">Prometheus <code>increase()</code> semantics</a>.</p>
 <h2 id="preserved-state-and-deferred-extensions">Preserved state and deferred extensions<a class="headerlink" href="#preserved-state-and-deferred-extensions" title="Permanent link">&para;</a></h2>
 <p>The initial before/after comparison kept the original MaaS tenant/configuration, subscriptions, policies, model references, shared Config, DSC, DSCI and default Gateway specs and UIDs unchanged. Original Llama, scheduler, default gateway and MaaS API pod UIDs were unchanged, with zero additional restarts during that check. Later persistence work touched only AHEAD's identity service and database.</p>
 <table>
