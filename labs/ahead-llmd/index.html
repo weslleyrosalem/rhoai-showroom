@@ -1864,6 +1864,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#supervised-live-comparison-from-the-workbench" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supervised live comparison from the Workbench
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Supervised live comparison from the Workbench">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#start-the-temporary-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start the temporary controller
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed-workload-and-stopping-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed workload and stopping behavior
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#activity-1-identify-the-inference-path" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1929,6 +1968,17 @@
     <span class="md-ellipsis">
       
         Interpret the results
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#live-notebook-result-september-22-2026-1355-utc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Live notebook result: September 22, 2026, 13:55 UTC
       
     </span>
   </a>
@@ -2230,6 +2280,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#supervised-live-comparison-from-the-workbench" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supervised live comparison from the Workbench
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Supervised live comparison from the Workbench">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#start-the-temporary-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start the temporary controller
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed-workload-and-stopping-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed workload and stopping behavior
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#activity-1-identify-the-inference-path" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2302,6 +2391,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#live-notebook-result-september-22-2026-1355-utc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Live notebook result: September 22, 2026, 13:55 UTC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#observed-rehearsal-september-22-2026-06100611-utc" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2335,37 +2435,94 @@
 <h1 id="ahead-llmd-aurora-supply-inference-workshop">AHEAD-LLMD: Aurora Supply inference workshop<a class="headerlink" href="#ahead-llmd-aurora-supply-inference-workshop" title="Permanent link">&para;</a></h1>
 <p>Aurora's procurement assistant repeats inventory and approval context across requests. Observe how a single GPU, explicit per-request round-robin, and the installed llm-d scheduler serve that workload. Decide from the evidence whether another experiment is justified.</p>
 <p>This is an administrator-led adaptation of the <a href="https://github.com/rhpds/llm-d-showroom/tree/e4d63c30252ce42fa783b1a08a1706d3cda20761">llm-d workshop</a>. <code>ahead-llmd</code> contains workshop materials and sanitized results. The model remains in <code>ai-showroom</code>: two Qwen3 4B replicas on two L40S nodes. No model/GPU deployment is copied, no shared resources are restarted, and no capacity is added. The original Llama/MaaS demonstrations continue independently.</p>
+<h2 id="supervised-live-comparison-from-the-workbench">Supervised live comparison from the Workbench<a class="headerlink" href="#supervised-live-comparison-from-the-workbench" title="Permanent link">&para;</a></h2>
+<p><strong>Live notebook rehearsal passed on September 22, 2026.</strong> The actual notebook completed all three code cells in 67.773 seconds, with 32/32 benchmark requests and zero errors or incomplete requests. Cleanup left no benchmark worker, GuideLLM process, or port-forward. Read the <a href="#live-notebook-result-september-22-2026-1355-utc">fresh two-mode observations</a> separately from the earlier, explicitly dated three-mode measurement.</p>
+<p>Use <code>notebooks/10-llmd-live.ipynb</code> in the existing Aurora workbench, with the <strong>Aurora Inference Demo</strong> kernel. A presenter must operate the short-lived controller on an authenticated administrator workstation. <strong>Run All</strong> submits a fresh UUID request, waits for that request's result, and plots only its sanitized measurements. An unavailable or expired controller produces an error, never a saved-result fallback.</p>
+<h3 id="start-the-temporary-controller">Start the temporary controller<a class="headerlink" href="#start-the-temporary-controller" title="Permanent link">&para;</a></h3>
+<p>Prepare the local Python 3.12 environment, <strong>GuideLLM 0.6.0</strong>, and pinned tokenizer using Activity 2 below. This administrator environment is separate from the Workbench's persistent inference kernel and the GuideLLM version used by notebook 08. Notebook 10 itself is only a file-channel client: it receives no administrator token, kubeconfig, backend permission, or port-forward.</p>
+<p>From the repository root, set these values deliberately:</p>
+<ul>
+<li><code>SHOWROOM_SERVER</code> and <code>SHOWROOM_USER</code>: independently verified target cluster and authorized administrator identity. Do not derive expected values from the current context in the same command.</li>
+<li><code>SHOWROOM_GUIDELLM</code> and <code>SHOWROOM_TOKENIZER</code>: absolute paths to the prepared local GuideLLM executable and matching tokenizer directory.</li>
+<li><code>SHOWROOM_CONTROLLER_RESULTS</code>: a <strong>new absolute directory outside Git</strong> for the private ledger, raw reports, logs, and partial results.</li>
+<li><code>SHOWROOM_CONTROLLER_EXPIRES_AT</code>: an explicit ISO 8601 UTC expiry, in the future and no more than three hours away.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python3.12<span class="w"> </span>scripts/ahead-llmd/workbench_controller.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>--expected-server<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_SERVER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span>--expected-user<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_USER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span>--guidellm<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_GUIDELLM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span>--tokenizer<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_TOKENIZER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span>--output<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_CONTROLLER_RESULTS</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span>--expires-at<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_CONTROLLER_EXPIRES_AT</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span>--max-runs<span class="w"> </span><span class="m">6</span>
+</code></pre></div>
+<p>Starting the controller publishes health only; it does not start inference. Keep the presenter session running. In Jupyter, first inspect the notebook's controller status, then run its comparison cell once. The fixed channel is under <code>/opt/app-root/src/.local/share/aurora-showroom/llmd-live</code>. Requests contain only a UUID, <code>compare</code>, and a recent creation time; they cannot supply shell commands, model URLs, or workload settings. Files use owner-only permissions, and symlink targets are rejected. The controller accepts a request only within its freshness window and records claimed IDs locally to prevent replay during the session.</p>
+<h3 id="fixed-workload-and-stopping-behavior">Fixed workload and stopping behavior<a class="headerlink" href="#fixed-workload-and-stopping-behavior" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Limit</th>
+<th>Live notebook contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Comparison</td>
+<td>Round-robin, then llm-d; two existing Qwen backends</td>
+</tr>
+<tr>
+<td>Each phase</td>
+<td>At most 30 seconds, 16 requests, concurrency 2, and 32 output tokens per request</td>
+</tr>
+<tr>
+<td>Authentication check</td>
+<td>One additional authorized request, at most 16 output tokens, plus one denied anonymous request</td>
+</tr>
+<tr>
+<td>Session</td>
+<td>One active comparison; 30-second cooldown; at most six claimed runs; explicit temporary expiry</td>
+</tr>
+<tr>
+<td>Deadlines</td>
+<td>180-second worker wall budget including shutdown margin; 210-second notebook wait</td>
+</tr>
+</tbody>
+</table>
+<p>A full two-phase run contains 32 benchmark completions and can add one successful authentication preflight. Failed or cancelled attempts consume the session budget. The controller preserves private partial artifacts, but the notebook does not present an incomplete comparison as a successful result.</p>
+<p><strong>Interrupt kernel</strong> writes a cancellation marker for that request. The controller checks it every five seconds; including the bounded channel operation, detection can take about nine seconds. It requests normal AHEAD cleanup, then enforces cleanup of its tracked GuideLLM process group, children, and forwards. An independent worker watchdog also handles controller death and expiry. Closing the browser alone does not send cancellation. A backend may finish an already accepted request after the client has disconnected.</p>
+<p>The phases use matching workload structure with different fresh prefix salts; exact prompt bytes therefore differ. Caches are not reset. Round-robin uses administrator-only direct backend forwards, while llm-d includes native Gateway authentication and endpoint-picker scheduling. Other traffic can contribute to backend/EPP counters. Show actual request counts, errors, timestamps, and these limits alongside every latency or cache comparison; this exercise does not isolate a causal llm-d speedup or demonstrate cross-node KV transfer.</p>
+<p>When the budget is exhausted or the expiry arrives, the temporary controller stops accepting requests. A presenter must explicitly start a new authorized session for further comparisons. This is not a permanently available benchmarking service or an automatic background load generator.</p>
 <h2 id="activity-1-identify-the-inference-path">Activity 1: Identify the inference path<a class="headerlink" href="#activity-1-identify-the-inference-path" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oc<span class="w"> </span>whoami
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oc<span class="w"> </span>whoami<span class="w"> </span>--show-server
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>oc<span class="w"> </span>get<span class="w"> </span>namespace<span class="w"> </span>ahead-llmd
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>oc<span class="w"> </span>get<span class="w"> </span>llminferenceservice<span class="w"> </span>aurora-qwen-4b<span class="w"> </span>-n<span class="w"> </span>ai-showroom
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>oc<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ai-showroom<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/name<span class="o">=</span>aurora-qwen-4b,kserve.io/component<span class="o">=</span>workload<span class="w"> </span>-o<span class="w"> </span>wide
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>oc<span class="w"> </span>get<span class="w"> </span>deployment<span class="w"> </span>aurora-qwen-4b-kserve-router-scheduler<span class="w"> </span>-n<span class="w"> </span>ai-showroom<span class="w"> </span>-o<span class="w"> </span>yaml
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>oc<span class="w"> </span>whoami
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>oc<span class="w"> </span>whoami<span class="w"> </span>--show-server
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>oc<span class="w"> </span>get<span class="w"> </span>namespace<span class="w"> </span>ahead-llmd
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>oc<span class="w"> </span>get<span class="w"> </span>llminferenceservice<span class="w"> </span>aurora-qwen-4b<span class="w"> </span>-n<span class="w"> </span>ai-showroom
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>oc<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ai-showroom<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/name<span class="o">=</span>aurora-qwen-4b,kserve.io/component<span class="o">=</span>workload<span class="w"> </span>-o<span class="w"> </span>wide
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>oc<span class="w"> </span>get<span class="w"> </span>deployment<span class="w"> </span>aurora-qwen-4b-kserve-router-scheduler<span class="w"> </span>-n<span class="w"> </span>ai-showroom<span class="w"> </span>-o<span class="w"> </span>yaml
 </code></pre></div>
 <p>Expected: two Ready model pods on distinct nodes, <code>prefix-cache-scorer</code> in the scheduler configuration. Inspect the actual images and model revision. The scheduler also uses queue, KV utilization, and no-hit LRU scoring. Prefix scoring being configured does not prove a latency improvement.</p>
 <h2 id="activity-2-prepare-guidellm-on-the-administrator-workstation">Activity 2: Prepare GuideLLM on the administrator workstation<a class="headerlink" href="#activity-2-prepare-guidellm-on-the-administrator-workstation" title="Permanent link">&para;</a></h2>
 <p>Python 3.12 and an authenticated <code>oc</code> are required. Use a new local directory outside a public Git checkout for reports; raw GuideLLM reports include local filesystem paths. The script never gives the OpenShift token to GuideLLM or writes it to reports.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/weslleyrosalem/rhoai-showroom.git
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd</span><span class="w"> </span>rhoai-showroom/scripts/ahead-llmd
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>python3.12<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>.venv/bin/python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>.venv/bin/python<span class="w"> </span>prepare_tokenizer.py<span class="w"> </span>tokenizer
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/weslleyrosalem/rhoai-showroom.git
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>rhoai-showroom/scripts/ahead-llmd
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>python3.12<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>.venv/bin/python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>.venv/bin/python<span class="w"> </span>prepare_tokenizer.py<span class="w"> </span>tokenizer
 </code></pre></div>
 <p>The tokenizer download is pinned to the serving model revision and SHA256-verified. No model weights are downloaded to the workstation. On macOS, the runner selects multiprocessing <code>spawn</code> to avoid a GuideLLM fork startup hang observed during the initial rehearsal.</p>
 <p>Set <code>SHOWROOM_SERVER</code> and <code>SHOWROOM_USER</code> to the independently verified cluster and authorized administrator identity. Set <code>SHOWROOM_PRIVATE_RESULTS</code> to a new absolute directory <strong>outside the public repository</strong>. The program refuses an identity or server mismatch; never populate its expected identity from the current context in the same command.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>.venv/bin/python<span class="w"> </span>ahead_llmd.py<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--expected-server<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_SERVER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--expected-user<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_USER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>--guidellm<span class="w"> </span>.venv/bin/guidellm<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span>--tokenizer<span class="w"> </span>tokenizer<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span>--output<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_PRIVATE_RESULTS</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span>--seconds<span class="w"> </span><span class="m">30</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>.venv/bin/python<span class="w"> </span>ahead_llmd.py<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--expected-server<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_SERVER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>--expected-user<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_USER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>--guidellm<span class="w"> </span>.venv/bin/guidellm<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>--tokenizer<span class="w"> </span>tokenizer<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span>--output<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_PRIVATE_RESULTS</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span>--seconds<span class="w"> </span><span class="m">30</span>
 </code></pre></div>
 <p>Add <code>--check-only</code> first to validate identity, model revision, tokenizer checksums, GuideLLM version, and two Ready L40S backends on distinct nodes without inference or port-forwards.</p>
 <p>This runs single-backend observation at concurrency one, then per-request round-robin and llm-d at concurrency two. Every mode is bounded by 30 seconds or 30 requests, whichever occurs first, and requests at most 32 output tokens. All forwards and the loopback broker close on completion or failure. This is a short functional rehearsal, not a saturation or capacity benchmark.</p>
 <p>To produce the sanitized report used by the guide, choose a new output file. The exporter refuses to overwrite an existing report:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>.venv/bin/python<span class="w"> </span>summarize_ahead_llmd.py<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_PRIVATE_RESULTS</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_PRIVATE_RESULTS</span><span class="s2">/results-summary.json"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>.venv/bin/python<span class="w"> </span>summarize_ahead_llmd.py<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_PRIVATE_RESULTS</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_PRIVATE_RESULTS</span><span class="s2">/results-summary.json"</span>
 </code></pre></div>
 <h2 id="activity-3-read-the-two-backend-baseline">Activity 3: Read the two-backend baseline<a class="headerlink" href="#activity-3-read-the-two-backend-baseline" title="Permanent link">&para;</a></h2>
 <p>Open the <code>round-robin/benchmarks.json</code> or CSV generated by GuideLLM (inspect the actual filenames). Verify successful, errored, and cancelled request counts before reading percentiles. Compare the explicit broker assignment counts and the per-backend success counters in <code>evidence.json</code>; other live traffic can contribute to those counters.</p>
@@ -2418,6 +2575,36 @@
 <li>Local prefix reuse is not cross-node KV transfer or disaggregated prefill/decode. Four-GPU Llama results and the original workshop's 98% example were not reproduced here.</li>
 </ul>
 <p>There is no persistent inference proxy, new cross-namespace service account, or public model route. Rehearsal access requires the existing authorized administrator identity. Keep this privileged path distinct from the customer/native Playground experience.</p>
+<h2 id="live-notebook-result-september-22-2026-1355-utc">Live notebook result: September 22, 2026, 13:55 UTC<a class="headerlink" href="#live-notebook-result-september-22-2026-1355-utc" title="Permanent link">&para;</a></h2>
+<p>The new comparison measured <strong>13:55:06–13:55:55 UTC</strong>, using the two existing Qwen backends. Native authentication returned anonymous <strong>401</strong> and authorized <strong>200</strong>. Each benchmark phase completed <strong>16/16 requests</strong>, with zero errors, incomplete requests, proxy errors, or client disconnects. The successful authentication preflight is separate from those 32 benchmark completions.</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th style="text-align: right;">Mean TTFT</th>
+<th style="text-align: right;">Mean end-to-end latency</th>
+<th style="text-align: right;">Prefix-hit fraction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Explicit round-robin</td>
+<td style="text-align: right;">218.232 ms</td>
+<td style="text-align: right;">0.59370 s</td>
+<td style="text-align: right;">86.432%</td>
+</tr>
+<tr>
+<td>Native llm-d Gateway</td>
+<td style="text-align: right;">184.972 ms</td>
+<td style="text-align: right;">0.56101 s</td>
+<td style="text-align: right;">86.288%</td>
+</tr>
+</tbody>
+</table>
+<p>Both phases observed <strong>8/8 successful requests across the two backends</strong>. The EPP request counter increased by <strong>0</strong> during round-robin and <strong>16</strong> during llm-d. Cache counters were <strong>8,256 hits / 9,552 queries</strong> for round-robin and <strong>8,256 / 9,568</strong> for llm-d.</p>
+<p>This run demonstrated the two working paths and endpoint-picker participation. It <strong>did not show increased prefix affinity or a higher hit fraction</strong> for llm-d: both paths were balanced, and its observed hit fraction was slightly lower. The smaller mean latency in this sample does not establish a causal benefit; the paths, salts, tokenized prompt lengths, cache state, and shared traffic limits still apply. No configuration was changed to force a preferred result.</p>
+<p>GuideLLM reports a 30-second measurement window per phase, with a finite 16-request workload. Its 0.533 requests/second average is not serving capacity. Mean input size was 597 tokens for round-robin and 598 for llm-d; both generated 32 output tokens per request. Compare like timing statistics: the table above uses <strong>means</strong>, while the earlier historical table below uses <strong>P95 TTFT</strong>.</p>
+<p>Read the <a href="../../results/ahead-llmd-live-20260922T135506Z.json">typed, sanitized live result</a>, including exact timestamps, report and prompt hashes, pinned images, counts, and limitations. These are this request's actual measurements; the notebook did not substitute the earlier result.</p>
 <h2 id="observed-rehearsal-september-22-2026-06100611-utc">Observed rehearsal: September 22, 2026, 06:10–06:11 UTC<a class="headerlink" href="#observed-rehearsal-september-22-2026-06100611-utc" title="Permanent link">&para;</a></h2>
 <p>All three modes completed <strong>16/16 requests</strong>, with zero reported errors or incomplete requests. Native gateway authentication returned anonymous <strong>401</strong> and authorized <strong>200</strong>. The two model replicas stayed Ready, their model resource UID/spec remained unchanged, and neither model pod restarted.</p>
 <table>

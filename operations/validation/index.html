@@ -2304,6 +2304,16 @@
 <td>All three executed in the persistent Aurora Inference Demo kernel. GuideLLM observed 0.802 s mean latency and 40.46 ms client streaming TTFT across three requests; functional observation, not capacity or causal llm-d evidence</td>
 </tr>
 <tr>
+<td>Live llm-d notebook</td>
+<td>At 13:55 UTC, notebook 10 ran both paths afresh: 32/32 successful requests, no errors/incomplete, backend 8/8 in both, EPP 0 versus 16</td>
+<td>Actual kernel execution and charts passed; controller cleanup confirmed. Cache fractions 86.43%/86.29% did not show a prefix-affinity gain; smaller observed llm-d latency is not causal proof</td>
+</tr>
+<tr>
+<td>AHEAD Granite MaaS</td>
+<td>At 13:59 UTC: two Ready replicas, dedicated tenant route, one-model discovery 200, chat 200 / 80 tokens, anonymous 401, unsubscribed model 403, both raw backends denied from Workbench</td>
+<td>Scoped presenter subscription passed; temporary key revoked. Optional profile is separate from core Argo; existing tenant-isolation placeholder and authorization cache limits remain documented</td>
+</tr>
+<tr>
 <td>Workbench and DSPA</td>
 <td>Running; actual distributed jobs and native optimization pipeline results inspected</td>
 <td>Individual notebook and pipeline paths passed</td>
@@ -2320,7 +2330,7 @@
 </tr>
 <tr>
 <td>Feature Store</td>
-<td>Feast0.65 Ready; eight-SKU materialization; authenticated200 and anonymous401</td>
+<td>Feast0.65 Ready; eight-SKU materialization; authenticated200 and anonymous 401</td>
 <td>Runtime and native overview, lineage, features, historical dataset, and connected Aurora Workbench passed</td>
 </tr>
 <tr>
@@ -2335,12 +2345,12 @@
 </tr>
 <tr>
 <td>GPU models</td>
-<td>Two Qwen4B replicas Ready on distinct hosts; 8/8 authorized requests, EPP +8, backend successful counts +2/+6; anonymous401</td>
+<td>Two Qwen4B replicas Ready on distinct hosts; 8/8 authorized requests, EPP +8, backend successful counts +2/+6; anonymous 401</td>
 <td>Two-node routing passed; matched same-GPU engine comparison passed (48/48 requests); no causal distributed-routing efficiency claim</td>
 </tr>
 <tr>
 <td>Private Qwen gateway</td>
-<td>At 10:44 UTC: inherited autoscaler aligned with one fixed gateway replica; original serving pod and pod template preserved; anonymous401, two authorized200 responses in 0.484s and 0.417s</td>
+<td>At 10:44 UTC: inherited autoscaler aligned with one fixed gateway replica; original serving pod and pod template preserved; anonymous 401, two authorized200 responses in 0.484s and 0.417s</td>
 <td>Access checks passed after the configuration fix; single CPU gateway is not highly available</td>
 </tr>
 <tr>
