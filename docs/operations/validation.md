@@ -14,22 +14,24 @@ Validation started on **September 22, 2026 UTC**. This record separates actual f
 | MCP and IPP | Public SDK tools; 14 auth/input cases; unsafe output 403; checker outage 503; private bypass denials | Functional security gates passed |
 | MCP catalog and lifecycle | Catalog source visible; native MCPServer handshake; isolated lifecycle protocol and denial tests | Functional gates passed |
 | Aurora web app | Authenticated English response, sources, tools, live model, Ray forecast, MLflow trace; synthetic email blocked | Public test drive passed |
-| Workbench, DSPA, Playground | Services Running; native pipeline runs submitted | Individual services ready; complete journeys under test |
+| Workbench and DSPA | Running; actual distributed jobs and native optimization pipeline results inspected | Individual notebook and pipeline paths passed |
+| Native Playground | Qwen chat; returns policy with clickable citation; unsupported facts rejected; actual MCP stock and proposal results | Browser test drive passed; temporary scoped MCP credential expires September 22 at 17:57 UTC |
 | Native Trainer | Two CPU workers on distinct hosts; complete job, resource/pod/log tabs inspected; holdout MAE0.82070 vs baseline1.33036 | Distributed training and native Jobs UI passed |
-| Feature Store | Feast0.65 Ready; eight-SKU materialization; authenticated200 and anonymous401 | Runtime passed; native UI review in progress |
+| Feature Store | Feast0.65 Ready; eight-SKU materialization; authenticated200 and anonymous401 | Runtime and native overview, lineage, features, historical dataset, and connected Aurora Workbench passed |
 | Prompt registry | Version1 @baseline and Version2 @demo visible with actual templates | Native version details passed; application runtime prompt remains separate |
 | Ray | Succeeded with two distinct workers; eight forecast models published to MLflow and S3 | Distributed training passed |
-| GPU models | Two Qwen4B replicas Ready on distinct hosts; 8/8 authorized requests, EPP +8, backend successful counts +2/+6; anonymous401 | Two-node routing and backend use passed; comparative efficiency not measured |
+| GPU models | Two Qwen4B replicas Ready on distinct hosts; 8/8 authorized requests, EPP +8, backend successful counts +2/+6; anonymous401 | Two-node routing passed; matched same-GPU engine comparison passed (48/48 requests); no causal distributed-routing efficiency claim |
 | AutoML | Native module, completed run, full training DAG and model leaderboard visible; Three models compared; SeasonalNaive_FULL signed MAE−0.571, RecursiveTabular_FULL−0.651, WeightedEnsemble_FULL−0.675 | Native three-model results UI passed |
 | AutoRAG | Native module enabled; real DAG and four-pattern leaderboard visible; Pattern3 correctness0.8129 | Native results UI passed; real semantic query passed before and after restart |
-| EvalHub/Garak | A real quick evaluation completed; one probe, attack_success_rate 1, benchmark pass=false | Completed marker test; meaningful security assessment under review |
+| EvalHub/Garak | [Matched OWASP pair](../labs/owasp-evaluations.md):33 responses per target;both 42.42% ASR,14 detector hits;benchmark and overall Fail | Complete raw JSONL/HTML downloaded from MLflow and hash-verified;NeMo blocked 0/33 in this broader corpus;four probes, not all ten risks |
 | Model onboarding/scoring | Native registry Available; pinned candidate created once; repeated apply stable; authenticated and unauthorized tests passed | Registration passed; candidate safety/performance approval pending |
 | OpenShell | Exact-subject authentication, denied alternate identity, network boundaries, agent filesystem restrictions, denied external egress, real MaaS inference | Private administrator-led preview passed the documented gates |
+| Predictive TrustyAI | Native Project Settings shows installed; actual OVMS capture; baseline SPD0/DIR1, promotion SPD−0.30/DIR0.6667; demand drift measured | Functional metrics passed; native chart collection under final review |
 | MIG / NeMoClaw | Prerequisites and pinned deployment options researched | Not yet validated |
 
 The active cloud configuration has a conservative maximum of 11 physical GPUs, including every pool maximum and upgrade surge. The user-authorized hard ceiling is 16. These are allocation bounds, not the number of GPUs running continuously, and optional profiles cannot be combined without recalculating them.
 
-The original Garak quick run used a DAN marker detector with one example. A matched marker is not sufficient evidence of harmful behavior; its result is being replaced by a better documented assessment with retained responses. The UI percentage is the attack-success metric, not a safety score. The aggregate evaluation status and per-benchmark result disagreed; use the per-benchmark result. The complete result JSON was explicitly exported through the MLflow SDK and confirmed in S3. Automatic report delivery is being checked separately from recorded metrics.
+The original Garak quick run used a one-example DAN marker detector. A marker alone does not establish harmful behavior. The final [matched OWASP pair](../labs/owasp-evaluations.md) has complete per-response evidence and explicit matching thresholds: lower ASR is better; a zero-hit benchmark gate corresponds to an overall transformed score threshold of 1.0. Both final results fail consistently. The current deterministic NeMo regex rules do not improve the selected 33-response corpus. This is a four-probe subset mapped to the 2025 taxonomy, with separate controls and untested gaps for all ten risks; it is not full OWASP coverage. Report JSONL and HTML were explicitly uploaded through the workspace-aware MLflow SDK, then downloaded and SHA256-verified.
 
 ## Journey acceptance criteria
 

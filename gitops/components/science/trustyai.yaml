@@ -1,0 +1,374 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai-showroom-monitoring
+  labels:
+    opendatahub.io/dashboard: 'true'
+    app.kubernetes.io/part-of: rhoai-showroom
+    argocd.argoproj.io/managed-by: openshift-gitops
+  annotations:
+    openshift.io/display-name: "AI Showroom \u2014 Predictive Monitoring"
+    openshift.io/description: 'Aurora Supply: isolated OVMS inventory service-level
+      fairness and drift demonstration'
+    argocd.argoproj.io/sync-options: Prune=false
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kserve-logger-ca-bundle
+  namespace: ai-showroom-monitoring
+  annotations:
+    service.beta.openshift.io/inject-cabundle: 'true'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aurora-allocation-model
+  namespace: ai-showroom-monitoring
+binaryData:
+  model.onnx: CAgSDnJob2FpLXNob3dyb29tMpsBU3ludGhldGljIHdhcmVob3VzZSBzZXJ2aWNlLWxldmVsIG1vbml0b3JpbmcuIElucHV0czogd2FyZWhvdXNlX3pvbmUsIGRlbWFuZF83ZCwgYXZhaWxhYmxlX3VuaXRzLiBPdXRwdXQ6IGV4cGVkaXRlIHJldmlldyAoMS8wKS4gTm8gcHVyY2hhc2UgYXV0aG9yaXphdGlvbi46oAIKIQoJaW52ZW50b3J5Cgd3ZWlnaHRzEgNnYXAiBk1hdE11bAoiCgNnYXAKBHplcm8SDG5lZWRzX3JldmlldyIHR3JlYXRlcgopCgxuZWVkc19yZXZpZXcSCGV4cGVkaXRlIgRDYXN0KgkKAnRvGAegAQISKEF1cm9yYSBpbnZlbnRvcnkgZXhwZWRpdGVkLXJldmlldyBwb2xpY3kqKQgDCAEQC0IHd2VpZ2h0c1IYAAAAAAAAAAAAAAAAAADwPwAAAAAAAPC/KhQIARALQgR6ZXJvUggAAAAAAAAAAFogCglpbnZlbnRvcnkSEwoRCAsSDQoHEgViYXRjaAoCCANiHwoIZXhwZWRpdGUSEwoRCAcSDQoHEgViYXRjaAoCCAFCBAoAEA0=
+---
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+metadata:
+  annotations:
+    opendatahub.io/runtime-version: v2026.1.0
+    openshift.io/display-name: "Aurora allocation \u2014 OpenVINO CPU"
+    opendatahub.io/template-name: kserve-ovms
+    opendatahub.io/template-display-name: OpenVINO Model Server
+  labels:
+    opendatahub.io/dashboard: 'true'
+    app.kubernetes.io/part-of: rhoai-showroom
+  name: aurora-ovms
+  namespace: ai-showroom-monitoring
+spec:
+  annotations:
+    opendatahub.io/kserve-runtime: ovms
+    prometheus.io/path: /metrics
+    prometheus.io/port: '8888'
+  containers:
+  - args:
+    - --model_name={{.Name}}
+    - --port=8001
+    - --rest_port=8888
+    - --model_path=/mnt/models
+    - --file_system_poll_wait_seconds=0
+    - --metrics_enable
+    image: registry.redhat.io/rhoai/odh-openvino-model-server-rhel9@sha256:1a27f3047b14a16cd6aeb7925fd3564c0682df3ff019af7eeef62e1af62f9adc
+    name: kserve-container
+    ports:
+    - containerPort: 8888
+      protocol: TCP
+  multiModel: false
+  protocolVersions:
+  - v2
+  - grpc-v2
+  supportedModelFormats:
+  - autoSelect: true
+    name: openvino_ir
+    version: opset13
+  - name: onnx
+    version: '1'
+  - autoSelect: true
+    name: tensorflow
+    version: '1'
+  - autoSelect: true
+    name: tensorflow
+    version: '2'
+  - autoSelect: true
+    name: paddle
+    version: '2'
+  - autoSelect: true
+    name: pytorch
+    version: '2'
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: aurora-allocation
+  namespace: ai-showroom-monitoring
+  labels:
+    opendatahub.io/dashboard: 'true'
+    networking.kserve.io/visibility: cluster-local
+    app.kubernetes.io/part-of: rhoai-showroom
+  annotations:
+    openshift.io/display-name: "Aurora inventory \u2014 expedited review policy"
+    openshift.io/description: 'Transparent synthetic policy graph: demand exceeds
+      stock; no real purchasing action'
+    serving.kserve.io/deploymentMode: Standard
+    security.opendatahub.io/enable-auth: 'true'
+spec:
+  predictor:
+    minReplicas: 1
+    maxReplicas: 1
+    model:
+      runtime: aurora-ovms
+      modelFormat:
+        name: onnx
+        version: '1'
+      resources:
+        requests:
+          cpu: 250m
+          memory: 512Mi
+        limits:
+          cpu: '1'
+          memory: 1Gi
+      volumeMounts:
+      - name: model
+        mountPath: /mnt/models/1
+        readOnly: true
+    volumes:
+    - name: model
+      configMap:
+        name: aurora-allocation-model
+---
+apiVersion: trustyai.opendatahub.io/v1
+kind: TrustyAIService
+metadata:
+  name: trustyai-service
+  namespace: ai-showroom-monitoring
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+spec:
+  storage:
+    format: PVC
+    folder: /inputs
+    size: 1Gi
+  data:
+    filename: data.csv
+    format: CSV
+  metrics:
+    schedule: 10s
+    batchSize: 100
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-monitoring-readers
+  namespace: ai-showroom-monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: Group
+  apiGroup: rbac.authorization.k8s.io
+  name: showroom-platform-admins
+- kind: Group
+  apiGroup: rbac.authorization.k8s.io
+  name: showroom-data-scientists
+- kind: Group
+  apiGroup: rbac.authorization.k8s.io
+  name: showroom-visitors
+- kind: ServiceAccount
+  name: aurora-lab
+  namespace: ai-showroom
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-monitoring-private
+  namespace: ai-showroom-monitoring
+spec:
+  podSelector:
+    matchLabels:
+      app: trustyai-service
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ai-showroom
+      podSelector:
+        matchLabels:
+          notebook-name: aurora-lab
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: redhat-ods-applications
+      podSelector:
+        matchLabels:
+          app: rhods-dashboard
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openshift-ingress
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openshift-user-workload-monitoring
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: prometheus
+          app.kubernetes.io/instance: user-workload
+    ports:
+    - port: 8443
+      protocol: TCP
+  - from:
+    - podSelector:
+        matchLabels:
+          serving.kserve.io/inferenceservice: aurora-allocation
+    ports:
+    - port: 4443
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-allocation-private
+  namespace: ai-showroom-monitoring
+spec:
+  podSelector:
+    matchLabels:
+      serving.kserve.io/inferenceservice: aurora-allocation
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ai-showroom
+      podSelector:
+        matchLabels:
+          notebook-name: aurora-lab
+    ports:
+    - port: 8443
+      protocol: TCP
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openshift-user-workload-monitoring
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: prometheus
+          app.kubernetes.io/instance: user-workload
+    ports:
+    - port: 8443
+      protocol: TCP
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: aurora-monitoring-scrape
+  namespace: ai-showroom-monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: aurora-monitoring-scrape
+  namespace: ai-showroom-monitoring
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - services
+  verbs:
+  - get
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - inferenceservices
+  resourceNames:
+  - aurora-allocation
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aurora-monitoring-scrape
+  namespace: ai-showroom-monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: aurora-monitoring-scrape
+subjects:
+- kind: ServiceAccount
+  name: aurora-monitoring-scrape
+  namespace: ai-showroom-monitoring
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aurora-trustyai-secure-metrics
+  namespace: ai-showroom-monitoring
+  labels:
+    aurora-monitoring: trustyai
+spec:
+  ports:
+  - name: https
+    port: 443
+    targetPort: 8443
+  selector:
+    app: trustyai-service
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: aurora-trustyai-secure
+  namespace: ai-showroom-monitoring
+spec:
+  selector:
+    matchLabels:
+      aurora-monitoring: trustyai
+  namespaceSelector:
+    matchNames:
+    - ai-showroom-monitoring
+  endpoints:
+  - port: https
+    scheme: https
+    path: /q/metrics
+    interval: 15s
+    authorization:
+      type: Bearer
+      credentials:
+        name: aurora-monitoring-scrape-token
+        key: token
+    tlsConfig:
+      ca:
+        configMap:
+          name: kserve-logger-ca-bundle
+          key: service-ca.crt
+      serverName: trustyai-service-tls.ai-showroom-monitoring.svc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aurora-allocation-secure-metrics
+  namespace: ai-showroom-monitoring
+  labels:
+    aurora-monitoring: allocation
+spec:
+  ports:
+  - name: https
+    port: 443
+    targetPort: 8443
+  selector:
+    serving.kserve.io/inferenceservice: aurora-allocation
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: aurora-allocation-secure
+  namespace: ai-showroom-monitoring
+spec:
+  selector:
+    matchLabels:
+      aurora-monitoring: allocation
+  namespaceSelector:
+    matchNames:
+    - ai-showroom-monitoring
+  endpoints:
+  - port: https
+    scheme: https
+    path: /metrics
+    interval: 15s
+    authorization:
+      type: Bearer
+      credentials:
+        name: aurora-monitoring-scrape-token
+        key: token
+    tlsConfig:
+      ca:
+        configMap:
+          name: kserve-logger-ca-bundle
+          key: service-ca.crt
+      serverName: aurora-allocation-predictor.ai-showroom-monitoring.svc

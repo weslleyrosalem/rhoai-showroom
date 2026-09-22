@@ -13,7 +13,7 @@ State the maturity boundaries before starting: MCP Gateway/Lifecycle and Playgro
 | 6–9 | Open the new MLflow trace | Actual spans, tool calls, and latency |
 | 9–12 | Compare missing, unlisted, and allowed MCP identities | 401, 403, and success |
 | 12–15 | Run allowed and blocked NeMo checks | Exact rail and CPU execution |
-| 15–18 | Inspect a completed Garak evaluation | Configuration, samples, outcomes, and limitations |
+| 15–18 | Compare the two [OWASP runs](../labs/owasp-evaluations.md) | Same 33 prompts; 42.42% ASR on both paths; explicit failed gates and rule limitations |
 | 18–20 | Let the customer change one synthetic input | Reproducible result and explanation |
 
 ## Forty-five-minute workshop
@@ -25,7 +25,7 @@ State the maturity boundaries before starting: MCP Gateway/Lifecycle and Playgro
 | 13–19 | Inspect the trace, versioned prompt, forecast, and MLflow run |
 | 19–25 | MCP authorization tests; discover the catalog card and managed server |
 | 25–31 | NeMo checks and validated integrated blocking; explain open protocol gates |
-| 31–36 | Discover an EvalHub provider; launch a bounded smoke and inspect an earlier full run |
+| 31–36 | Discover an EvalHub provider; inspect the matched OWASP pair and complete raw reports |
 | 36–40 | Discuss evaluation blind spots; OpenShell only if its acceptance gates have passed |
 | 40–43 | Review a synthetic reorder-point change in Git, synchronize, and revert |
 | 43–45 | Customer repeats the shortest test drive independently |

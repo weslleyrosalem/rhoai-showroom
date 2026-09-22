@@ -8,3 +8,4 @@ resources:
 # RayJob is intentionally not continuously reconciled: submit it once per test drive.
   - playground.yaml
   - featurestore.yaml
+  - trustyai.yaml

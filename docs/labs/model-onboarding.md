@@ -1,6 +1,6 @@
 # Model onboarding: from candidate to governed service
 
-**Status:** the curated catalog and native registry candidate onboarding are verified. GPU deployment and the complete promotion rehearsal remain separate validation gates. Candidate registration does not mean a model has passed evaluation or is approved for customer use.
+**Status:** the curated catalog and native registry candidate onboarding are verified. The Qwen GPU deployment and native tool-calling/routing checks also passed; the complete promotion rehearsal remains a separate gate. Candidate registration does not mean a model has passed evaluation or is approved for customer use.
 
 Use the Aurora replenishment assistant as the acceptance scenario. Start with `Qwen/Qwen3-4B-Instruct-2507`, pinned to the revision in `gitops/components/models/models.lock.json`. Its initial role is a candidate alternative to the existing demonstration model.
 
@@ -88,7 +88,7 @@ python3 gitops/components/models/record_runtime.py \
 # Review the PLAN, then repeat with --apply.
 ```
 
-Expected identity values must come from the independently approved environment record. The report path must be new and outside the repository. PLAN is read-only; APPLY performs a native-auth request for `get_stock({"sku":"AS-001"})`, verifies a successful structured response and picker activity, writes the private report, and updates runtime evidence only. It preserves candidate lifecycle, immutable provenance, safety status, and performance status. A failed runtime check never updates the registry. Existing failures must not be replaced with a green overall score.
+Expected identity values must come from the independently approved environment record. The report path must be new and outside the repository. PLAN is read-only; APPLY performs a native-auth request for `get_stock({"sku":"AS-001"})`, verifies a successful structured response and picker activity consistent with that request (concurrent traffic prevents unique per-request attribution), writes the private report, and updates runtime evidence only. It preserves candidate lifecycle, immutable provenance, safety status, and performance status. A failed runtime check never updates the registry. Existing failures must not be replaced with a green overall score.
 
 Use a single editor window for this version. The helper re-reads metadata immediately before the PATCH and aborts if it changed during measurement; the registry API does not provide a Kubernetes resourceVersion compare-and-swap transaction. Keep concurrent promotion/evaluation writers paused for this short update.
 

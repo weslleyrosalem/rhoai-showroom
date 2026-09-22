@@ -57,7 +57,7 @@ python3 gitops/components/models/record_runtime.py \
 # Review the PLAN, then repeat with --apply.
 ```
 
-Expected identity values must come from the independently approved environment record. The report path must be new and outside the repository. PLAN is read-only; APPLY performs a native-auth request for `get_stock({"sku":"AS-001"})`, verifies a successful structured response and picker activity, writes the private report, and updates runtime evidence only. It preserves candidate lifecycle, immutable provenance, safety status, and performance status. A failed runtime check never updates the registry. Existing failures must not be replaced with a green overall score.
+Expected identity values must come from the independently approved environment record. The report path must be new and outside the repository. PLAN is read-only; APPLY performs a native-auth request for `get_stock({"sku":"AS-001"})`, verifies a successful structured response and picker activity consistent with that request (concurrent traffic prevents unique per-request attribution), writes the private report, and updates runtime evidence only. It preserves candidate lifecycle, immutable provenance, safety status, and performance status. A failed runtime check never updates the registry. Existing failures must not be replaced with a green overall score.
 
 Use a single editor window for this version. The helper re-reads metadata immediately before the PATCH and aborts if it changed during measurement; the registry API does not provide a Kubernetes resourceVersion compare-and-swap transaction. Keep concurrent promotion/evaluation writers paused for this short update.
 

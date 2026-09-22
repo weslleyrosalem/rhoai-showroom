@@ -10,6 +10,7 @@ import datetime as dt
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -46,7 +47,7 @@ def runtime_properties(properties, evidence_hash, timestamp):
         'showroom.runtime_validation': 'PASSED_PROTOCOL_TOOL_AND_ROUTING',
         'showroom.runtime_evidence_sha256': evidence_hash,
         'showroom.runtime_evidence_at': timestamp,
-        'showroom.runtime_evidence_scope': 'Native authenticated inference, structured get_stock(AS-001), endpoint-picker counter. No safety approval or performance comparison.'}))
+        'showroom.runtime_evidence_scope': 'Native authenticated inference, structured get_stock(AS-001), concurrent endpoint-picker activity. No unique per-request correlation, safety approval, or performance comparison.'}))
     return changed
 
 
@@ -119,11 +120,11 @@ def main():
                     'cluster_server': args.expected_server, 'model_revision': candidate['revision'], 'runtime_image': candidate['runtime_image'],
                     'ready_backends': len(ready), 'resolved_images': resolved_images, 'http_status': status, 'usage': response.get('usage'),
                     'tool_calls': calls, 'client_latency_seconds': latency, 'picker_request_delta': delta,
-                    'scope': 'Runtime protocol/tool/routing acceptance only. No model safety, quality, or performance approval.'}
+                    'scope': 'Runtime protocol/tool acceptance with concurrent endpoint-picker activity consistent with the request, not unique per-request attribution. No safety, quality, or performance approval.'}
         destination.parent.mkdir(parents=True, exist_ok=True)
-        with destination.open('x') as output:
+        descriptor = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(descriptor, 'w') as output:
             json.dump(evidence, output, indent=2)
-        destination.chmod(0o600)
         if not passed:
             raise ValueError('Runtime acceptance failed; registry was not modified')
         # Re-read immediately before writing so a change during the test is not overwritten.

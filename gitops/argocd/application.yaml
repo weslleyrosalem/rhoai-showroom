@@ -21,6 +21,12 @@ spec:
     - RespectIgnoreDifferences=true
     - SkipDryRunOnMissingResource=true
   ignoreDifferences:
+  - group: serving.kserve.io
+    kind: InferenceService
+    name: aurora-allocation
+    namespace: ai-showroom-monitoring
+    jsonPointers:
+    - /spec/predictor/logger
   - group: kubeflow.org
     kind: Notebook
     jqPathExpressions:

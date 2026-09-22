@@ -73,6 +73,7 @@ nav:
   - Prompt versions: labs/prompts.md
   - Guardrails: labs/guardrails.md
   - TrustyAI: labs/trustyai.md
+  - Predictive model monitoring: labs/model-monitoring.md
   - Red teaming: labs/red-teaming.md
   - RAG: labs/rag.md
   - Workbench: labs/workbench.md
@@ -81,6 +82,7 @@ nav:
   - Native training jobs: labs/trainer.md
   - MLflow: labs/mlflow.md
   - Evaluations: labs/evaluation.md
+  - OWASP evaluation evidence: labs/owasp-evaluations.md
   - AutoML: labs/automl.md
   - AutoRAG: labs/autorag.md
   - Pipelines: labs/pipelines.md
@@ -89,8 +91,10 @@ nav:
   - Model scores: labs/model-score.md
   - NeMoClaw and OpenShell: labs/nemoclaw.md
   - MaaS and quotas: labs/maas.md
+  - AHEAD MaaS workshop: labs/ahead-maas.md
   - Hardware and MIG: labs/hardware.md
   - Benchmark: labs/benchmark.md
+  - AHEAD llm-d workshop: labs/ahead-llmd.md
 - Operations:
   - GitOps and portability: operations/gitops.md
   - Presentation preparation: operations/presenter.md

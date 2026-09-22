@@ -37,3 +37,7 @@ Observed checks include allowed stock calls (200), prohibited synthetic argument
 6. On a validated integrated path, place the same synthetic pattern in a tool argument and observe 403 before backend execution.
 
 Regex can miss paraphrases and can reject harmless text. Adding semantic detectors, Presidio, or a safety model changes capacity, latency, dependencies, and evaluation requirements. Record equivalent test cases before and after each change.
+
+## Measured coverage limit
+
+The [matched OWASP evaluation](owasp-evaluations.md) produced 14 of 33 detector matches on both the direct-model and NeMo-adapter paths. The deployed regex rails allowed all 33 requests in that selected corpus. This does not contradict the synthetic-pattern blocking tests above: the broader report-injection/template cases do not match those configured rules. Do not present the guardrail configuration as a general semantic attack detector.

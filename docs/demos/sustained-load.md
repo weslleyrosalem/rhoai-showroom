@@ -66,6 +66,10 @@ The wrapper prints sanitized start/finish records and actual report summaries. E
 
 For dashboards, correlate the same UTC window across successful request counts, prompt/generated tokens, latency distributions, prefix-cache hits and queries, GPU utilization, and waiting/running requests. Keep the `showroom-load` subscription and `X-Showroom-Client: guidellm-sustained` traffic class identifiable. Client TTFT across the gateway can include buffering; it is not interchangeable with engine TTFT.
 
+The September 22 qualification completed a 0.25-rps block with 150 successful requests and a 0.5-rps block with 300 successful requests, both with zero reported errors. Each retained one incomplete request at the segment duration boundary. The 0.5-rps block generated 38,400 output tokens with a 2.877-second mean request latency. These are completed segment observations, not guarantees for the remainder of the run.
+
+In the installed native MaaS Usage dashboard, the summary/table uses token-counter increase over the selected dashboard range. The time-series chart uses a fixed rolling two-hour increase. Its final plotted value can therefore differ from the summary when the selected range is not two hours. Neither value is the unprocessed lifetime counter; inspect the query and align windows before comparing them.
+
 ## Stop and retain
 
 The absolute deadline ends load without a running laptop or an active chat. To stop early, delete only `job/showroom-guidellm-20260922` in `ai-showroom`; leave the PVC for evidence. Do not delete the original model, shared subscriptions, or an operator. Revoke the dedicated key through the MaaS API/UI after collecting evidence if early termination is required. Keep the PVC until reports have been exported and checked.

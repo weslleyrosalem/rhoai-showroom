@@ -12,6 +12,7 @@ def load(name, path):
     spec.loader.exec_module(module)
     return module
 science = load("science", ROOT / "scripts/science.py")
+monitoring = load("trustyai_metrics", ROOT / "scripts/trustyai_metrics.py")
 rag = load("rag", ROOT / "apps/aurora-rag/rag.py")
 
 class ScienceTest(unittest.TestCase):
@@ -63,6 +64,18 @@ class ScienceTest(unittest.TestCase):
             policy = copied / "documents/purchasing-policy.md"
             policy.write_text(policy.read_text() + "\nUpdated policy.\n")
             self.assertNotEqual(original, science.corpus_prefix(copied))
+
+    def test_monitoring_promotion_changes_demand_without_zone_in_model(self):
+        baseline = monitoring.cohort(False)
+        promotion = monitoring.cohort(True)
+        self.assertEqual(len(baseline), 100)
+        for original, changed in zip(baseline, promotion):
+            self.assertEqual(original[0], changed[0])
+            self.assertEqual(original[2], changed[2])
+            self.assertEqual(changed[1] - original[1], 60 if original[0] == 0 else 0)
+        rates = lambda rows: [sum(int(row[1] > row[2]) for row in rows[zone::2]) / 50 for zone in (0, 1)]
+        self.assertEqual(rates(baseline), [0.6, 0.6])
+        self.assertEqual(rates(promotion), [0.9, 0.6])
 
     def test_autorag_ground_truth_references_valid_documents(self):
         for case in json.loads((ROOT / "data/eval/autorag.json").read_text()):

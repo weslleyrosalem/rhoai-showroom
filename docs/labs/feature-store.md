@@ -42,3 +42,5 @@ Select the dataset to review its event-time boundaries and feature references. T
 The saved-dataset API is experimental in the installed Feast release. The repeatable preparation script validates eight complete rows before retaining the result and overwrites only this specifically named synthetic snapshot on subsequent runs.
 
 Observed native UI limitation: the generated saved-dataset snippet contains unquoted feature references, and the generated feature-view snippet omits the `timedelta` import. Those snippets are not executable as shown. Use the checked-in definitions and preparation script for a repeatable test drive; the actual dataset details and feature references are valid.
+
+The native **Connected workbenches** modal was verified to list `aurora-lab` in `ai-showroom`. Its permission badges summarize project-level permission aggregation; they are not proof of the Notebook service account's write permissions. The actual scoped identity checks and reader/writer bindings define that boundary.

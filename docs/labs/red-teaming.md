@@ -4,7 +4,7 @@ Garak probes model behavior, NeMo enforces configured rails, and MCP Gateway con
 
 ## Prepare the experiment
 
-Use an authorized synthetic target, an available model endpoint, and a healthy EvalHub database. Discover provider and benchmark IDs from the installed API; do not assume an old example matches the current request schema. Follow the [evaluation lab](evaluation.md) for this showroom's actual runs.
+Use an authorized synthetic target, an available model endpoint, and a healthy EvalHub database. Discover provider and benchmark IDs from the installed API; do not assume an old example matches the current request schema. Follow the [matched OWASP lab](owasp-evaluations.md) for the actual 33-response baseline/NeMo pair, precise detector interpretation, and all ten 2025 risks with explicit gaps.
 
 Compare two runs only when model, version, sampling, parameters, and test set match:
 

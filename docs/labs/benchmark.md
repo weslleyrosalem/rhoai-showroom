@@ -12,6 +12,23 @@ This lab measures a synthetic Aurora Supply replenishment task. Scripts contain 
 
 The engine comparison does not prove an llm-d benefit. Two TP4 replicas represent horizontal scaling, not a single model split across nodes. PCIe/Ethernet overhead can offset scaling gains; measured results decide.
 
+## Measured rehearsal: September 22, 2026
+
+The following **single-repetition** results used the same physical L40S and the same temporary Pod for both engines. Qwen3-4B-Instruct-2507 weights, BF16 precision, image, tokenizer/template, 4-CPU limit, 32Gi memory limit, prompts, seed, warmup, and output cap were held constant. Prefix caching was disabled. Each row contains 12 measured requests plus two separate warmups, with a maximum of 64 output tokens per request. All rows completed 12/12 requests successfully and returned 766 total output tokens. The measurements used a localhost port-forward to the engine, excluding the MaaS and llm-d gateway path.
+
+| Engine | Client concurrency | Output tokens/s | Latency p50 / p95 | Client TTFT p50 |
+|---|---:|---:|---:|---:|
+| Transformers, serialized batch-one reference | 1 | 26.01 | 2,453 / 2,478 ms | 184 ms |
+| vLLM, continuous batching | 1 | 67.18 | 944 / 995 ms | 177 ms |
+| Transformers, serialized batch-one reference | 2 | 27.47 | 4,629 / 4,725 ms | 2,358 ms |
+| vLLM, continuous batching | 2 | 124.51 | 1,007 / 1,125 ms | 192 ms |
+
+In this workload, vLLM delivered **2.58×** the reference output throughput at concurrency 1 and **4.53×** at concurrency 2. The second comparison deliberately illustrates the queueing cost of a serialized reference. It does not represent every Transformers optimization, prove an llm-d routing advantage, or establish a universal performance multiplier. The run order was Transformers first, then vLLM; repetitions and alternating order remain required before a performance recommendation or approval.
+
+The [sanitized raw measurements](../results/engine-ab-20260922.json) include individual request timing, immutable image/model pins, workload/template hashes, errors, usage, and comparison output. No response text is included, so generation quality has not been evaluated by this benchmark. The registry’s separate performance qualification gate remains `NOT_RUN`; this one rehearsal has not promoted the candidate or completed its repeated-run acceptance criteria. The original Llama and its GuideLLM traffic remained active. One Qwen replica continued serving; the temporary benchmark resources were removed and the second Qwen replica was restored afterward.
+
+For a scheduled maintenance window, the [optional engine rehearsal helper](https://github.com/weslleyrosalem/rhoai-showroom/tree/main/gitops/components/platform/engine-benchmark) provides a guarded PLAN and temporary reuse of one existing Qwen GPU, with automatic restoration and cleanup reporting. Its generalized APPLY path has not been rerun after the measured private predecessor; the source documents that validation boundary. It creates no cloud capacity. Keep the live demonstration on the restored two-replica endpoint.
+
 ## Required metadata
 
 Create a private JSON file from the workload actually running:
@@ -53,7 +70,7 @@ python3 scripts/benchmark.py run \
   --output /private/directory/vllm-run-1.json
 ```
 
-The workload contains policies and 48 fictional SKUs. `repeated-prefix` preserves the prefix; `distinct-prefix` changes an identifier at its beginning. Character lengths are controlled; actual token counts come from endpoint usage. Output includes timestamps, HTTP status, latency, TTFT, approximate TPOT, usage, and prompt hashes. It excludes responses and credentials.
+The workload contains Aurora policies and the eight versioned products (`AS-001` through `AS-008`), with a frozen historical demand scenario and a 21-day coverage policy. `repeated-prefix` preserves the prefix; `distinct-prefix` changes an identifier at its beginning. Character lengths are controlled; actual token counts come from endpoint usage. Output includes timestamps, HTTP status, latency, TTFT, approximate TPOT, usage, and prompt hashes. It excludes responses and credentials.
 
 TTFT measures the first nonempty SSE text/reasoning content received by the client, not internal engine latency. TPOT divides elapsed time after that content by output tokens minus one. Since SSE can combine tokens, this is an approximation.
 

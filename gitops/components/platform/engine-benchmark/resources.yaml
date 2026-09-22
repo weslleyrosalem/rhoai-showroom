@@ -1,0 +1,161 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: showroom-engine-benchmark
+  namespace: ai-showroom-bench
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: engine-benchmark
+automountServiceAccountToken: false
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-engine-benchmark
+  namespace: ai-showroom-bench
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: engine-benchmark
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: rhoai-showroom
+      app.kubernetes.io/component: engine-benchmark
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress: []
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openshift-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: UDP
+      port: 5353
+    - protocol: TCP
+      port: 53
+    - protocol: TCP
+      port: 5353
+  - ports:
+    - protocol: TCP
+      port: 443
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: showroom-engine-benchmark
+  namespace: ai-showroom-bench
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: engine-benchmark
+spec:
+  serviceAccountName: showroom-engine-benchmark
+  automountServiceAccountToken: false
+  restartPolicy: Never
+  activeDeadlineSeconds: 3600
+  terminationGracePeriodSeconds: 15
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  nodeSelector:
+    nvidia.com/gpu.product: NVIDIA-L40S
+    showroom.openshift.ai/gpu-pool: 'true'
+    node.kubernetes.io/instance-type: g6e.2xlarge
+  tolerations:
+  - key: nvidia.com/gpu
+    operator: Equal
+    value: 'true'
+    effect: NoSchedule
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: aurora-qwen-4b
+            kserve.io/component: workload
+        namespaces:
+        - ai-showroom
+        topologyKey: kubernetes.io/hostname
+  initContainers:
+  - name: storage-initializer
+    image: registry.redhat.io/rhoai/odh-kserve-storage-initializer-rhel9@sha256:c2db37bfe06f62b4ead20a975afe9df1c00e0178492c4bcd75968b60b1fbee79
+    args:
+    - hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554
+    - /mnt/models
+    securityContext: &id001
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      capabilities:
+        drop:
+        - ALL
+      seccompProfile:
+        type: RuntimeDefault
+    resources:
+      requests:
+        cpu: 100m
+        memory: 100Mi
+      limits:
+        cpu: '1'
+        memory: 4Gi
+    volumeMounts:
+    - name: models
+      mountPath: /mnt/models
+    - name: tmp
+      mountPath: /tmp
+  containers:
+  - name: benchmark
+    image: registry.redhat.io/rhaii/vllm-cuda-rhel9@sha256:c056e61672b6aea489ad5dde0bd2f8497230f5333e87f7cf6c494eba3bfdc808
+    command:
+    - python
+    - -c
+    - import time; time.sleep(3600)
+    securityContext: *id001
+    resources:
+      requests:
+        cpu: '4'
+        memory: 24Gi
+        nvidia.com/gpu: '1'
+      limits:
+        cpu: '4'
+        memory: 32Gi
+        nvidia.com/gpu: '1'
+    env:
+    - name: HOME
+      value: /tmp
+    - name: HF_HOME
+      value: /tmp/hf
+    - name: HF_HUB_OFFLINE
+      value: '1'
+    - name: TRANSFORMERS_OFFLINE
+      value: '1'
+    - name: TOKENIZERS_PARALLELISM
+      value: 'false'
+    volumeMounts:
+    - name: models
+      mountPath: /mnt/models
+      readOnly: true
+    - name: tmp
+      mountPath: /tmp
+    - name: dshm
+      mountPath: /dev/shm
+    - name: code
+      mountPath: /opt/benchmark
+      readOnly: true
+  volumes:
+  - name: models
+    emptyDir:
+      sizeLimit: 30Gi
+  - name: tmp
+    emptyDir:
+      sizeLimit: 10Gi
+  - name: dshm
+    emptyDir:
+      medium: Memory
+      sizeLimit: 1Gi
+  - name: code
+    configMap:
+      name: showroom-engine-benchmark-code

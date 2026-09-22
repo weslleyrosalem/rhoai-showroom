@@ -48,6 +48,56 @@ spec:
     ports:
     - protocol: TCP
       port: 8080
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: redhat-ods-monitoring
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/component: opentelemetry-collector
+          app.kubernetes.io/instance: redhat-ods-monitoring.data-science-collector
+    ports:
+    - protocol: TCP
+      port: 15020
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-qwen-backend-private
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: private-inference
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: aurora-qwen-4b
+      kserve.io/component: workload
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          gateway.networking.k8s.io/gateway-name: showroom-inference
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: aurora-qwen-4b
+          app.kubernetes.io/component: llminferenceservice-router-scheduler
+    ports:
+    - protocol: TCP
+      port: 8000
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: redhat-ods-monitoring
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/component: opentelemetry-collector
+          app.kubernetes.io/instance: redhat-ods-monitoring.data-science-collector
+    ports:
+    - protocol: TCP
+      port: 8000
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway

@@ -337,6 +337,13 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
+          kubernetes.io/metadata.name: redhat-ods-monitoring
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/component: opentelemetry-collector
+          app.kubernetes.io/instance: redhat-ods-monitoring.data-science-collector
+    - namespaceSelector:
+        matchLabels:
           network.openshift.io/policy-group: monitoring
     ports:
     - port: 9464

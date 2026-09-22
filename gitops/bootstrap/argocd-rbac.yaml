@@ -110,6 +110,7 @@ rules:
   resourceNames:
   - ai-showroom
   - ai-showroom-bench
+  - ai-showroom-monitoring
   verbs:
   - patch
   - update

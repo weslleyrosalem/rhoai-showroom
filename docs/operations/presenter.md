@@ -8,7 +8,7 @@ Use the [inference script](../demos/inference.md), [MaaS script](../demos/maas.m
 
 - Check the [validation record](validation.md), MaaS key expiration, operators, and endpoints.
 - Warm up the models and GPU capacity you will use. Download weights and provision nodes before the session.
-- Run a RAG question, MCP tool call, safety check, short evaluation, and Ray forecast.
+- Run one RAG question, one MCP tool call, and the bounded safety control. Inspect the saved evaluation and Ray forecast artifacts; submit new experiments only when that is the planned test drive.
 - Test the participant's restricted identity. The presenter's admin session does not demonstrate visitor RBAC.
 - Open the guide, OpenShift AI, MLflow, observability, and Argo CD. Use synthetic inputs throughout.
 - Keep measured benchmark artifacts with their date and configuration. If a live experiment fails, identify earlier results as earlier results.

@@ -1,0 +1,125 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: aurora-guarded-model
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: aurora-guarded-model
+spec:
+  runPolicy: Serial
+  source: {type: Binary, binary: {}}
+  strategy: {type: Docker, dockerStrategy: {dockerfilePath: Containerfile}}
+  output: {to: {kind: ImageStreamTag, name: 'aurora-guarded-model:1.0.0'}}
+  resources:
+    requests: {cpu: 200m, memory: 256Mi}
+    limits: {cpu: '1', memory: 1Gi}
+  successfulBuildsHistoryLimit: 2
+  failedBuildsHistoryLimit: 1
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: aurora-guarded-model
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aurora-guarded-model-rails
+subjects:
+  - {kind: ServiceAccount, name: aurora-guarded-model, namespace: ai-showroom}
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: Role, name: showroom-rails-check}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aurora-guarded-model-ca
+  annotations:
+    service.beta.openshift.io/inject-cabundle: 'true'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aurora-guarded-model
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: aurora-guarded-model-tls
+spec:
+  selector: {app: aurora-guarded-model}
+  ports: [{name: https, port: 8443, targetPort: 8443}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aurora-guarded-model
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: aurora-guarded-model}}
+  template:
+    metadata:
+      labels: {app: aurora-guarded-model}
+    spec:
+      serviceAccountName: aurora-guarded-model
+      securityContext: {runAsNonRoot: true, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: adapter
+          image: image-registry.openshift-image-registry.svc:5000/ai-showroom/aurora-guarded-model:1.0.0
+          imagePullPolicy: Always
+          ports: [{containerPort: 8443}]
+          env:
+            - name: MODEL_BASE
+              valueFrom: {secretKeyRef: {name: showroom-maas-key, key: base-url}}
+            - name: MODEL_ID
+              valueFrom: {secretKeyRef: {name: showroom-maas-key, key: model-id}}
+            - name: MODEL_KEY
+              valueFrom: {secretKeyRef: {name: showroom-maas-key, key: api-key}}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+          readinessProbe: {httpGet: {scheme: HTTPS, path: /health, port: 8443}, initialDelaySeconds: 3}
+          livenessProbe: {httpGet: {scheme: HTTPS, path: /health, port: 8443}, initialDelaySeconds: 10}
+          volumeMounts:
+            - {name: tls, mountPath: /etc/tls, readOnly: true}
+            - {name: ca, mountPath: /etc/service-ca, readOnly: true}
+      volumes:
+        - {name: tls, secret: {secretName: aurora-guarded-model-tls}}
+        - {name: ca, configMap: {name: aurora-guarded-model-ca}}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-guarded-model
+spec:
+  podSelector: {matchLabels: {app: aurora-guarded-model}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app: evalhub, component: evaluation-job}}
+        - podSelector: {matchLabels: {notebook-name: aurora-lab}}
+      ports: [{protocol: TCP, port: 8443}]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: openshift-dns}}
+      ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}, {protocol: UDP, port: 5353}, {protocol: TCP, port: 5353}]
+    - to: [{podSelector: {matchLabels: {app: showroom-rails}}}]
+      ports: [{protocol: TCP, port: 8443}]
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16]
+      ports: [{protocol: TCP, port: 443}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-guarded-model-rails
+spec:
+  podSelector: {matchLabels: {app: showroom-rails}}
+  policyTypes: [Ingress]
+  ingress:
+    - from: [{podSelector: {matchLabels: {app: aurora-guarded-model}}}]
+      ports: [{protocol: TCP, port: 8443}]

@@ -56,6 +56,8 @@ oc apply -k gitops/components/science
 oc apply -k gitops/components/experience
 ```
 
+The science component also creates the separate `ai-showroom-monitoring` project for the supported OVMS/TrustyAI exercise. Complete the [logger TLS prerequisite](../labs/model-monitoring.md#deployment-and-tls-prerequisite) with a private backup before sending its reference and scenario batches. This explicit shared ConfigMap adjustment is not silently managed by the Application. Verify capture, authorization, and metric history before presenting predictive monitoring.
+
 The RAG BuildConfig and Workbench clone this repository. In a fork, update both URLs and the AppProject/Application repository references. Follow [Ray](../labs/ray.md) and [pipelines](../labs/pipelines.md) to upload data and submit experiments. Jobs are explicit actions and are not continuously recreated by GitOps.
 
 Complete [GitOps adoption](gitops.md), run the [test drives](test-drive.md), and maintain a validation record for your installation. GPU and MIG profiles require coordinated cloud capacity changes; the default overlay does not provision them.

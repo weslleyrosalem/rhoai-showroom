@@ -38,3 +38,7 @@ The current standard quota is 200,000 tokens/hour. The deliberately small test-d
 Let the customer choose a model from the curated catalog, inspect its pinned source and license, and register a candidate version. Then use the already Ready endpoint for a safe replenishment recommendation. If they issue their own key, use their actual authorized identity and subscription; do not add visitors to an administrative group merely to make the test drive work.
 
 A key gives access to the subscription associated with its issuance. Quota behavior depends on measured token usage and policy propagation. Avoid repeated rapid 429 tests immediately before an interactive customer request. The protected GuideLLM window runs September 22 from 8:00 to 11:00 a.m. New York time; see the [load guide](sustained-load.md).
+
+## Extend the governance test drive
+
+The [AHEAD MaaS workshop](../labs/ahead-maas.md) provides an isolated tenant, explicit model-access matrix, group and individual subscription priorities, OIDC identities, and repeatable quota exercises. Its three CPU simulators demonstrate policy behavior; use the Aurora Llama path for real GPU inference. The external Anthropic example uses separate default-tenant governance and requires a private provider credential.

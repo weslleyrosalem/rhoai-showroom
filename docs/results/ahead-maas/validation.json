@@ -1,0 +1,904 @@
+{
+  "schemaVersion": 1,
+  "observedOn": "2026-09-22",
+  "sourceGuideCommit": "ea53fed1827eb1180a0f36c1255b232a582bf944",
+  "environment": {
+    "product": "Red Hat OpenShift AI",
+    "version": "3.5.1",
+    "namespace": "ahead",
+    "tenant": "ahead",
+    "tenantNamespace": "ai-tenant-ahead",
+    "modelKinds": [
+      "three CPU simulators",
+      "one real Anthropic external-model registration"
+    ],
+    "gpuRequests": 0
+  },
+  "scopeStatus": "Verified core lab path with explicit deferred shared-platform options and known error-handling limits",
+  "initialVerification": [
+    {
+      "name": "anonymous",
+      "http": 401
+    },
+    {
+      "name": "invalid",
+      "http": 401
+    },
+    {
+      "name": "premium",
+      "http": 200,
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 5,
+        "total_tokens": 8
+      }
+    },
+    {
+      "name": "free-1",
+      "http": 200,
+      "usage": {
+        "prompt_tokens": 7,
+        "completion_tokens": 50,
+        "total_tokens": 57
+      }
+    },
+    {
+      "name": "free-2",
+      "http": 200,
+      "usage": {
+        "prompt_tokens": 7,
+        "completion_tokens": 3,
+        "total_tokens": 10
+      }
+    },
+    {
+      "name": "free-3",
+      "http": 200,
+      "usage": {
+        "prompt_tokens": 7,
+        "completion_tokens": 2,
+        "total_tokens": 9
+      }
+    },
+    {
+      "name": "free-4",
+      "http": 200,
+      "usage": {
+        "prompt_tokens": 7,
+        "completion_tokens": 3,
+        "total_tokens": 10
+      }
+    },
+    {
+      "name": "free-5",
+      "http": 200,
+      "usage": {
+        "prompt_tokens": 7,
+        "completion_tokens": 9,
+        "total_tokens": 16
+      }
+    },
+    {
+      "name": "free-6",
+      "http": 429
+    },
+    {
+      "name": "premium-isolation",
+      "http": 200,
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 19,
+        "total_tokens": 22
+      }
+    }
+  ],
+  "labs": [
+    {
+      "name": "subscription-maas-user",
+      "expected": "ahead-oidc-data-scientists",
+      "actual": "ahead-oidc-data-scientists",
+      "groups": [
+        "data-scientists",
+        "ml-engineers"
+      ],
+      "passed": true
+    },
+    {
+      "name": "discovery-maas-user",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "models": [
+        "publishers/ahead/models/facebook/opt-125m"
+      ]
+    },
+    {
+      "name": "oidc-inference-maas-user",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 9,
+        "total_tokens": 12
+      }
+    },
+    {
+      "name": "subscription-restricted-user",
+      "expected": "ahead-oidc-data-scientists",
+      "actual": "ahead-oidc-data-scientists",
+      "groups": [
+        "data-scientists"
+      ],
+      "passed": true
+    },
+    {
+      "name": "discovery-restricted-user",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "models": [
+        "publishers/ahead/models/facebook/opt-125m"
+      ]
+    },
+    {
+      "name": "oidc-inference-restricted-user",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 4,
+        "total_tokens": 7
+      }
+    },
+    {
+      "name": "subscription-carol",
+      "expected": "ahead-team-standard",
+      "actual": "ahead-team-standard",
+      "groups": [
+        "ahead-demo-users"
+      ],
+      "passed": true
+    },
+    {
+      "name": "discovery-carol",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "models": [
+        "publishers/ahead/models/facebook/opt-125m"
+      ]
+    },
+    {
+      "name": "subscription-alice",
+      "expected": "ahead-alice-gold",
+      "actual": "ahead-alice-gold",
+      "groups": [
+        "ahead-demo-users"
+      ],
+      "passed": true
+    },
+    {
+      "name": "discovery-alice",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "models": [
+        "publishers/ahead/models/facebook/opt-125m"
+      ]
+    },
+    {
+      "name": "subscription-bob",
+      "expected": "ahead-bob-throttled",
+      "actual": "ahead-bob-throttled",
+      "groups": [
+        "ahead-demo-users"
+      ],
+      "passed": true
+    },
+    {
+      "name": "discovery-bob",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "models": [
+        "publishers/ahead/models/facebook/opt-125m"
+      ]
+    },
+    {
+      "name": "subscription-dual-user",
+      "expected": "ahead-quota-standard",
+      "actual": "ahead-quota-standard",
+      "groups": [
+        "quota-bulk",
+        "quota-standard"
+      ],
+      "passed": true
+    },
+    {
+      "name": "discovery-dual-user",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "models": [
+        "publishers/ahead/models/facebook/opt-125m"
+      ]
+    },
+    {
+      "name": "subscription-capped-user",
+      "expected": "ahead-quota-individual",
+      "actual": "ahead-quota-individual",
+      "groups": [
+        "quota-bulk",
+        "quota-standard"
+      ],
+      "passed": true
+    },
+    {
+      "name": "discovery-capped-user",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "models": [
+        "publishers/ahead/models/facebook/opt-125m"
+      ]
+    },
+    {
+      "name": "subscription-sales-1",
+      "expected": "ahead-corp-sales",
+      "actual": "ahead-corp-sales",
+      "groups": [
+        "corp-sales"
+      ],
+      "passed": true
+    },
+    {
+      "name": "discovery-sales-1",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "models": [
+        "publishers/ahead/models/facebook/opt-125m"
+      ]
+    },
+    {
+      "name": "subscription-eng-1",
+      "expected": "ahead-corp-engineering",
+      "actual": "ahead-corp-engineering",
+      "groups": [
+        "corp-engineering"
+      ],
+      "passed": true
+    },
+    {
+      "name": "discovery-eng-1",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "models": [
+        "publishers/ahead/models/ahead/cloud-simulated",
+        "publishers/ahead/models/ahead/code-simulated",
+        "publishers/ahead/models/facebook/opt-125m"
+      ]
+    },
+    {
+      "name": "subscription-prod-1",
+      "expected": "ahead-corp-products",
+      "actual": "ahead-corp-products",
+      "groups": [
+        "corp-products"
+      ],
+      "passed": true
+    },
+    {
+      "name": "discovery-prod-1",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "models": [
+        "publishers/ahead/models/ahead/code-simulated",
+        "publishers/ahead/models/facebook/opt-125m"
+      ]
+    },
+    {
+      "name": "user-quota-bob",
+      "http": 500,
+      "expected": 200,
+      "passed": false,
+      "statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    },
+    {
+      "name": "user-quota-alice",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    },
+    {
+      "name": "user-quota-carol",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    },
+    {
+      "name": "key-multiplication-bob",
+      "http": 429,
+      "expected": 429,
+      "passed": true
+    },
+    {
+      "name": "service-account-report-writer",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 1,
+        "total_tokens": 4
+      }
+    },
+    {
+      "name": "service-account-quota",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "statuses": [
+        200,
+        200,
+        200,
+        200,
+        429,
+        429,
+        429,
+        429,
+        429
+      ]
+    },
+    {
+      "name": "service-account-batch-scorer",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 1,
+        "total_tokens": 4
+      }
+    },
+    {
+      "name": "corporate-sales-1-0",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "model": "publishers/ahead/models/facebook/opt-125m",
+      "usage": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 2
+      }
+    },
+    {
+      "name": "corporate-sales-1-1",
+      "http": 403,
+      "expected": 403,
+      "passed": true,
+      "model": "publishers/ahead/models/ahead/code-simulated"
+    },
+    {
+      "name": "corporate-sales-1-2",
+      "http": 403,
+      "expected": 403,
+      "passed": true,
+      "model": "publishers/ahead/models/ahead/cloud-simulated"
+    },
+    {
+      "name": "corporate-eng-1-0",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "model": "publishers/ahead/models/facebook/opt-125m",
+      "usage": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 2
+      }
+    },
+    {
+      "name": "corporate-eng-1-1",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "model": "publishers/ahead/models/ahead/code-simulated",
+      "usage": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 2
+      }
+    },
+    {
+      "name": "corporate-eng-1-2",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "model": "publishers/ahead/models/ahead/cloud-simulated",
+      "usage": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 2
+      }
+    },
+    {
+      "name": "corporate-prod-1-0",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "model": "publishers/ahead/models/facebook/opt-125m",
+      "usage": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 2
+      }
+    },
+    {
+      "name": "corporate-prod-1-1",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "model": "publishers/ahead/models/ahead/code-simulated",
+      "usage": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 2
+      }
+    },
+    {
+      "name": "corporate-prod-1-2",
+      "http": 403,
+      "expected": 403,
+      "passed": true,
+      "model": "publishers/ahead/models/ahead/cloud-simulated"
+    },
+    {
+      "name": "corporate-cloud-quota",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        429
+      ]
+    },
+    {
+      "name": "corporate-local-quota-isolation",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 1,
+        "total_tokens": 4
+      }
+    },
+    {
+      "name": "corporate-key-multiplication",
+      "http": 429,
+      "expected": 429,
+      "passed": true
+    },
+    {
+      "name": "subscription-ownership",
+      "http": 400,
+      "expected": 403,
+      "passed": false
+    },
+    {
+      "name": "free-window-recovered",
+      "http": 200,
+      "expected": 200,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 6,
+        "total_tokens": 9
+      }
+    },
+    {
+      "name": "cross-tenant-rejection",
+      "http": 403,
+      "expected": 403,
+      "passed": true
+    }
+  ],
+  "refinements": [
+    {
+      "name": "bob-cross-quota",
+      "http": 429,
+      "passed": true,
+      "statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        429
+      ],
+      "totalTokens": 20
+    },
+    {
+      "name": "unowned-subscription-rejected",
+      "http": 400,
+      "passed": true,
+      "code": "invalid_subscription"
+    },
+    {
+      "name": "priority-burn-dual-user",
+      "http": 200,
+      "passed": false,
+      "subscription": "ahead-quota-standard",
+      "ceiling": 10000,
+      "actualTokens": 8020,
+      "statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    },
+    {
+      "name": "priority-burn-capped-user",
+      "http": 429,
+      "passed": true,
+      "subscription": "ahead-quota-individual",
+      "ceiling": 5000,
+      "actualTokens": 5213,
+      "statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        429
+      ]
+    },
+    {
+      "name": "priority-burn-dual-user-completed",
+      "http": 429,
+      "passed": true,
+      "actualTokens": 10025,
+      "ceiling": 10000,
+      "additionalStatuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        429
+      ]
+    }
+  ],
+  "jwks": [
+    {
+      "name": "baseline",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "name": "issuer-blocked",
+      "http": "000",
+      "passed": true
+    },
+    {
+      "name": "issuer-blocked-in-cluster",
+      "http": "000",
+      "passed": true
+    },
+    {
+      "name": "unseen-jwt-during-idp-outage-0",
+      "http": 201,
+      "passed": true
+    },
+    {
+      "name": "unseen-jwt-during-idp-outage-1",
+      "http": 201,
+      "passed": true
+    },
+    {
+      "name": "unseen-jwt-during-idp-outage-2",
+      "http": 201,
+      "passed": true
+    },
+    {
+      "name": "tampered-signature",
+      "http": 500,
+      "passed": true,
+      "note": "Fail-closed; this build can return 500 when the IdP is unavailable."
+    },
+    {
+      "name": "issuer-restored",
+      "http": 200,
+      "passed": true
+    }
+  ],
+  "external": {
+    "name": "external-anthropic",
+    "http": 200,
+    "usage": {
+      "completion_tokens": 10,
+      "prompt_tokens": 17,
+      "total_tokens": 27
+    }
+  },
+  "apiKeyLifecycle": [
+    {
+      "name": "key-created",
+      "http": 201,
+      "passed": true
+    },
+    {
+      "name": "key-revoked",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "name": "revoked-key-denied",
+      "http": 403,
+      "passed": true
+    }
+  ],
+  "preservation": {
+    "controlObjectsUnchanged": true,
+    "originalCorePodRestartsAdded": 0,
+    "checkedObjectCount": 20,
+    "boundary": "Initial before/after comparison; AHEAD-only persistence work followed."
+  },
+  "identityPersistence": {
+    "startedAt": "2026-09-22T06:07:23.772256+00:00",
+    "beforeCounts": "2|14|14",
+    "afterCounts": "2|14|14",
+    "pvcPhase": "Bound",
+    "restartCounts": "2|14|14",
+    "newLoginAfterDatabaseRestart": 200,
+    "existingKeyInferenceAfterDatabaseRestart": 200,
+    "sameSubjectAfterRestart": true,
+    "completedAt": "2026-09-22T06:10:36.234865+00:00",
+    "passed": true
+  },
+  "identityContinuity": [
+    {
+      "user": "maas-user",
+      "loginHTTP": 200,
+      "sameSubject": true,
+      "sameGroups": true
+    },
+    {
+      "user": "sales-1",
+      "loginHTTP": 200,
+      "sameSubject": true,
+      "sameGroups": true
+    },
+    {
+      "user": "capped-user",
+      "loginHTTP": 200,
+      "sameSubject": true,
+      "sameGroups": true
+    }
+  ],
+  "publicHelperSmoke": [
+    {
+      "test": "aitenant/ahead",
+      "passed": true
+    },
+    {
+      "test": "llminferenceservice/ahead-simulator",
+      "passed": true
+    },
+    {
+      "test": "maasmodelref/ahead-simulator",
+      "passed": true
+    },
+    {
+      "test": "keycloak/keycloak",
+      "passed": true
+    },
+    {
+      "test": "gateway-health",
+      "passed": true,
+      "http": 200
+    },
+    {
+      "test": "anonymous",
+      "passed": true,
+      "http": 401,
+      "usage": null
+    },
+    {
+      "test": "invalid",
+      "passed": true,
+      "http": 401,
+      "usage": null
+    },
+    {
+      "test": "premium",
+      "passed": true,
+      "http": 200,
+      "usage": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 2
+      }
+    },
+    {
+      "test": "temporary-key-revocation",
+      "passed": true,
+      "http": 200
+    }
+  ],
+  "deferred": [
+    {
+      "name": "Global Loki usageLogging",
+      "status": "NOT_EXECUTED",
+      "reason": "Changes shared MaaS Config and monitoring path; preserve concurrent demos."
+    },
+    {
+      "name": "Shared Limitador Redis persistence",
+      "status": "NOT_EXECUTED",
+      "reason": "Restarts shared limiter and changes existing quota/counter behavior."
+    }
+  ],
+  "knownLimitations": [
+    "An altered JWT is denied with HTTP500 while the dedicated IdP is unreachable and HTTP401 after restoration.",
+    "Initial Bob burst had not crossed quota; bounded continuation confirmed429. Initial dual-user burn was partial; continuation confirmed10025tokens and429. Historical false test flags remain explicitly superseded by refinements.",
+    "All corporate model roles, including cloud, are CPU simulators. External Anthropic is a separate real-provider path.",
+    "No universal performance, security certification, HA or production readiness claim."
+  ],
+  "updatedAt": "2026-09-22T06:12:33.238421+00:00",
+  "publicHelperQuotaRecovery": [
+    {
+      "test": "aitenant/ahead",
+      "passed": true
+    },
+    {
+      "test": "llminferenceservice/ahead-simulator",
+      "passed": true
+    },
+    {
+      "test": "maasmodelref/ahead-simulator",
+      "passed": true
+    },
+    {
+      "test": "keycloak/keycloak",
+      "passed": true
+    },
+    {
+      "test": "gateway-health",
+      "passed": true,
+      "http": 200
+    },
+    {
+      "test": "anonymous",
+      "passed": true,
+      "http": 401,
+      "usage": null
+    },
+    {
+      "test": "invalid",
+      "passed": true,
+      "http": 401,
+      "usage": null
+    },
+    {
+      "test": "premium",
+      "passed": true,
+      "http": 200,
+      "usage": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 2
+      }
+    },
+    {
+      "test": "free-quota",
+      "passed": true,
+      "statuses": [
+        200,
+        200,
+        200,
+        429
+      ],
+      "observedTokens": 108
+    },
+    {
+      "test": "premium-isolation",
+      "passed": true,
+      "http": 200
+    },
+    {
+      "test": "free-recovery",
+      "passed": true,
+      "http": 200
+    },
+    {
+      "test": "temporary-key-revocation",
+      "passed": true,
+      "http": 200
+    },
+    {
+      "test": "temporary-key-revocation",
+      "passed": true,
+      "http": 200
+    }
+  ],
+  "handoffAt": "2026-09-22T06:16:34.440083+00:00"
+}

@@ -8,7 +8,7 @@ Use this as a route through the native dashboard. A screen earns a place in the 
 
 Open the Aurora application, ask for the AS-001 replenishment review, and inspect its sources, inventory tool, forecast, and trace. Ask the customer to change the SKU to AS-002 and explain why the recommendation changes. Then follow one of the three journeys below to inspect the platform behind the answer.
 
-Do not equate the forecast alone with the purchase quantity: the application also applies stock, lead time, and policy. Do not present December 2025 fixtures as current inventory.
+Do not equate the forecast alone with the purchase quantity: the application also applies stock, reorder point, and the 21-day coverage policy. Do not present December 2025 fixtures as current inventory.
 
 ## Platform and inference
 
@@ -53,6 +53,8 @@ The [Feature Store](../labs/feature-store.md), [native training](../labs/trainer
 
 | Native screen or experience | Customer question and action | Evidence and interpretation |
 |---|---|---|
+| Projects → AI Showroom — Predictive Monitoring → Settings | Is predictive monitoring configured? Inspect **TrustyAI installed**. | The separate OVMS project avoids mixing unsupported deployment types into this monitoring namespace. |
+| Predictive Monitoring → deployment → Model bias | Does changed demand change service-level outcomes? Select the named SPD and DIR metrics and inspect configuration. | Baseline0/1; promotion−0.30/0.6667. Explain the synthetic workload, group arithmetic, and distinct drift window in the [monitoring lab](../labs/model-monitoring.md). |
 | AI hub → MCP servers | What can an agent do? Open the Aurora Supply server and inspect its tools. | Inventory lookup and policy retrieval support the recommendation. No purchase-execution tool is provided. |
 | Gen AI studio → AI asset endpoints | Which approved assets can a builder use? Inspect models, knowledge, and MCP assets. | Catalog publication, asset discovery, authentication, and successful use are separate checks. |
 | Playground → Model / Prompt | How do instructions change behavior? Ask the Aurora approval question and inspect the selected model and prompt. | The response must be useful and consistent with the application's human-approval boundary. A rendered chat box is not acceptance. |

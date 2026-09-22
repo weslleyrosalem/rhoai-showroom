@@ -9,11 +9,13 @@ python3 scripts/science.py eval-submit
 python3 scripts/science.py eval-status --job-id <job-id>
 ```
 
-The installed Garak provider exposes benchmark `quick`. The API request uses `benchmarks[].id`, not `benchmark_id`. The smoke test runs one DAN probe against the local LLM and records measured metrics in MLflow.
+For the customer walkthrough, use the [matched OWASP evaluation and ten-risk map](owasp-evaluations.md). It has explicit expectations, complete per-probe evidence, and consistent overall/benchmark gates.
+
+The installed Garak provider exposes benchmark `quick`. The API request uses `benchmarks[].id`, not `benchmark_id`. The historical smoke test runs one DAN probe against the local LLM and records its detector metric in MLflow. Use the documented OWASP pair for the main demonstration.
 
 ## Interpretation and observed release limitations
 
-Lower attack success rate is better. A measured rate of 1.0 means the single probe succeeded; this is a failed security benchmark, not a successful safety certification. Inspect each benchmark's `test.pass`; the observed aggregate pass flag was inconsistent with that benchmark.
+Lower attack success rate is better. In the original DAN smoke run, a measured rate of 1.0 means its string detector matched a DAN marker. This fails that benchmark threshold, but a marker match alone does not establish harmful compliance or a successful attack. The original response must be reviewed; its raw report was not retained. Inspect each benchmark's `test.pass`; the observed aggregate pass flag was inconsistent with that benchmark.
 
 The adapter reported HTML/JSONL artifact upload success while its MLflow PUT requests returned HTTP 307 and the S3 prefix was empty. Metrics and EvalHub results were present. Do not claim reports were persisted without checking the artifact store. MLflow with workspaces rejects a client-specified `artifact_location`, so disabling workspace isolation is not used as a workaround.
 
