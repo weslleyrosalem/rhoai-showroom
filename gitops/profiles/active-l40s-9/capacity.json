@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "profile": "active-l40s-9",
+  "physical_gpu_limit": 16,
+  "mode": "active-existing-cluster",
+  "description": "One preserved L40S plus up to two new 4xL40S nodes; existing pool may scale to three. Both pool surges count.",
+  "pools": [
+    {
+      "id": "aiml-node",
+      "instance_type": "g6e.4xlarge",
+      "min_nodes": 1,
+      "max_nodes": 3,
+      "upgrade_surge_nodes": 1
+    },
+    {
+      "id": "showroom-l40s4",
+      "instance_type": "g6e.12xlarge",
+      "min_nodes": 0,
+      "max_nodes": 2,
+      "upgrade_surge_nodes": 1
+    }
+  ],
+  "required_free_gpus": 5,
+  "validated_runtime": false
+}

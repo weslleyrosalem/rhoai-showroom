@@ -46,7 +46,8 @@ spec:
     sectionName: mcp
   # No cluster-specific hostname in Git; refresh to public Route host when exposing.
   publicHost: showroom-mcp-istio.ai-showroom.svc.cluster.local:8080
-  privateHost: http://showroom-mcp-istio.ai-showroom.svc.cluster.local:8081
+  # Hairpin initialize must traverse the ext_proc listener in MCP Gateway 0.7.1.
+  privateHost: http://showroom-mcp-istio.ai-showroom.svc.cluster.local:8080
   httpRouteManagement: Disabled
 ---
 apiVersion: gateway.networking.k8s.io/v1

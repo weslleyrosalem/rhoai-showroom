@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: ai-showroom
 resources:
   - nemo.yaml
+  - rbac-network.yaml
 configMapGenerator:
   - name: showroom-safety
     files:

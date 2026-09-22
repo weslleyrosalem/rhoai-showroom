@@ -81,6 +81,9 @@ def assess(profile, nodes, inventory=None, now=None):
             problems.append('Inventory is stale or from the future (maximum age 15 minutes).')
     except (KeyError, ValueError, TypeError):
         problems.append('Inventory observed_at must be an ISO8601 timestamp with timezone.')
+    semantics = inventory.get('count_semantics', 'exact')
+    if semantics not in ('exact', 'upper-bound'):
+        problems.append('Inventory count_semantics must be exact or upper-bound.')
     pools = {}
     covered = set()
     current_cloud = 0
@@ -133,7 +136,10 @@ def assess(profile, nodes, inventory=None, now=None):
     if live > LIMIT:
         problems.append('Current cluster already exceeds the fixed GPU ceiling.')
     return {'status': 'BLOCKED' if problems else 'PASS', 'limit': LIMIT,
-            'live_physical_gpus': live, 'cloud_current_physical_gpus': current_cloud,
+            'live_physical_gpus': live,
+            'cloud_count_semantics': semantics,
+            'cloud_current_physical_gpus': current_cloud if semantics == 'exact' else None,
+            'cloud_current_physical_gpu_upper_bound': current_cloud if semantics == 'upper-bound' else None,
             'unclaimed_live_physical_gpus': unclaimed, 'combined_physical_gpu_ceiling': ceiling,
             'reasons': problems,
             'scope': 'Capacity accounting only; does not validate quota, availability, cost, runtime readiness, or perform mutations.'}
@@ -141,7 +147,7 @@ def assess(profile, nodes, inventory=None, now=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', required=True, choices=['core', 'interactive', 'full-l40s-13', 'mig-9', 'mig-13'])
+    parser.add_argument('--profile', required=True, choices=['core', 'interactive', 'active-l40s-9', 'full-l40s-13', 'mig-9', 'mig-13'])
     parser.add_argument('--inventory', type=Path, help='Private complete ROSA/OCM JSON snapshot; see hardware lab')
     parser.add_argument('--nodes', type=Path, help='Saved oc get nodes -o json; otherwise query current cluster')
     parser.add_argument('--expected-server', help='Require an exact oc API server before querying live nodes')

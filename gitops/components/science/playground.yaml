@@ -1,0 +1,238 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: aurora-pgvector
+  namespace: ai-showroom
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aurora-pgvector-init
+  namespace: ai-showroom
+data:
+  enable-pgvector.sh: '#!/bin/bash
+
+    psql -U postgres -d "${POSTGRESQL_DATABASE}" -c "CREATE EXTENSION IF NOT EXISTS
+    vector;"
+
+    '
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aurora-pgvector
+  namespace: ai-showroom
+spec:
+  selector:
+    app: aurora-pgvector
+  ports:
+  - port: 5432
+    targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aurora-pgvector
+  namespace: ai-showroom
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: aurora-pgvector
+  template:
+    metadata:
+      labels:
+        app: aurora-pgvector
+    spec:
+      containers:
+      - image: registry.redhat.io/rhel9/postgresql-16@sha256:a348c03256ea3e1923b9134ac9ec14f374d5d70f22d89289fae3615e09508e44
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - vectoruser
+            - -d
+            - vectordb
+          failureThreshold: 3
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: postgresql
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - vectoruser
+            - -d
+            - vectordb
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+        startupProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - vectoruser
+            - -d
+            - vectordb
+          failureThreshold: 18
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /var/lib/pgsql/data
+          name: pgdata
+        - mountPath: /opt/app-root/src/postgresql-start
+          name: init-scripts
+          readOnly: true
+        envFrom:
+        - secretRef:
+            name: aurora-pgvector-credentials
+      volumes:
+      - name: pgdata
+        persistentVolumeClaim:
+          claimName: aurora-pgvector
+      - name: init-scripts
+        configMap:
+          name: aurora-pgvector-init
+          defaultMode: 493
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aurora-ogx-config
+  namespace: ai-showroom
+  labels:
+    ogx.io/watch: 'true'
+data:
+  config.yaml: "version: '2'\ndistro_name: rh\napis:\n- responses\n- file_processors\n\
+    - files\n- inference\n- tool_runtime\n- vector_io\nproviders:\n  inference:\n\
+    \  - provider_id: sentence-transformers\n    provider_type: inline::sentence-transformers\n\
+    \    config:\n      trust_remote_code: false\n  - provider_id: aurora-maas\n \
+    \   provider_type: remote::vllm\n    config:\n      base_url: ${env.MAAS_BASE_URL}\n\
+    \      api_token: ${env.MAAS_API_KEY}\n      tls_verify: true\n  vector_io:\n\
+    \  - provider_id: pgvector\n    provider_type: remote::pgvector\n    config:\n\
+    \      db: ${env.PGVECTOR_DB:=vectordb}\n      distance_metric: COSINE\n     \
+    \ host: ${env.PGVECTOR_HOST}\n      password: ${env.PGVECTOR_PASSWORD}\n     \
+    \ persistence:\n        backend: kv_default\n        namespace: vector_io::pgvector\n\
+    \      port: ${env.PGVECTOR_PORT:=5432}\n      user: ${env.PGVECTOR_USER:=vectoruser}\n\
+    \  responses:\n  - provider_id: builtin\n    provider_type: inline::builtin\n\
+    \    config:\n      persistence:\n        responses:\n          backend: sql_default\n\
+    \          max_write_queue_size: 10000\n          num_writers: 4\n          table_name:\
+    \ responses\n  file_processors:\n  - provider_id: pypdf\n    provider_type: inline::pypdf\n\
+    \    config: {}\n  files:\n  - provider_id: localfs-files\n    provider_type:\
+    \ inline::localfs\n    config:\n      metadata_store:\n        backend: sql_default\n\
+    \        table_name: files_metadata\n      storage_dir: /opt/app-root/src/.llama/distributions/rh/files\n\
+    \  tool_runtime:\n  - provider_id: file-search\n    provider_type: inline::file-search\n\
+    \    config: {}\n  - provider_id: model-context-protocol\n    provider_type: remote::model-context-protocol\n\
+    \    config: {}\nmetadata_store:\n  type: sqlite\n  db_path: /opt/app-root/src/.llama/distributions/rh/inference_store.db\n\
+    storage:\n  backends:\n    kv_default:\n      db_path: /opt/app-root/src/.llama/distributions/rh/kvstore.db\n\
+    \      type: kv_sqlite\n    sql_default:\n      db_path: /opt/app-root/src/.llama/distributions/rh/sql_store.db\n\
+    \      type: sql_sqlite\n  stores:\n    connectors:\n      backend: sql_default\n\
+    \      table_name: connectors\n    conversations:\n      backend: sql_default\n\
+    \      table_name: openai_conversations\n    inference:\n      backend: sql_default\n\
+    \      max_write_queue_size: 10000\n      num_writers: 4\n      table_name: inference_store\n\
+    \    metadata:\n      backend: kv_default\n      namespace: registry\n    prompts:\n\
+    \      backend: sql_default\n      table_name: prompts\nvector_stores:\n  default_provider_id:\
+    \ pgvector\n  default_embedding_model:\n    provider_id: sentence-transformers\n\
+    \    model_id: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2\n \
+    \ annotation_prompt_params:\n    enable_annotations: true\n  file_ingestion_params:\n\
+    \    default_chunk_overlap_tokens: 128\n    default_chunk_size_tokens: 512\n \
+    \ chunk_retrieval_params:\n    chunk_multiplier: 5\n    default_reranker_strategy:\
+    \ rrf\n    default_search_mode: vector\n    max_tokens_in_context: 4000\n    rrf_impact_factor:\
+    \ 60\n    weighted_search_alpha: 0.5\n  file_batch_params:\n    cleanup_interval_seconds:\
+    \ 86400\n    file_batch_chunk_size: 10\n    max_concurrent_files_per_batch: 3\n\
+    registered_resources:\n  models:\n  - provider_id: sentence-transformers\n   \
+    \ model_id: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2\n    provider_model_id:\
+    \ sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2\n    model_type:\
+    \ embedding\n    metadata:\n      embedding_dimension: 384\n  - provider_id: aurora-maas\n\
+    \    model_id: ${env.MAAS_MODEL_ID}\n    model_type: llm\n    metadata:\n    \
+    \  display_name: Aurora local LLM via MaaS\n  vector_stores: []\nexternal_providers_dir:\
+    \ /opt/app-root/.llama/providers.d\nserver:\n  port: 8321\n"
+---
+apiVersion: ogx.io/v1beta1
+kind: OGXServer
+metadata:
+  name: lsd-genai-playground
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+spec:
+  distribution:
+    name: rh
+  network:
+    port: 8321
+  overrideConfig:
+    name: aurora-ogx-config
+    key: config.yaml
+  workload:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 250m
+        memory: 1Gi
+      limits:
+        cpu: '2'
+        memory: 6Gi
+    overrides:
+      env:
+      - name: PGVECTOR_HOST
+        value: aurora-pgvector.ai-showroom.svc
+      - name: PGVECTOR_DB
+        value: vectordb
+      - name: PGVECTOR_USER
+        value: vectoruser
+      - name: PGVECTOR_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: aurora-pgvector-credentials
+            key: POSTGRESQL_PASSWORD
+      - name: MAAS_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: showroom-maas-key
+            key: api-key
+      - name: MAAS_BASE_URL
+        valueFrom:
+          secretKeyRef:
+            name: showroom-maas-key
+            key: base-url
+      - name: MAAS_MODEL_ID
+        valueFrom:
+          secretKeyRef:
+            name: showroom-maas-key
+            key: model-id
+      command:
+      - /bin/sh
+      - -c
+      - ogx run /etc/ogx/config.yaml --insecure

@@ -5,6 +5,9 @@ metadata:
 spec:
   parentRefs:
     - {name: showroom-mcp, sectionName: mcps}
+    # Gateway 0.7.1 discovery requires same-port attachment as extension.
+    # Public listener still requires AuthPolicy; mcps remains private by NetworkPolicy.
+    - {name: showroom-mcp, sectionName: mcp}
   hostnames: [aurora-tools.mcp.internal]
   rules:
     - matches:
@@ -26,15 +29,3 @@ spec:
     kind: HTTPRoute
     name: aurora-tools
     namespace: ai-showroom
----
-apiVersion: mcp.kuadrant.io/v1alpha1
-kind: MCPVirtualServer
-metadata:
-  name: aurora-readonly
-spec:
-  description: Curated discovery view. This is NOT an authorization boundary.
-  tools:
-    - aurora_list_products
-    - aurora_get_stock
-    - aurora_get_replenishment_recommendation
-  prompts: []

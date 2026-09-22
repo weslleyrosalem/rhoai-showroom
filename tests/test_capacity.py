@@ -1,4 +1,5 @@
 import copy
+import json
 import datetime as dt
 import importlib.util
 from pathlib import Path
@@ -63,5 +64,18 @@ class CapacityTests(unittest.TestCase):
     def test_unknown_accelerator_fails_closed(self):
         n=node();n['metadata']['labels']={'node.kubernetes.io/instance-type':'unknown'}
         with self.assertRaises(ValueError):m.physical_gpus(n)
+
+    def test_active_pool_surge_reaches_exactly_sixteen(self):
+        pools=[pool('aiml-node','g6e.4xlarge',3,3,1,['existing']),pool('showroom-l40s4','g6e.12xlarge',2,2,1)]
+        i=inventory(pools);i['count_semantics']='upper-bound'
+        p=json.loads((ROOT/'gitops/profiles/active-l40s-9/capacity.json').read_text())
+        r=m.assess(p,{'items':[node()]},i,NOW)
+        self.assertEqual(r['status'],'PASS')
+        self.assertEqual(r['combined_physical_gpu_ceiling'],16)
+        self.assertIsNone(r['cloud_current_physical_gpus'])
+        self.assertEqual(r['cloud_current_physical_gpu_upper_bound'],11)
+    def test_active_pool_plus_another_four_gpu_node_is_blocked(self):
+        pools=[pool('aiml-node','g6e.4xlarge',3,3,1,['existing']),pool('showroom-l40s4','g6e.12xlarge',2,2,1),pool('extra','g6e.12xlarge',0,1,0)]
+        self.assertEqual(m.assess(profile(),{'items':[node()]},inventory(pools),NOW)['status'],'BLOCKED')
 
 if __name__=='__main__':unittest.main()

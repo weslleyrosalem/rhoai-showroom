@@ -13,3 +13,9 @@ These directories do not create `ai-showroom`; install the common foundation fir
 The fixed ceiling is16 physical GPUs, including existing/pending/desired pool machines and upgrade surge. Full13 with one extra4GPU upgrade node is17 and must be blocked. Profiles do not imply other pools have disappeared: cloud inventory retains them until their actual scale-down and maxima are verified.
 
 Do not apply Full and MIG simultaneously. Read [hardware](../../docs/labs/hardware.md) and [benchmark](../../docs/labs/benchmark.md) before changing capacity.
+
+## Plano implantado neste cluster
+
+`active-l40s-9` mantém as subscriptions do showroom apontando para o Llama existente e adiciona Qwen4B/TP1 e uma réplica Qwen32B/TP4 com subscriptions próprias. Pool `aiml-node` 1–3 ×1GPU, surge1; `showroom-l40s4` 0–2 ×4GPU, surge1. Limite global incluindo surge:16. O nome9 corresponde a uma GPU preservada + oito novas, não ao máximo autoscalável total.
+
+Não sincronize automaticamente os manifests GPU. Execute o guard com inventário ROSA/OCM atual, revise o custo/capacidade e só então aplique. `full-l40s-13` e MIG são alternativas, não expansões acumuláveis do plano ativo. Para duas réplicas Qwen32B no plano ativo, libere Qwen4B primeiro.

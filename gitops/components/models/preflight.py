@@ -19,7 +19,7 @@ def get(resource):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--model',required=True,choices=['qwen-4b','qwen-32b-tp4','qwen-32b-multinode','qwen-72b-opt-in'])
-    p.add_argument('--profile',required=True,choices=['interactive','full-l40s-13','mig-13'])
+    p.add_argument('--profile',required=True,choices=['interactive','active-l40s-9','full-l40s-13','mig-13'])
     p.add_argument('--inventory',type=Path,required=True)
     p.add_argument('--expected-server',required=True)
     args=p.parse_args()

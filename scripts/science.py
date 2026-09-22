@@ -52,7 +52,7 @@ def generate(destination, seed=351):
                              promotion=promotion, unit_price=product["unit_price"],
                              lead_time_days=product["lead_time_days"]))
     with (destination / "demand.csv").open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     write_json(destination / "provenance.json", {

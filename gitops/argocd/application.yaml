@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rhoai-showroom
+  namespace: openshift-gitops
+spec:
+  project: rhoai-showroom
+  source:
+    repoURL: https://github.com/weslleyrosalem/rhoai-showroom.git
+    targetRevision: main
+    path: gitops/overlays/portable
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ai-showroom
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+    - ServerSideApply=true
+    - RespectIgnoreDifferences=true
+    - SkipDryRunOnMissingResource=true
+  ignoreDifferences:
+  - group: kubeflow.org
+    kind: Notebook
+    jqPathExpressions:
+    - .metadata.annotations["kubeflow-resource-stopped"]
+  - group: kuadrant.io
+    kind: AuthPolicy
+    name: showroom-mcp-auth
+    namespace: ai-showroom
+    jsonPointers:
+    - /spec/rules/authentication/openshift/kubernetesTokenReview/audiences

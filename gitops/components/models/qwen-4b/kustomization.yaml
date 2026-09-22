@@ -3,6 +3,8 @@
   "kind": "Kustomization",
   "resources": [
     "model.yaml",
-    "maas-ref.yaml"
+    "maas-ref.yaml",
+    "access.yaml",
+    "subscription.yaml"
   ]
 }

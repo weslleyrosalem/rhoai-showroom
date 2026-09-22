@@ -1,0 +1,13 @@
+{
+  "spec": {
+    "components": {
+      "mcplifecycleoperator": {
+        "managementState": "Managed"
+      },
+      "trustyai": {
+        "managementState": "Managed",
+        "mcpGuardrailsMode": false
+      }
+    }
+  }
+}

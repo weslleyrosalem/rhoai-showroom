@@ -1,0 +1,43 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: showroom-rails-check
+rules:
+  - apiGroups: ['']
+    resources: [services]
+    # This is the synthetic resourceName required by the operator's RBAC proxy.
+    resourceNames: [showroom-rails-service]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-rails-check
+subjects:
+  - kind: ServiceAccount
+    name: aurora-science
+    namespace: ai-showroom
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: showroom-rails-check
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-rails-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app: showroom-rails
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-ingress
+        - podSelector:
+            matchLabels:
+              app: aurora-rag
+      ports:
+        - {protocol: TCP, port: 8443}

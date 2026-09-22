@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-rails-private
+spec:
+  podSelector:
+    matchLabels: {app: showroom-rails-bridge}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: {app: showroom-mcp-ipp}
+      ports: [{protocol: TCP, port: 9443}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-rails-bridge-upstream
+spec:
+  podSelector:
+    matchLabels: {app: showroom-rails}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: {app: showroom-rails-bridge}
+      ports: [{protocol: TCP, port: 8443}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-mcp-ipp
+spec:
+  podSelector:
+    matchLabels: {app: showroom-mcp-ipp}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              gateway.networking.k8s.io/gateway-name: showroom-mcp
+      ports: [{protocol: TCP, port: 9004}]

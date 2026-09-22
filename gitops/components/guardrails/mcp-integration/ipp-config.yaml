@@ -1,0 +1,18 @@
+plugins:
+  - type: nemo-request-guard
+    name: nemo-input
+    parameters:
+      nemoURL: https://showroom-rails-private.ai-showroom.svc:9443/v1/guardrail/checks
+      timeoutSeconds: 10
+  - type: nemo-response-guard
+    name: nemo-output
+    parameters:
+      nemoURL: https://showroom-rails-private.ai-showroom.svc:9443/v1/guardrail/checks
+      timeoutSeconds: 10
+profiles:
+  - name: default
+    plugins:
+      request:
+        - pluginRef: nemo-input
+      response:
+        - pluginRef: nemo-output

@@ -16,6 +16,7 @@ from business import Catalog
 DEFAULT_HOSTS = ["localhost:*", "127.0.0.1:*", "[::1]:*", "testserver",
                  "aurora-tools:*", "aurora-tools.ai-showroom.svc:*",
                  "aurora-tools.ai-showroom.svc.cluster.local:*", "aurora-tools.mcp.internal:*"]
+DEFAULT_HOSTS += [h[:-2] for h in DEFAULT_HOSTS if h.endswith(":*")]
 allowed_hosts = [h.strip() for h in os.environ.get("AURORA_ALLOWED_HOSTS", ",".join(DEFAULT_HOSTS)).split(",") if h.strip()]
 allowed_origins = [h.strip() for h in os.environ.get("AURORA_ALLOWED_ORIGINS", "http://localhost:*,http://127.0.0.1:*").split(",") if h.strip()]
 catalog = Catalog()

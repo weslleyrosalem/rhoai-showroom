@@ -1,0 +1,14 @@
+{
+  "spec": {
+    "monitoring": {
+      "traces": {
+        "storage": {
+          "backend": "pv",
+          "size": "5Gi",
+          "retention": "168h"
+        },
+        "sampleRatio": "1.0"
+      }
+    }
+  }
+}

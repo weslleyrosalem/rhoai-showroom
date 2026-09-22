@@ -10,7 +10,9 @@ import math
 import os
 from pathlib import Path
 import re
+import ssl
 import unicodedata
+import urllib.error
 import urllib.request
 
 
@@ -68,6 +70,12 @@ async def tools_for_sku(sku):
                 return results
 
 
+class RejectRedirects(urllib.request.HTTPRedirectHandler):
+    """Never forward the MaaS bearer credential to a redirect target."""
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(req.full_url, code, "MaaS redirects are disabled", headers, fp)
+
+
 def complete(messages):
     base = os.environ["MAAS_BASE_URL"].rstrip("/")
     if not base.endswith("/v1"):
@@ -77,10 +85,30 @@ def complete(messages):
     request = urllib.request.Request(base + "/chat/completions", data=json.dumps(body).encode(),
                                      headers={"Content-Type": "application/json",
                                               "Authorization": "Bearer " + os.environ["MAAS_API_KEY"]})
-    with urllib.request.urlopen(request, timeout=100) as response:
+    with urllib.request.build_opener(RejectRedirects()).open(request, timeout=100) as response:
         result = json.load(response)
     return {"answer": result["choices"][0]["message"]["content"], "usage": result.get("usage", {}),
             "model": result.get("model", body["model"])}
+
+
+class GuardrailBlocked(ValueError):
+    pass
+
+
+def guardrail_check(text, role):
+    """Check before trace capture; unknown or unavailable verdicts fail closed."""
+    endpoint = os.environ.get("GUARDRAILS_URL", "https://showroom-rails.ai-showroom.svc/v1/guardrail/checks")
+    ca = os.environ.get("MLFLOW_TRACKING_SERVER_CERT_PATH", "/etc/service-ca/service-ca.crt")
+    payload = {"model": "aurora-assistant", "messages": [{"role": role, "content": text}],
+               "guardrails": {"config_id": "showroom-safety"}}
+    req = urllib.request.Request(endpoint, data=json.dumps(payload).encode(), headers={
+        "Content-Type": "application/json", "Authorization": "Bearer " + token_from_serviceaccount()})
+    opener = urllib.request.build_opener(RejectRedirects(), urllib.request.HTTPSHandler(context=ssl.create_default_context(cafile=ca)))
+    with opener.open(req, timeout=20) as response:
+        verdict = json.load(response).get("status")
+    if verdict != "success":
+        raise GuardrailBlocked("Conteúdo bloqueado pelo guardrail de segurança")
+    return verdict
 
 
 def configure_tracing():
@@ -98,6 +126,7 @@ def configure_tracing():
 def ask(question, retriever, use_tools=True):
     if not isinstance(question, str) or not question.strip() or len(question) > 4000:
         raise ValueError("A pergunta deve conter de 1 a 4000 caracteres")
+    guardrail_check(question, "user")
     mlflow = configure_tracing()
     def traced(name, function, *args):
         if mlflow:
@@ -122,7 +151,8 @@ def ask(question, retriever, use_tools=True):
                                                         "tool_results": tool_result}, ensure_ascii=False)},
         ]
         result = traced("maas_inference", complete, messages)
-        result.update({"sources": [{"document_id": x["document_id"], "score": x["score"]} for x in sources],
+        guardrail_check(result["answer"], "assistant")
+        result.update({"guardrails": "input/output approved", "sources": [{"document_id": x["document_id"], "score": x["score"]} for x in sources],
                        "retrieval": "lexical TF-IDF", "tools_used": list(tool_result), "synthetic": True})
         return result
     if mlflow:

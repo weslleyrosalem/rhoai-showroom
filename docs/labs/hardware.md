@@ -2,17 +2,31 @@
 
 O teto do showroom é **16 GPUs físicas no total**, incluindo a GPU existente, todos os pools, máquinas em criação e sobreposição de upgrades. Quotas de Kubernetes, MIG e time-slicing contam recursos lógicos; não substituem esse controle de infraestrutura.
 
-## Perfis
+## Plano ativo: active-l40s-9
 
-| Perfil | Infraestrutura proposta, incluindo a GPU existente | Uso |
+O plano configurado no ROSA em 22/09/2026 preserva `aiml-node` e adiciona `showroom-l40s4`. O nome do preset descreve a experiência com uma GPU preservada e até oito novas GPUs. O teto real considera também o autoscaling do pool existente.
+
+| Pool | Tipo | Mínimo / máximo de nós | GPUs por nó | Surge de nós | Máximo físico incluindo surge |
+|---|---|---|---|---|---|
+| aiml-node | g6e.4xlarge | 1 / 3 | 1 | 1 | 4 |
+| showroom-l40s4 | g6e.12xlarge | 0 / 2 | 4 | 1 | 12 |
+| workers | m8i.2xlarge | 1 / 4 | 0 | sem impacto GPU | 0 |
+
+**3 + 8 + 1 + 4 = 16 GPUs físicas**, com no máximo 11 fora da sobreposição de upgrades. Não aumente nenhum máximo nem adicione um pool GPU sem recalcular o conjunto. O pool novo exige IMDSv2, o label `showroom.openshift.ai/gpu-pool=true` e a taint `nvidia.com/gpu=true:NoSchedule`.
+
+A primeira etapa executa Qwen4B/TP1 e uma única réplica Qwen32B/TP4, mantendo o Llama existente. Para comparar duas réplicas Qwen32B em dois nós de quatro GPUs, desative primeiro o Qwen4B: oito GPUs novas ocupadas pelo benchmark não deixam uma nona GPU no pool. GPU workloads ficam fora do sincronismo automático padrão do Argo até passar o preflight.
+
+## Perfis alternativos
+
+| Perfil | Infraestrutura nominal incluindo uma GPU existente | Uso e condição |
 |---|---|---|
-| Core |1 L40S existente| CPU + serviços compartilhados |
-| Interactive |1 existente +1 L40S =2| Qwen4B e benchmark serial de engine |
-| Full L40S13 |1 existente +3 nós de4 L40S =13| Qwen4B, duas réplicas Qwen32B/TP4 e margem para outros experimentos |
-| MIG9 |1 existente +1 nó de8 A100 =9| Laboratório MIG |
-| MIG13 |1 existente +8 A100 +4 L40S =13| MIG e inferência em nós separados |
+| Core | 1 L40S existente | CPU + serviços compartilhados |
+| Interactive | 1 existente + 1 L40S = 2 | Outro cluster ou plano próprio; não adicionar automaticamente ao plano ativo |
+| Full L40S13 | 1 existente + 3 nós de 4 L40S = 13 | Desenho alternativo; **não cabe no plano ativo com seus máximos e surge** |
+| MIG9 | 1 existente + 1 nó de 8 A100 = 9 | Alternativa após remover/reduzir pools incompatíveis com o teto |
+| MIG13 | 1 existente + 8 A100 + 4 L40S = 13 | Alternativa que também exige revisar sobreposição de upgrades |
 
-Esses são perfis alternativos. Manter o pool Full12 e acrescentar A1008 daria21 com a GPU existente, portanto é proibido pelo preflight. Até Full13 com surge de um nó4GPU chegaria17. Ajuste o plano de manutenção ou reduza temporariamente a capacidade; o script não esconde essa sobreposição.
+Esses perfis não se somam. Full13 com um nó de surge de quatro GPUs chegaria a 17 mesmo com somente uma GPU existente. Um A100 de oito GPUs com surge de um nó acrescenta mais oito; manter o L40S existente já excederia 16. O preflight bloqueia esses casos até a política real de manutenção e a capacidade restante caberem no teto. Não configure surge zero fictício no inventário para obter PASS.
 
 AWS confirma quatro L40S no `g6e.12xlarge` e oito A100 no `p4d.24xlarge`. Ainda é necessário verificar região, oferta ROSA, quota AWS, disponibilidade e o custo da conta. [G6e](https://aws.amazon.com/ec2/instance-types/g6e/), [P4](https://aws.amazon.com/ec2/instance-types/p4/).
 
@@ -41,10 +55,10 @@ Formato de inventário privado — valores ilustrativos, não copiar como evidê
 }
 ```
 
-Inclua também pools CPU com `gpus_per_node: 0`. Um tipo GPU desconhecido precisa ser adicionado à tabela de tipos após verificação oficial; não marque GPU desconhecida como CPU. `complete: true` só é legítimo depois de consultar todas as páginas da API cloud. `upgrade_surge_nodes: 0` exige confirmação da política real, não é uma sugestão para omitir capacidade de upgrade.
+Inclua também pools CPU com `gpus_per_node: 0`. Um tipo GPU desconhecido precisa ser adicionado à tabela de tipos após verificação oficial; não marque GPU desconhecida como CPU. `complete: true` só é legítimo depois de consultar todas as páginas da API cloud ou todos os pools na interface OCM. Quando a interface não fornecer current/desired exatos, use `count_semantics: "upper-bound"` e conte conservadoramente cada um como o máximo do pool. O relatório mostra explicitamente esse limite, sem apresentá-lo como número de GPUs atualmente ligadas. Registre fonte e horário reais da observação; não renove um timestamp sem consultar o estado. `upgrade_surge_nodes: 0` exige confirmação da política real, não é uma sugestão para omitir capacidade de upgrade.
 
 ```bash
-python3 scripts/capacity.py --profile full-l40s-13 \
+python3 scripts/capacity.py --profile active-l40s-9 \
   --expected-server "$EXPECTED_OPENSHIFT_SERVER" \
   --inventory /caminho/privado/rosa-inventory.json \
   --output /caminho/privado/capacity-result.json
@@ -56,7 +70,7 @@ A validade máxima é15 minutos. Um PASS significa somente que a contagem calcul
 
 `showroom-cpu-small` oferece CPU/RAM. `showroom-l40s-1` pede uma L40S. `showroom-l40s-4` pede quatro dispositivos para tensor parallelism. Ambos exigem o label `showroom.openshift.ai/gpu-pool=true`, além de NVIDIA-L40S. Configure esse label somente nos novos pools do showroom. Assim os novos modelos não disputam o GPU reservado para a demonstração anterior.
 
-O profile informa RAM do host separadamente da VRAM. Criar um profile não cria um node. Confirme nodes Ready, dispositivos alocáveis, taints/tolerations, PVCs e pull-secret antes de oferecer a opção de deploy ao visitante.
+O profile informa RAM do host separadamente da VRAM. Criar um profile não cria um node. No scale-from-zero, confirme que os labels exigidos pelo seletor estão presentes também no template da machinepool; um label produzido somente depois pelo GPU Feature Discovery pode impedir o autoscaler de reconhecer o pool. Confirme nodes Ready, dispositivos alocáveis, taints/tolerations, PVCs e pull-secret antes de oferecer a opção de deploy ao visitante.
 
 O módulo `qwen-32b-multinode` cria duas réplicas, cada uma TP4, com anti-affinity obrigatória em hostnames diferentes. São dois servidores completos de um mesmo modelo. **Não** é um único modelo dividido por pipeline parallelism entre nós. Um ensaio PP2×TP4 permanece separado até validar presets, LeaderWorkerSet e transporte na instalação real.
 
@@ -70,4 +84,4 @@ Os labels GFD podem contar instâncias MIG, não placas físicas. Para tipos EC2
 
 ## Aceite
 
-Registre inventário cloud, contagem antes/depois, topologia e evidência de scheduling. Nenhum recurso GPU novo deve cair no nó preservado. Um ensaio Full deve mostrar os dois pods TP4 em nós diferentes. MIG só recebe status demonstrável depois de um workload usar uma partição real. Não substitua essas evidências pelo sucesso de um `oc apply`.
+Registre inventário cloud, contagem antes/depois, topologia e evidência de scheduling. Nenhum recurso GPU novo deve cair no nó preservado. Um ensaio de duas réplicas deve mostrar os dois pods TP4 em nós diferentes, após liberar o Qwen4B no plano ativo. MIG só recebe status demonstrável depois de um workload usar uma partição real. Não substitua essas evidências pelo sucesso de um `oc apply`.

@@ -27,7 +27,7 @@ Os CRDs locais são `mcp.kuadrant.io/v1alpha1`: `MCPGatewayExtension`, `MCPServe
 
 - Namespace `ai-showroom`, GatewayClass `openshift-default`, RHCL/Authorino e MCP Gateway Operator instalados.
 - ServiceAccounts `showroom-visitor`, `showroom-engineer` e `aurora-science` quando usados pela jornada.
-- Imagem `aurora-tools:1.0.0` construída conforme [README do app](../../apps/aurora-tools/README.md).
+- Imagem `aurora-tools:1.0.0` construída conforme [README do app](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/apps/aurora-tools/README.md).
 - TrustyAI só é necessário para a etapa guardrails, não para consulta MCP básica.
 
 Instalar o MCP Lifecycle pelo DSC permite a experiência de deploy pelo catálogo, mas não configura Gateway/auth automaticamente. Este módulo implanta a aplicação conhecida por Deployment/Service, declarativamente; não afirma que ela foi instalada via catálogo. [Lifecycle3.5](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_the_mcp_catalog/enabling-mcp-lifecycle-management)
@@ -82,7 +82,7 @@ No cliente MCP/Playground, use o host HTTPS, bearer token autorizado e o header 
 
 Abra cada retorno de ferramenta. A recomendação inclui `data_revision`, `forecast.model_version`, horizonte e `order_created:false`. Se `forecast:null`, a regra é o ponto de reposição e não um modelo treinado; não apresente esse fallback como ML.
 
-No roteiro técnico, execute [smoke_mcp.py](../../apps/aurora-tools/smoke_mcp.py). O script verifica ferramentas e chamadas reais sem imprimir o token. `Ready=True` no registro é insuficiente porque a descoberta do broker é assíncrona. [Registro MCP](https://github.com/Kuadrant/mcp-gateway/blob/v0.7.1/docs/guides/register-mcp-servers.md)
+No roteiro técnico, execute [smoke_mcp.py](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/apps/aurora-tools/smoke_mcp.py). O script verifica ferramentas e chamadas reais sem imprimir o token. `Ready=True` no registro é insuficiente porque a descoberta do broker é assíncrona. [Registro MCP](https://github.com/Kuadrant/mcp-gateway/blob/v0.7.1/docs/guides/register-mcp-servers.md)
 
 ## Diagnóstico
 

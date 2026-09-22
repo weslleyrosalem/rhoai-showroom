@@ -1,0 +1,11 @@
+apiVersion: mcp.kuadrant.io/v1alpha1
+kind: MCPVirtualServer
+metadata:
+  name: aurora-readonly
+spec:
+  description: Curated discovery view. This is NOT an authorization boundary.
+  tools:
+    - aurora_list_products
+    - aurora_get_stock
+    - aurora_get_replenishment_recommendation
+  prompts: []

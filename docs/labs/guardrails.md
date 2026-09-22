@@ -35,7 +35,7 @@ A regra só afeta o tráfego enviado ao NeMo. Não diga “todo MCP está proteg
 
 ## Integração MCP/IPP — etapa opcional com gate próprio
 
-Leia o [contrato IPP](../../gitops/components/guardrails/mcp-integration/IPP-CONTRACT.md). Ele fixa a fonte inspecionada e os parâmetros de plugins reais. É necessário implantar um IPP que contenha `nemo-request-guard`/`nemo-response-guard`, TLS confiável até o NeMo, ordenação Envoy e modos de processamento de resposta corretos. A configuração inclui um overlay que liga a descoberta TrustyAI:
+Leia o [contrato IPP](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/components/guardrails/mcp-integration/IPP-CONTRACT.md). Ele fixa a fonte inspecionada e os parâmetros de plugins reais. É necessário implantar um IPP que contenha `nemo-request-guard`/`nemo-response-guard`, TLS confiável até o NeMo, ordenação Envoy e modos de processamento de resposta corretos. A configuração inclui um overlay que liga a descoberta TrustyAI:
 
 ```sh
 oc apply --dry-run=server -k gitops/components/guardrails/mcp-integration

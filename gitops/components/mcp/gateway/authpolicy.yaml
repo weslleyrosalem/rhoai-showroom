@@ -11,9 +11,9 @@ spec:
   rules:
     authentication:
       openshift:
+        # Replace using configure_gateway.py or a cluster overlay. Fail closed until configured.
         kubernetesTokenReview:
-          audiences:
-            - https://kubernetes.default.svc
+          audiences: [showroom-configure-api-audience-before-publication]
     authorization:
       showroom-identities:
         patternMatching:

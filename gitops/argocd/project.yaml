@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: rhoai-showroom
+  namespace: openshift-gitops
+spec:
+  description: Aurora Supply showroom; scoped repository and destinations.
+  sourceRepos:
+    - https://github.com/weslleyrosalem/rhoai-showroom.git
+  destinations:
+    - {server: 'https://kubernetes.default.svc', namespace: ai-showroom}
+    - {server: 'https://kubernetes.default.svc', namespace: ai-showroom-bench}
+    - {server: 'https://kubernetes.default.svc', namespace: redhat-ods-applications}
+    - {server: 'https://kubernetes.default.svc', namespace: models-as-a-service}
+  clusterResourceWhitelist:
+    - {group: '', kind: Namespace}
+    - {group: user.openshift.io, kind: Group}
+    - {group: mlflow.opendatahub.io, kind: MLflow}
+  namespaceResourceWhitelist:
+    - {group: '*', kind: '*'}
+  namespaceResourceBlacklist:
+    - {group: '', kind: Secret}
+    - {group: operators.coreos.com, kind: Subscription}
+  orphanedResources:
+    warn: false

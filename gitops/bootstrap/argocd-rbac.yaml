@@ -1,0 +1,155 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: showroom-gitops
+  namespace: redhat-ods-applications
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  - services
+  - serviceaccounts
+  - persistentvolumeclaims
+  verbs: &id001
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs: *id001
+- apiGroups:
+  - trustyai.opendatahub.io
+  resources:
+  - evalhubs
+  verbs: *id001
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-gitops
+  namespace: redhat-ods-applications
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: showroom-gitops
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: showroom-gitops
+  namespace: models-as-a-service
+rules:
+- apiGroups:
+  - maas.opendatahub.io
+  resources:
+  - maasauthpolicies
+  - maassubscriptions
+  - maasmodelrefs
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-gitops
+  namespace: models-as-a-service
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: showroom-gitops
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: showroom-gitops-shared
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - namespaces
+  resourceNames:
+  - ai-showroom
+  - ai-showroom-bench
+  verbs:
+  - patch
+  - update
+- apiGroups:
+  - user.openshift.io
+  resources:
+  - groups
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+- apiGroups:
+  - user.openshift.io
+  resources:
+  - groups
+  resourceNames:
+  - showroom-visitors
+  - showroom-data-scientists
+  - showroom-platform-admins
+  verbs:
+  - patch
+  - update
+- apiGroups:
+  - mlflow.opendatahub.io
+  resources:
+  - mlflows
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+- apiGroups:
+  - mlflow.opendatahub.io
+  resources:
+  - mlflows
+  resourceNames:
+  - mlflow
+  verbs:
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: showroom-gitops-shared
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: showroom-gitops-shared

@@ -73,6 +73,8 @@ def test_actual_mcp_initialize_list_and_call():
             response = client.post("/mcp", headers=headers, json={"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": name, "arguments": args}})
             assert response.status_code == 200
             assert not response.json()["result"].get("isError", False)
+        routed = client.post("/mcp", headers={**headers, "Host": "aurora-tools.mcp.internal"}, json={"jsonrpc": "2.0", "id": 9, "method": "tools/list", "params": {}})
+        assert routed.status_code == 200
         denied = client.post("/mcp", headers=headers, json={"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {"name": "create_order", "arguments": {}}})
         assert denied.json()["result"]["isError"] is True
         invalid = client.post("/mcp", headers=headers, json={"jsonrpc": "2.0", "id": 5, "method": "tools/call", "params": {"name": "list_products", "arguments": {"limit": 10000}}})

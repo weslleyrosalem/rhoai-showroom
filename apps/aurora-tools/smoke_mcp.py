@@ -18,7 +18,7 @@ async def main():
     parser.add_argument("--token-env", default="MCP_TOKEN")
     parser.add_argument("--sku", default="AS-001")
     parser.add_argument("--prefix", default="aurora_")
-    parser.add_argument("--virtual-server", default="ai-showroom/aurora-readonly")
+    parser.add_argument("--virtual-server", default="")
     args = parser.parse_args()
     url = urlsplit(args.url)
     if url.username or url.password or not url.hostname or url.fragment:
@@ -26,14 +26,16 @@ async def main():
     if url.scheme != "https" and not (url.scheme == "http" and url.hostname in {"localhost", "127.0.0.1", "::1"}):
         raise SystemExit("Use TLS, except for a local port-forward")
     token = os.environ.get(args.token_env) or subprocess.check_output(["oc", "whoami", "-t"], text=True).strip()
-    headers = {"Authorization": "Bearer " + token, "X-Mcp-Virtualserver": args.virtual_server}
+    headers = {"Authorization": "Bearer " + token}
+    if args.virtual_server:
+        headers["X-Mcp-Virtualserver"] = args.virtual_server
     async with httpx.AsyncClient(headers=headers, follow_redirects=False) as client, streamable_http_client(args.url, http_client=client) as (read, write, _):
         async with ClientSession(read, write) as session:
             await session.initialize()
             listing = await session.list_tools()
             names = {tool.name for tool in listing.tools}
             expected = {args.prefix + name for name in ("list_products", "get_stock", "get_replenishment_recommendation")}
-            assert names == expected, f"Unexpected tool names: {sorted(names)}"
+            assert expected <= names and names <= expected | {"discover_tools", "select_tools"}, f"Unexpected tool names: {sorted(names)}"
             checks = []
             for name, arguments in [("list_products", {}), ("get_stock", {"sku": args.sku}), ("get_replenishment_recommendation", {"sku": args.sku})]:
                 result = await session.call_tool(args.prefix + name, arguments)

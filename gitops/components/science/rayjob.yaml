@@ -10,7 +10,7 @@
     "shutdownAfterJobFinishes": true,
     "ttlSecondsAfterFinished": 300,
     "activeDeadlineSeconds": 1800,
-    "runtimeEnvYAML": "pip:\n  - mlflow[kubernetes]==3.14.0\n  - boto3==1.42.74\n",
+    "runtimeEnvYAML": "pip:\n  - mlflow[kubernetes]==3.14.0\n  - boto3==1.43.18\n",
     "rayClusterSpec": {
       "rayVersion": "2.47.1",
       "headGroupSpec": {

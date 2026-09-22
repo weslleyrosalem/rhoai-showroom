@@ -1,0 +1,114 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: showroom-rails-bridge
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: showroom-mcp-ipp
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-rails-bridge
+subjects:
+  - kind: ServiceAccount
+    name: showroom-rails-bridge
+    namespace: ai-showroom
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: showroom-rails-check
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: showroom-rails-private
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: showroom-rails-private-tls
+spec:
+  selector: {app: showroom-rails-bridge}
+  ports:
+    - {name: https, port: 9443, targetPort: 9443}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: showroom-rails-bridge
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: showroom-rails-bridge}
+  template:
+    metadata:
+      labels: {app: showroom-rails-bridge}
+    spec:
+      serviceAccountName: showroom-rails-bridge
+      securityContext: {runAsNonRoot: true, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: bridge
+          image: registry.access.redhat.com/ubi9/python-312@sha256:ff373f4b42b662e99954adea770ca87b4ea963186cc752174ccb94aa08fa702d
+          command: [python, /config/bridge.py]
+          env: [{name: PYTHONDONTWRITEBYTECODE, value: '1'}]
+          ports: [{containerPort: 9443, name: https}]
+          resources:
+            requests: {cpu: 25m, memory: 64Mi}
+            limits: {cpu: 250m, memory: 128Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          readinessProbe:
+            httpGet: {scheme: HTTPS, path: /health, port: https}
+          livenessProbe:
+            httpGet: {scheme: HTTPS, path: /health, port: https}
+          volumeMounts:
+            - {name: code, mountPath: /config, readOnly: true}
+            - {name: tls, mountPath: /tls, readOnly: true}
+      volumes:
+        - name: code
+          configMap: {name: showroom-rails-bridge}
+        - name: tls
+          secret: {secretName: showroom-rails-private-tls}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: showroom-mcp-ipp
+spec:
+  selector: {app: showroom-mcp-ipp}
+  ports:
+    - {name: grpc, port: 9004, targetPort: 9004}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: showroom-mcp-ipp
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: showroom-mcp-ipp}
+  template:
+    metadata:
+      labels: {app: showroom-mcp-ipp}
+    spec:
+      serviceAccountName: showroom-mcp-ipp
+      securityContext: {runAsNonRoot: true, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: ipp
+          image: registry.redhat.io/rhoai/odh-ai-gateway-payload-processing-rhel9@sha256:83091d245d7ae9275ba27db0aed50bfc0b80b78b6ef28b77db7f62c175b14fe2
+          args: [--config-file, /config/ipp-config.yaml, '--v=0', '--tracing=false']
+          env:
+            - {name: DISABLE_EXTERNAL_MODEL_CONTROLLER, value: 'true'}
+            - {name: NAMESPACE, value: ai-showroom}
+            - {name: SSL_CERT_DIR, value: /var/run/secrets/kubernetes.io/serviceaccount}
+          ports: [{name: grpc, containerPort: 9004}, {name: health, containerPort: 9005}]
+          readinessProbe: {grpc: {port: 9005}}
+          livenessProbe: {grpc: {port: 9005}}
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts:
+            - {name: config, mountPath: /config, readOnly: true}
+      volumes:
+        - name: config
+          configMap: {name: showroom-mcp-ipp}

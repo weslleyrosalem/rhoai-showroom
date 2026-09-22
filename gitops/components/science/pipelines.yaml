@@ -5,7 +5,11 @@ metadata:
   namespace: ai-showroom
 spec:
   apiServer:
-    managedPipelines: {}
+    managedPipelines:
+      pipelines:
+        - name: autogluon-timeseries-training-pipeline
+        - name: autogluon-tabular-training-pipeline
+        - name: documents-rag-optimization-pipeline
   mlflow:
     integrationMode: AUTODETECT
     injectUserEnvVars: true
