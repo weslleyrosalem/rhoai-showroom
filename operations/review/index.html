@@ -2274,7 +2274,22 @@
 <tr>
 <td>The guide gave similar visual weight to every feature</td>
 <td>Put presentation routes first and used clear documentation hierarchy</td>
-<td>Published desktop layout and keyboard skip-link/action navigation passed; mobile viewport verification remains open</td>
+<td>Published desktop and keyboard navigation passed; a 390-pixel generated-site check also passed, as scoped below</td>
+</tr>
+<tr>
+<td>The test drive implied that native Playground requests created the demonstrated MLflow traces</td>
+<td>Separated Playground citation/tool inspection from Aurora application tracing</td>
+<td>Each exercise now names its validated application path</td>
+</tr>
+<tr>
+<td>A GitOps step implied that a policy edit alone rebuilt the application</td>
+<td>Replaced it with the documented ConfigMap annotation, self-heal, and revert exercise</td>
+<td>The script no longer depends on an unconfigured image-build trigger</td>
+</tr>
+<tr>
+<td>Tempo readiness could be mistaken for demonstrated Aurora tracing</td>
+<td>Queried its authenticated API and qualified the architecture and validation record</td>
+<td>The six-hour search returned no traces; the demonstrated application flow uses MLflow</td>
 </tr>
 </tbody>
 </table>
@@ -2287,7 +2302,9 @@
 <p><a class="md-button" href="https://github.com/weslleyrosalem/rhoai-showroom/issues/new?template=demo-feedback.yml">Share showroom feedback</a></p>
 <p>Feedback is public. Use synthetic examples and sanitized errors. Credentials, private cluster URLs, account identifiers, and customer data must stay out of the issue.</p>
 <h2 id="website-acceptance">Website acceptance<a class="headerlink" href="#website-acceptance" title="Permanent link">&para;</a></h2>
-<p>The published guide was inspected on desktop after the September 22 release. Its keyboard skip link moves focus to the content, and Tab/Enter reaches and opens the presentation action. The requested 390-pixel browser override did not change the measured viewport; mobile testing is therefore <strong>not yet verified</strong>, rather than assumed from responsive CSS. The override was reset after the check.</p>
+<p>The published guide was inspected on desktop after the September 22 release. Its keyboard skip link moves focus to the content, and Tab/Enter reaches and opens the presentation action.</p>
+<p>The same generated site artifact was also served locally inside a <strong>390-pixel browsing context</strong>. Home and inference pages each measured 390 pixels for both viewport and document width, with no horizontal page overflow. The drawer opened, returned to its top-level menu, and navigated to the inference presentation. Search returned the MLflow lab, and opening that result reached the expected page. Text, headings, and search results wrapped within the narrow layout.</p>
+<p>This verifies the tested responsive layout and navigation. It does not emulate a physical phone, touch input, or every browser. The earlier browser-wide viewport override did not take effect and was reset; it was not counted as a passed test.</p>
 
 
 
