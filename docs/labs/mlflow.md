@@ -1,5 +1,7 @@
 # MLflow experiments and traces
 
+**Customer question:** Can we explain one replenishment proposal, account for its model usage, and challenge a fluent answer with the underlying tool evidence?
+
 The platform singleton runs in `redhat-ods-applications`; the workspace is `ai-showroom`. Workbench and workload identities use namespace-scoped Kubernetes authorization.
 
 Open `notebooks/01-demand.ipynb`. Generate the synthetic dataset, inspect the chronological holdout, and publish the measured result. The model artifact is also uploaded to `s3://aurora-artifacts/models/forecast/latest.json` for the MCP backend.
@@ -27,6 +29,18 @@ Native pipeline automatic tracking emitted a missing nested run-ID warning. The 
 Open **MLflow → Experiments → aurora-assistant-demo**. Ask “Should I replenish AS-001? Explain the policy and required approval.” In the resulting trace, inspect the retrieval span, two named tool spans, the LLM usage, and the successful configured policy check. Compare the recorded proposal with the app's deterministic business card. Ask an unsupported policy question to demonstrate uncertainty, then verify that an explicitly blocked input produces no new trace containing that input.
 
 The inventory rule distinguishes target stock from additional quantity: `target_stock = max(reorder_point, ceil(forecast_7d_units * 21 / 7))`; `recommended_quantity = max(0, target_stock - stock)`. The tool calculates these values. The model explains them without recomputing the proposal. No policy check is presented as factual truth verification.
+
+## Read the native overview graphs
+
+In MLflow, select workspace **ai-showroom**, then **Experiments → aurora-assistant-demo → Overview**. Start with **Last 7 days**, the window used in browser acceptance. Use a range containing the September 22, 2026 run when reviewing the saved history, and check the time axis before comparing a UTC record with the browser's displayed time. Keep the same experiment and time range while switching panels.
+
+| Native panel | Recorded acceptance signal | Customer interpretation |
+|---|---|---|
+| Overview → Usage | Six traces; 9,950 tokens: 8,098 input and 1,852 output | These are actual provider-derived counts. **No cost data available** means there is no monetary measurement, even if a headline shows `$0`. |
+| Overview → Tool calls | Two calls, 100% execution success, 0 failures, 101 ms average; usage and latency charts render | This aggregate covers one request through the corrected span export, not all historical tool executions. A successful call does not establish that the generated explanation used its result correctly. |
+| Traces → selected request | Retrieval, stock, replenishment, LLM, and output-policy spans | Inspect the selected trace's duration and token usage, then compare its typed decision with the complete answer and citations. |
+
+These are dated observations, not fixed targets: additional customer requests change counts and averages. The token totals cover six traces, while the initial validated tool aggregate covers only the post-correction request. Do not divide the two to infer tokens per tool call. A blank chart first calls for checking workspace, experiment, time range, and export health; it does not establish zero usage. An execution-success or policy-check signal is not a factual-quality score. Continue to **Review** to inspect the prepared correct explanation and the real counterexample.
 
 ## Current measured acceptance
 

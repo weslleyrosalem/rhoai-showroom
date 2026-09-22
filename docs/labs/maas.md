@@ -90,3 +90,7 @@ The private directory must be outside the repository with mode 0700; files are c
 Record 200/401/429, timestamps, subscription, and usage without keys. Test a real identity outside the permitted groups; testing only as `aiadmin` does not establish tenant isolation. Reissue keys after membership changes because issued keys may retain a group snapshot.
 
 Revoke only the visit's keys when finished. Remove owned showroom resources by name/label; preserve shared namespaces, models, and `subplus`. This installation uses `maas.opendatahub.io/v1alpha1`; do not copy obsolete API-group examples. [MaaS guide](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/govern_llm_access_with_models-as-a-service/deploy-and-manage-models-as-a-service_maas).
+
+## Inspect native consumption charts
+
+Use **Observe & monitor → Dashboard → Usage**. Filter the exact subscription used by the request; select the model and inspect the **Token consumption table**, **Total rate limited**, and **Token consumption chart**. The [native dashboard guide](../operations/native-dashboards.md#1000-am-consumption-and-quota) explains the selected-range summary versus rolling two-hour chart, sampled counters, and the limiter-specific meaning of **Success rate**. Keep the actual HTTP status and recovery evidence alongside these charts.

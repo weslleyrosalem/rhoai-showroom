@@ -83,6 +83,10 @@ Change a hypothesis, train with Ray, and compare results in MLflow. Explore the 
 <div class="journey-link" markdown>[Explore the experiments →](journeys/science.md)</div>
 </div>
 
+## Show the work behind the answer
+
+Use the existing OpenShift AI 3.5.1 dashboards to connect requests with tokens, latency, cache reuse, replica activity, and subscription limits. The [native dashboard guide](operations/native-dashboards.md) names the exact tabs, filters, and charts to use during each presentation.
+
 ## Reproduce what you see
 
 The repository contains manifests, notebooks, sample data, and acceptance criteria. Choose the appropriate cluster profile, provide credentials locally, and follow the installation guide. Labs identify product maturity and the tests completed in this showroom.

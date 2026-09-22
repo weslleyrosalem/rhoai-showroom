@@ -16,6 +16,7 @@ The acceptance process follows the customer journey: open a screen, perform a me
 | The guide gave similar visual weight to every feature | Put presentation routes first and used clear documentation hierarchy | Published desktop and keyboard navigation passed; a 390-pixel generated-site check also passed, as scoped below |
 | The test drive implied that native Playground requests created the demonstrated MLflow traces | Separated Playground citation/tool inspection from Aurora application tracing | Each exercise now names its validated application path |
 | A GitOps step implied that a policy edit alone rebuilt the application | Replaced it with the documented ConfigMap annotation, self-heal, and revert exercise | The script no longer depends on an unconfigured image-build trigger |
+| Generic monitoring directions omitted the installed 3.5.1 dashboards | Replaced them with exact native tabs, panel names, filters, and presentation sequences | Six tabs inspected in the browser; panel queries independently checked, including limiter semantics and blank CPU-quota data |
 | Tempo readiness could be mistaken for demonstrated Aurora tracing | Queried its authenticated API and qualified the architecture and validation record | The six-hour search returned no traces; the demonstrated application flow uses MLflow |
 
 These are engineering and simulated customer reviews. They are not testimonials or feedback attributed to an actual customer.

@@ -9,13 +9,24 @@ The working MaaS endpoint uses the existing Llama 3.1 8B on one L40S. Qwen3-4B-I
 | Time | Show | Explain and verify |
 |---|---|---|
 | 0–4 min | OpenShift AI → Models → deployed Llama; workload details | One model endpoint, one existing L40S, actual vLLM runtime image. Inspect replica and GPU requests. |
-| 4–8 min | Aurora Supply application and playground | Ask for a replenishment review. The response is a recommendation, and the application uses a MaaS credential. |
-| 8–13 min | Model metrics and the sustained GuideLLM workload | Real benchmark traffic produces prompt/output tokens, requests, latency, and GPU activity. GuideLLM has its own quota and a visible automatic stop. Synthetic prompts generate real inference; they are not a representative customer workload. |
-| 13–20 min | Controlled repeated-prefix rehearsal | Explain local prefix reuse, run one first-use/repeated pair, then compare cache-counter deltas and client timing. Keep identical prompts and output limits within each pair. |
+| 4–8 min | Aurora Supply application, then native Qwen Playground | Ask for a replenishment review. The application uses the Llama MaaS subscription; native Qwen Playground uses the current user's Kubernetes model authorization. Both produce recommendations, through distinct serving paths. |
+| 8–13 min | Native **LLM Traffic** and **LLM Utilization** | Select Project `maas-how-to` and Model `redhataillama-31-8b-instruct` for existing GuideLLM traffic. Show **Throughput (req/s)**, **Token throughput (tokens/s)**, **GPU utilization**, and running/waiting requests. Synthetic prompts produce real inference; they are not a representative customer workload. |
+| 13–20 min | Native **LLM Performance**, then the recorded repeated-prefix evidence | Select Project `ai-showroom` and Model `aurora-qwen-4b`; start with the six-hour rehearsal window. Explain **KV cache hit rate**, **KV cache usage**, **Time to first token (TTFT)**, and **E2E request latency**. A new controlled pair is optional and requires the bounded helper below. |
 | 20–25 min | Private Qwen Gateway, LLMInferenceService, InferencePool, and endpoint picker metrics | Send an authenticated request through the dedicated Qwen listener and show the picker counter increase. Show queue, cache utilization, prefix, and LRU scorers. Compare backend placement only if both replicas are Ready on distinct nodes. |
 | 25–30 min | Measured engine comparison and hardware profiles | Show the same-L40S Transformers reference versus vLLM results in the benchmark lab. Explain serialized versus continuous batching, then distinguish measured TP1 results from the unmeasured TP4 and eight-GPU plans. |
 
 ## Live checks
+
+Start with the [installed native dashboards](../operations/native-dashboards.md), keeping their existing panels and filters. The terminal checks and retained benchmark reports below provide supporting evidence when a customer asks how a result was obtained.
+
+| Native dashboard | Filters for the Aurora Qwen path | Existing panels to show |
+|---|---|---|
+| **LLM Traffic** | Project `ai-showroom`; Model `aurora-qwen-4b` | **Throughput (req/s)**, **Token throughput (tokens/s)**, **Error rate** |
+| **LLM Utilization** | Same project and model | **GPU utilization**, **Requests running**, **Requests waiting** |
+| **LLM Performance** | Same project and model | **Time to first token (TTFT)**, **E2E request latency**, **KV cache hit rate**, **KV cache usage** |
+| **Models** | Project `ai-showroom`; Model deployment `aurora-qwen-4b` | **Model deployments**, **Replica count**, **P90 E2E request latency**, **P90 Time to first token (TTFT)** |
+
+Recheck the visible Project, Model, and time range after every tab change. The model selection can reset, and the URL does not reliably encode every active filter. Use the six-hour window to discuss recorded Qwen bursts; use a recent window for ongoing Llama load. Do not imply Qwen is receiving GuideLLM traffic. The native **Cluster** overview is a separate infrastructure view: several cards remain cluster-wide despite the Project selector, and **Deployed models** counts metric label groups rather than all model resources.
 
 ```bash
 oc get llminferenceservice -n maas-how-to
@@ -44,9 +55,13 @@ The September 22 rehearsal completed six successful requests. The final repeated
 
 Client-observed SSE first-token arrival nearly matched total response arrival, suggesting buffering along the gateway path. Show those values as **client-observed timing**, not engine TTFT. Use vLLM histograms for engine behavior. Do not calculate a headline speedup from six shared-instance requests.
 
-The native LLM Traffic dashboard discovers projects from actual `kserve_vllm:num_requests_running` series. In this installation, collectors expose the model project as `exported_namespace`, while the collecting namespace is `redhat-ods-monitoring`. Both Qwen backends and the private Gateway were successfully scraped after scoped monitoring ingress was applied. Refresh the project selector after new target discovery; do not invent namespace labels to populate a graph.
+The three native LLM dashboards discover projects from `kserve_vllm:num_requests_running`, using `exported_namespace` for the workload project. Their Data Science datasource is separate from the Cluster datasource; an empty query against the latter does not establish that LLM telemetry is absent. Both Qwen backends and the private Gateway were successfully scraped after scoped monitoring ingress was applied.
 
-Useful Prometheus metrics include `vllm:prefix_cache_hits_total`, `vllm:prefix_cache_queries_total`, `vllm:kv_cache_usage_perc`, `vllm:num_requests_running`, `vllm:num_requests_waiting`, request latency, and token counters. GPU utilization comes from the installed NVIDIA/DCGM integration; verify the metric and labels available in this cluster.
+**KV cache hit rate** divides rates of local prefix-hit tokens by prefix-query tokens; it does not measure cross-node KV transfer. **KV cache usage** displays a 0–1 fraction as a percentage. Native latency queries use engine histogram seconds, with the chart formatting the displayed unit; they are distinct from client SSE timing. **Error rate** has a zero fallback when its error series is absent, so zero does not prove a healthy scrape or absence of MaaS 401/429 responses. Performance panels also have zero fallbacks when there are no usable histogram observations. Low-rate requests can occur between gauge scrapes without producing a visible running-request spike.
+
+The installed **Inter-token latency** panel is **unavailable for this runtime**: its query uses the absent `kserve_vllm:time_per_output_token_seconds_bucket`. Current vLLM exports separate `inter_token_latency_seconds` and `request_time_per_output_token_seconds` histograms. The native panel's fallback zero is not a latency measurement; omit it from the demonstrated results. This guide leaves the shared dashboard unchanged.
+
+The scoped GPU telemetry began at **06:17 UTC on September 22**, after the short AHEAD routing run. Use its current or subsequent history; do not attribute those GPU lines to an earlier benchmark. Two GPU legends establish observed devices, not that every request used both GPUs. The **Models** CPU quota cell can remain blank because its installed query expects `resource="cpu"`, while this project's quota metric is `resource="requests.cpu"`; blank is not zero allocation or zero usage.
 
 ## Claims to keep precise
 

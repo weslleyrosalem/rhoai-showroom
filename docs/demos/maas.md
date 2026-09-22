@@ -7,11 +7,22 @@
 | Time | Screen or action | Observable result |
 |---|---|---|
 | 0–5 min | OpenShift AI model catalog and deployed models | Distinguish a discoverable catalog entry, a candidate registry record, and an actually Ready deployed endpoint. |
-| 5–10 min | MaaS models, subscriptions, and API keys | Inspect `showroom-standard`, `showroom-test-drive`, and the separate `showroom-load` class. Never project a raw key. |
+| 5–10 min | MaaS models, subscriptions, API keys, and native **Usage** | Inspect `showroom-standard`, `showroom-test-drive`, and the separate `showroom-load` class. Open the existing Usage dashboard and select the intended Subscription. Never project a raw key. |
 | 10–15 min | Aurora Supply or the Llama path in Playground | A valid standard credential receives a model response. The sustained benchmark uses a separate subscription and credential. |
 | 15–22 min | A bounded quota rehearsal | Anonymous access fails. A valid test-drive request succeeds; exhausting its 100-token/minute allowance returns 429. The standard subscription still succeeds. Wait for the quota window before repeating. |
 | 22–27 min | Groups and model access | Show platform administrators, data scientists, and visitors as separate groups. Group creation does not create an identity or log in a customer. |
 | 27–30 min | GitOps and audit evidence | Inspect the owned subscription manifests, the key expiration annotation, and recorded response statuses. Explain how the same controls can be recreated. |
+
+## Read the existing Usage dashboard
+
+Use the native **Usage** dashboard described in the [native dashboard guide](../operations/native-dashboards.md). Its filters are **User**, **Subscription**, **Model**, and **View by**. Start with User **All**, Subscription **showroom-load**, Model **redhataillama-31-8b-instruct**, and View by **By subscription** to inspect the sustained traffic separately from the customer test drive. Then switch to the relevant interactive subscription. Confirm every visible selector and the time range after changing tabs; do not infer filter state from the URL.
+
+The installed panels are **Active users**, **Success rate**, **Total requests**, **Total rate limited**, **Total tokens**, **Token consumption table**, and **Token consumption chart**. These existing charts are the presentation surface. Use recorded response statuses to explain the control test rather than building a replacement dashboard.
+
+- **Success rate** uses authorization and rate-limit counters, not end-to-end inference HTTP success or answer quality. Its query falls back to 100% when no usable denominator exists. An anonymous 401 may be rejected before these counters; use the recorded request result to demonstrate it.
+- **Total rate limited** uses observed Limitador counter increases. Allow collection time after a 429; a newly created series first scraped at a nonzero value has no earlier zero sample, so the first event is not guaranteed to appear in `increase`. Do not manufacture another request simply to repair a chart.
+- **Total tokens** and the table use the selected dashboard range. **Token consumption chart** uses a fixed rolling **two-hour** increase. Their values can differ when the ranges differ; neither is a lifetime counter.
+- Request and limited counts are grouped by user/subscription before being joined to model labels. With a multi-model subscription, the same subscription count can appear on several model rows. Do not sum those rows as unique requests.
 
 ## Read-only checks
 

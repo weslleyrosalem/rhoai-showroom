@@ -61,6 +61,7 @@ nav:
   - 8:00 a.m. · Inference: demos/inference.md
   - 10:00 a.m. · MaaS: demos/maas.md
   - Load test and metrics: demos/sustained-load.md
+  - Native dashboard guide: operations/native-dashboards.md
   - Native screen tour: operations/screen-tour.md
 - Three journeys:
   - Security and agents: journeys/security.md

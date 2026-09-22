@@ -5,6 +5,7 @@ Validation started on **September 22, 2026 UTC**. This record separates actual f
 | Area | Observed evidence | Status |
 |---|---|---|
 | Namespace and storage | ai-showroom, quota, RBAC, and S3 storage are available | Deployed |
+| Native observability | All six installed 3.5.1 dashboard tabs opened; actual Qwen/Llama graphs, model row, and filtered showroom-load Usage chart/table inspected | [Native dashboard walkthrough](native-dashboards.md) passed with documented query, time-window, and missing-series limits |
 | MLflow | Training/evaluation artifacts exported; current English app traces show retrieval, two actual tools, LLM tokens, and output policy checks | Persisted trace data, native timeline, usage, and two post-fix native tool calls validated; two actual responses await human review |
 | Tempo | Ready, 5 GiB persistent storage, 168-hour retention; authenticated query API passed at 07:27 UTC, with no traces in the six-hour search window | Workload integration not demonstrated; the validated Aurora trace path uses MLflow |
 | GitOps | At 07:20 UTC: Synced/Healthy at source revision `d806cde`; cosmetic namespace drift restored within a 32-second observation window | Reconciliation and self-heal passed |

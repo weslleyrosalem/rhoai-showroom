@@ -35,7 +35,7 @@ The namespace is lowercase `ahead`; the project display name is **AHEAD**. The o
 | 14–18 min | Compare the two priority-demo users | The larger set of group allowances does not accumulate; the selected priority determines one entitlement |
 | 18–23 min | Exercise the three corporate identities | Sales sees one model, Products two, Engineering three; forbidden calls return 403 |
 | 23–27 min | Show service-account and OIDC evidence | In-cluster token-based inference, scoped external identities, and JWT validation during an isolated IdP outage |
-| 27–30 min | Open the existing MaaS Usage dashboard | Select an `ahead-` subscription and explain actual request/token/quota counters; separate simulator and real-model traffic |
+| 27–30 min | Open **Observe & monitor → Dashboard → Usage** | Select an `ahead-` subscription and explain sampled request/token/quota counters; separate simulator and real-model traffic |
 
 Do not display passwords, API keys, Secret YAML or browser request headers. The scoped OIDC users create keys through the API; native dashboard authentication remains OpenShift OAuth. The existing [Playground](playground.md) and Aurora test drive remain separate customer experiences.
 
@@ -151,15 +151,22 @@ An external credential is required to repeat this step; the public guide contain
 
 ## Metrics: filter before interpreting
 
-In **Observe & monitor → Dashboard → MaaS Usage**, filter to one of the `ahead-` subscriptions. Use `ahead-external` for real external-model usage; other AHEAD subscriptions in this workshop measure simulator traffic. Aurora's `showroom-load` is the existing real Llama workload. Do not combine these as one performance benchmark.
+Use the existing OpenShift AI 3.5.1 **Observe & monitor → Dashboard → Usage** dashboard. Its displayed name is **Usage**; no custom dashboard or separate Grafana installation is required for this walkthrough.
 
-```promql
-sum(istio_requests_total{gateway_name="ahead"})
-sum by (subscription) (authorized_hits_total{subscription=~"ahead-.*"})
-sum by (subscription) (limited_calls_total{subscription=~"ahead-.*"})
-```
+1. Set **Subscription** to `ahead-simulator-free`, **User** and **Model** to all values, and **View by** to **By subscription**. Select a time range containing the rehearsal and refresh after scraping has had time to collect new samples.
+2. Read **Total tokens**, **Total requests**, and **Total rate limited**, then inspect the same subscription in **Token consumption table** and **Token consumption chart**. The quota helper's HTTP result remains the direct proof of rejection and recovery.
+3. Change **Subscription** to `ahead-simulator-premium` to inspect the independent allowed tier. Use `ahead-external` for the real Anthropic call. Other AHEAD subscriptions measure simulator traffic; `showroom-load` measures Aurora's real Llama traffic. Keep these scenarios separate.
 
-The rehearsal observed nonempty gateway, consumption and rate-limit series in the existing Thanos datasource. The native dashboard's summary follows the selected time range while its current chart uses a fixed rolling two-hour expression; their totals can differ. Prometheus sampling/`increase()` can also extrapolate. These counters are not exact per-request Loki billing records.
+| Native panel | What it shows | Interpretation boundary |
+|---|---|---|
+| **Total tokens** / **Token consumption table** | Sampled token-counter increase over the selected range | Token accounting, not GPU throughput or model quality |
+| **Total requests** / **Total rate limited** | Sampled authorized and rate-limited calls | These are limiter counters, not a log of every HTTP status |
+| **Success rate** | Authorized calls divided by authorized plus rate-limited calls | An allowed limiter decision is not proof that inference returned 200; the panel also defaults to 100% when its denominator has no data |
+| **Token consumption chart** | Rolling token increase, grouped by **View by** | The installed query uses two hours at each plotted point, regardless of the selected dashboard range |
+
+Anonymous **401** and forbidden-model **403** outcomes are demonstrated by the HTTP rehearsal, not by expecting a corresponding increase in **Total rate limited**. For corporate subscriptions spanning multiple models, token rows are model-specific, but request counters are joined from subscription-level series; do not sum model rows as unique requests.
+
+The rehearsal observed nonempty gateway, consumption and rate-limit series in the existing Thanos datasource. The summary and chart can differ because of their different windows. Prometheus sampling/`increase()` can also extrapolate. These counters are not exact per-request Loki billing records. A newly appearing series needs later samples to expose an increase; do not repeat a quota burn just to make a panel change.
 
 **Short-burst caveat observed in the presenter review:** the `ahead-simulator-free` Usage filter displayed 2 tokens, 1 request and 0 rate-limited for the selected 30 minutes. The new token series was first sampled at 108 and later 110; the limited-call series was first sampled at 1 and stayed 1. Their sampled increases therefore showed only the recovery request and no later increment in blocked calls. The HTTP rehearsal still proved 108 tokens followed by 429, premium isolation and recovery. A zero increase does not mean that no request was blocked before the first sample. Use the HTTP results as the quota acceptance evidence and the Usage panel as sampled observability. See [Prometheus `increase()` semantics](https://prometheus.io/docs/prometheus/latest/querying/functions/#increase).
 

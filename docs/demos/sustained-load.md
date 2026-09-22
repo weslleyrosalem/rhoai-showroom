@@ -64,11 +64,24 @@ oc logs -n ai-showroom job/showroom-guidellm-20260922 --tail=10
 
 The wrapper prints sanitized start/finish records and actual report summaries. Each completed segment retains `benchmarks.json`, `benchmarks.csv`, `benchmarks.html`, and a redacted `console.log`. `/results/history.jsonl` appends across restarts. Export the results directory to a private local location using `oc cp`; if the local WebSocket transport fails, set `KUBECTL_REMOTE_COMMAND_WEBSOCKETS=false` for that copy. Inspect an exported HTML report locally. There is no public unauthenticated results server.
 
-For dashboards, correlate the same UTC window across successful request counts, prompt/generated tokens, latency distributions, prefix-cache hits and queries, GPU utilization, and waiting/running requests. Keep the `showroom-load` subscription and `X-Showroom-Client: guidellm-sustained` traffic class identifiable. Client TTFT across the gateway can include buffering; it is not interchangeable with engine TTFT.
+Use the [existing native dashboards](../operations/native-dashboards.md) for the live walkthrough. GuideLLM's retained HTML/JSON files are measurement artifacts for inspection, not a replacement presentation dashboard.
+
+| Native dashboard | Visible selection | Panels tied to the running load |
+|---|---|---|
+| **Usage** | Subscription `showroom-load`; User **All**; Model `redhataillama-31-8b-instruct`; View by **By subscription** | **Total requests**, **Total rate limited**, **Total tokens**, **Token consumption table**, **Token consumption chart** |
+| **LLM Traffic** | Project `maas-how-to`; Model `redhataillama-31-8b-instruct` | **Throughput (req/s)** and **Token throughput (tokens/s)** |
+| **LLM Utilization** | Same project and model | **GPU utilization**, **Requests running**, **Requests waiting** |
+| **LLM Performance** | Same project and model | **Time to first token (TTFT)**, **E2E request latency**, **KV cache hit rate**, **KV cache usage** |
+
+Recheck visible filters after every tab change: model selections can reset, and URL variables may be stale or unrelated to the current dashboard. Use a shared UTC window, and distinguish the continuous Llama load from intermittent Qwen traffic in `ai-showroom`. Keep `showroom-load` as the native subscription filter; the `X-Showroom-Client: guidellm-sustained` header is client identification, not an installed dashboard filter. Client TTFT across the gateway can include buffering; it is not interchangeable with engine TTFT.
 
 The September 22 qualification completed a 0.25-rps block with 150 successful requests and a 0.5-rps block with 300 successful requests, both with zero reported errors. Each retained one incomplete request at the segment duration boundary. The 0.5-rps block generated 38,400 output tokens with a 2.877-second mean request latency. These are completed segment observations, not guarantees for the remainder of the run.
 
 In the installed native MaaS Usage dashboard, the summary/table uses token-counter increase over the selected dashboard range. The time-series chart uses a fixed rolling two-hour increase. Its final plotted value can therefore differ from the summary when the selected range is not two hours. Neither value is the unprocessed lifetime counter; inspect the query and align windows before comparing them.
+
+Scrapes sample traffic rather than recording every client result. A first nonzero counter sample cannot recover events before that sample, and a short request can finish between running/waiting gauge scrapes. **Usage → Success rate** describes policy counters and can fall back to 100% without denominator data; **LLM Traffic → Error rate** can fall back to zero without an error series. Keep the completed GuideLLM reports, including failures and incomplete requests, as the evidence for exact segment outcomes. Zero on one native chart does not erase a failed client request from the run history.
+
+The installed **LLM Performance → Inter-token latency** query uses a metric name that the current runtime does not emit. Its fallback zero is **unavailable data**, not measured zero latency; use the validated TTFT and E2E panels for this walkthrough. See the [native dashboard limits](../operations/native-dashboards.md#read-the-known-panel-limits-correctly).
 
 ## Stop and retain
 

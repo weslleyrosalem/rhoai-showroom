@@ -108,7 +108,7 @@ The current `active-l40s-11` plan demonstrates Qwen4B on single-GPU hosts and ke
 
 ## Cache and Endpoint Picker evidence
 
-Use long shared input with new suffixes. Compare per-pod cache counters and TTFT against distinct-prefix controls. One GPU demonstrates local cache reuse. Two replicas with actual EPP traffic are required for a routing claim. Discover metric names from the installed runtime; an empty graph is not evidence of zero activity.
+Use the existing **LLM Performance → KV cache hit rate / KV cache usage** panels, paired with **LLM Traffic** and **LLM Utilization**, as described in the [native dashboard guide](../operations/native-dashboards.md). Select the serving project, model, and recorded run interval. Use long shared input with new suffixes. Compare per-pod cache counters and TTFT against distinct-prefix controls. One GPU demonstrates local cache reuse. Two replicas with actual EPP traffic are required for a routing claim. Discover metric names from the installed runtime; an empty graph is not evidence of zero activity.
 
 Check known issue INFERENG-6962: shared wildcard listeners can bypass Endpoint Picker. Confirm authorized routes and EPP traffic. Hierarchical KV offloading is Developer Preview; prefill/decode disaggregation requires validated network/RDMA support and is not enabled by this benchmark. [vLLM prefix caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/), [vLLM benchmark CLI](https://docs.vllm.ai/en/v0.23.0/cli/bench/serve/), [RHOAI known issues](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/known-issues_relnotes).
 
