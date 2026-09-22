@@ -1,0 +1,12 @@
+{
+  "spec": {
+    "dashboardConfig": {
+      "automl": true,
+      "autorag": true,
+      "disableLMEval": false,
+      "genAiTracing": true,
+      "genAiStudio": true,
+      "mcpCatalog": true
+    }
+  }
+}

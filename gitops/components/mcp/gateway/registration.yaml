@@ -4,16 +4,27 @@ metadata:
   name: aurora-tools
 spec:
   parentRefs:
-    - {name: showroom-mcp, sectionName: mcps}
-    # Gateway 0.7.1 discovery requires same-port attachment as extension.
-    # Public listener still requires AuthPolicy; mcps remains private by NetworkPolicy.
-    - {name: showroom-mcp, sectionName: mcp}
-  hostnames: [aurora-tools.mcp.internal]
+  - name: showroom-mcp
+    sectionName: mcps
+    group: gateway.networking.k8s.io
+    kind: Gateway
+  - name: showroom-mcp
+    sectionName: mcp
+    group: gateway.networking.k8s.io
+    kind: Gateway
+  hostnames:
+  - aurora-tools.mcp.internal
   rules:
-    - matches:
-        - path: {type: PathPrefix, value: /}
-      backendRefs:
-        - {name: aurora-tools, port: 8000}
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: aurora-tools
+      port: 8000
+      group: ''
+      kind: Service
+      weight: 1
 ---
 apiVersion: mcp.kuadrant.io/v1alpha1
 kind: MCPServerRegistration
@@ -22,7 +33,8 @@ metadata:
 spec:
   prefix: aurora_
   path: /mcp
-  category: [operations]
+  category:
+  - operations
   hint: Synthetic Aurora Supply catalog, inventory and read-only replenishment proposals.
   targetRef:
     group: gateway.networking.k8s.io

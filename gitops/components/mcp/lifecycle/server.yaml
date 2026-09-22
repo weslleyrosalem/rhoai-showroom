@@ -57,5 +57,7 @@ spec:
       livenessProbe:
         httpGet: {path: /health, port: 8000}
         initialDelaySeconds: 15
+  extraAnnotations:
+    showroom.aurora/isolation: admin-network-policy-v1
   extraLabels:
     showroom.aurora/component: lifecycle-test-drive

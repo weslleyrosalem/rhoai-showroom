@@ -30,4 +30,17 @@ class SecretAdoption(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'context'):mod.apply({'kind':'Secret'},'https://expected')
             self.assertEqual(oc.call_count,1)
 
+class SharedConfiguration(unittest.TestCase):
+    def test_existing_trustyai_mode_is_not_silently_replaced(self):
+        old={'spec':{'components':{'trustyai':{'mcpGuardrailsMode':True}}}}
+        patch={'spec':{'components':{'trustyai':{'mcpGuardrailsMode':False}}}}
+        with self.assertRaisesRegex(RuntimeError,'TrustyAI'):mod.check_shared(old,patch,'dsc')
+        mod.check_shared(old,patch,'dsc',allow_changes=True)
+    def test_existing_s3_trace_storage_is_preserved(self):
+        old={'spec':{'monitoring':{'traces':{'storage':{'backend':'s3'}}}}}
+        patch={'spec':{'monitoring':{'traces':{'storage':{'backend':'pv','size':'5Gi'},'sampleRatio':'1.0'}}}}
+        with self.assertRaisesRegex(RuntimeError,'tracing'):mod.check_shared(old,patch,'dsci')
+    def test_unconfigured_tracing_can_be_initialized(self):
+        mod.check_shared({'spec':{}},{'spec':{'monitoring':{'traces':{'storage':{'backend':'pv'},'sampleRatio':'1.0'}}}},'dsci')
+
 if __name__=='__main__':unittest.main()

@@ -27,7 +27,7 @@
         "namespace": "ai-showroom",
         "tokenRateLimits": [
           {
-            "limit": 20000,
+            "limit": 200000,
             "window": "1h"
           }
         ]

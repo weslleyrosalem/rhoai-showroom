@@ -63,3 +63,21 @@ Complete [GitOps adoption](gitops.md), run the [test drives](test-drive.md), and
 ## Installation acceptance
 
 An authorized participant receives a model response, RAG sources, and MCP tool results; an unauthorized participant is denied. Ray experiments, MLflow artifacts, and evaluations have actual run IDs and results. Argo reaches Synced/Healthy and corrects a harmless drift. Selected GPU models become Ready and respond. Optional capabilities are marked validated only after their specific tests pass.
+
+## Existing shared configuration
+
+Bootstrap checks the operator release before enabling its optional DSC components, then waits for the required feature APIs. A missing MCP Lifecycle CRD does not prevent that enablement step. Other prerequisite operators must still be installed separately.
+
+If existing TrustyAI mode or tracing storage, retention, or sampling differs, bootstrap stops before modifying resources. Review the existing consumers and proposed partial JSON patches. Use `--allow-shared-changes` only when you intentionally choose the showroom settings for that shared platform. Per-cluster backups are retained locally.
+
+The S3 connection includes endpoint and region fields required by native pipeline templates. The internal OGX connection uses a placeholder API-key field because that private server runs without application authentication. It is not an external credential; network isolation must protect its endpoint.
+
+## Inspect missing operators without changing the cluster
+
+The [operator planner](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/bootstrap/operators/README.md) checks exact release pins in the configured catalogs, preserves installed operators, and renders manual-approval subscriptions for missing prerequisites. It does not execute installation.
+
+```bash
+python3 scripts/platform_bootstrap.py --help
+```
+
+Review its documented arguments, OperatorGroup compatibility checks, and generated plan. OLM may add transitive dependencies; review the actual InstallPlan before approval. The reference cluster passed the pin check with all 12 required operators already present. A fresh-cluster installation remains unvalidated.

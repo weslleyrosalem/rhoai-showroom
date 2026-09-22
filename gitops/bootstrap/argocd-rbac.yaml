@@ -151,6 +151,24 @@ rules:
   verbs:
   - patch
   - update
+- apiGroups:
+  - policy.networking.k8s.io
+  resources:
+  - adminnetworkpolicies
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+- apiGroups:
+  - policy.networking.k8s.io
+  resources:
+  - adminnetworkpolicies
+  resourceNames:
+  - showroom-mcp-lifecycle-isolation
+  verbs:
+  - patch
+  - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -218,3 +236,54 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: showroom-gitops-custom
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: showroom-gitops-registry
+  namespace: rhoai-model-registries
+rules:
+- apiGroups:
+  - modelregistry.opendatahub.io
+  resources:
+  - modelregistries
+  verbs: &id001
+  - get
+  - list
+  - watch
+  - create
+  - patch
+  - update
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - networkpolicies
+  verbs: *id001
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  verbs: *id001
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  resourceNames:
+  - registry-user-aurora-registry
+  verbs:
+  - get
+  - bind
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-gitops-registry
+  namespace: rhoai-model-registries
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: showroom-gitops-registry

@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-09-22T04:44:17.155749+00:00",
+  "observed_openshift_version": "4.22.14",
+  "target_rhoai": "3.5.1",
+  "validation": "Observed installed releases on the showroom cluster; fresh installation has not been rehearsed.",
+  "operators": [
+    {
+      "package": "openshift-cert-manager-operator",
+      "namespace": "cert-manager-operator",
+      "channel": "stable-v1.20",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "cert-manager-operator.v1.20.0",
+      "operator_group_scope": "namespace"
+    },
+    {
+      "package": "nfd",
+      "namespace": "openshift-nfd",
+      "channel": "stable",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "nfd.4.22.0-202609081346",
+      "operator_group_scope": "namespace"
+    },
+    {
+      "package": "gpu-operator-certified",
+      "namespace": "nvidia-gpu-operator",
+      "channel": "v26.7",
+      "catalog_source": "certified-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "gpu-operator-certified.v26.7.0",
+      "operator_group_scope": "namespace"
+    },
+    {
+      "package": "openshift-gitops-operator",
+      "namespace": "openshift-gitops-operator",
+      "channel": "gitops-1.21",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "openshift-gitops-operator.v1.21.4",
+      "operator_group_scope": "all"
+    },
+    {
+      "package": "servicemeshoperator3",
+      "namespace": "openshift-operators",
+      "channel": "stable",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "servicemeshoperator3.v3.4.2",
+      "operator_group_scope": "all"
+    },
+    {
+      "package": "rhcl-operator",
+      "namespace": "openshift-operators",
+      "channel": "stable",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "rhcl-operator.v1.4.3",
+      "operator_group_scope": "all"
+    },
+    {
+      "package": "leader-worker-set",
+      "namespace": "openshift-lws-operator",
+      "channel": "stable-v1.0",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "leader-worker-set.v1.0.1",
+      "operator_group_scope": "namespace"
+    },
+    {
+      "package": "mcp-gateway",
+      "namespace": "openshift-operators",
+      "channel": "preview",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "mcp-gateway.v0.7.1",
+      "operator_group_scope": "all"
+    },
+    {
+      "package": "cluster-observability-operator",
+      "namespace": "openshift-cluster-observability-operator",
+      "channel": "stable",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "cluster-observability-operator.v1.5.2",
+      "operator_group_scope": "all"
+    },
+    {
+      "package": "opentelemetry-product",
+      "namespace": "openshift-opentelemetry-operator",
+      "channel": "stable",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "opentelemetry-operator.v0.158.0-2",
+      "operator_group_scope": "all"
+    },
+    {
+      "package": "tempo-product",
+      "namespace": "openshift-tempo-operator",
+      "channel": "stable",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "tempo-operator.v0.22.0-2",
+      "operator_group_scope": "all"
+    },
+    {
+      "package": "rhods-operator",
+      "namespace": "redhat-ods-operator",
+      "channel": "stable-3.5",
+      "catalog_source": "redhat-operators",
+      "catalog_namespace": "openshift-marketplace",
+      "starting_csv": "rhods-operator.3.5.1",
+      "operator_group_scope": "all"
+    }
+  ]
+}

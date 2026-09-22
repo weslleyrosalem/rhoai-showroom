@@ -4,6 +4,8 @@ metadata:
   name: showroom-mcp-lifecycle-isolation
   labels:
     app.kubernetes.io/part-of: rhoai-showroom
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
 spec:
   priority: 70
   subject:
@@ -15,24 +17,28 @@ spec:
         matchLabels:
           showroom.aurora/component: lifecycle-test-drive
   ingress:
-    - name: allow-lifecycle-handshake
-      action: Allow
-      from:
-        - pods:
-            namespaceSelector:
-              matchLabels:
-                kubernetes.io/metadata.name: redhat-ods-applications
-            podSelector:
-              matchLabels:
-                app.kubernetes.io/name: mcp-lifecycle-operator
-      ports:
-        - portNumber: {protocol: TCP, port: 8000}
-    - name: deny-other-pods
-      action: Deny
-      from:
-        - namespaces: {}
+  - name: allow-lifecycle-handshake
+    action: Allow
+    from:
+    - pods:
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: redhat-ods-applications
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: mcp-lifecycle-operator
+    ports:
+    - portNumber:
+        protocol: TCP
+        port: 8000
+  - name: deny-other-pods
+    action: Deny
+    from:
+    - namespaces: {}
   egress:
-    - name: deny-all-ipv4-and-ipv6
-      action: Deny
-      to:
-        - networks: [0.0.0.0/0, '::/0']
+  - name: deny-all-ipv4-and-ipv6
+    action: Deny
+    to:
+    - networks:
+      - 0.0.0.0/0
+      - ::/0

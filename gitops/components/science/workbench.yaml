@@ -27,7 +27,7 @@ metadata:
 spec:
   template:
     spec:
-      serviceAccountName: aurora-science
+      serviceAccountName: aurora-lab
       initContainers:
         - name: clone-showroom
           image: registry.redhat.io/rhoai/odh-workbench-jupyter-minimal-cpu-py312-rhel9@sha256:1e8c79265d905315b4e9e11185f8abac06823eb2441bc4e7466bad4e48c84f16
@@ -47,13 +47,17 @@ spec:
           image: registry.redhat.io/rhoai/odh-workbench-jupyter-minimal-cpu-py312-rhel9@sha256:1e8c79265d905315b4e9e11185f8abac06823eb2441bc4e7466bad4e48c84f16
           workingDir: /opt/app-root/src/rhoai-showroom
           env:
+            - name: MAAS_BASE_URL
+              valueFrom: {secretKeyRef: {name: showroom-maas-key, key: base-url}}
+            - name: MAAS_MODEL_ID
+              valueFrom: {secretKeyRef: {name: showroom-maas-key, key: model-id}}
             - name: NOTEBOOK_ARGS
               value: "--ServerApp.port=8888 --ServerApp.token='' --ServerApp.password='' --ServerApp.base_url=/notebook/ai-showroom/aurora-lab --ServerApp.quit_button=False"
           envFrom:
             - configMapRef: {name: aurora-science-config}
             - secretRef: {name: showroom-s3-credentials}
           ports:
-            - {containerPort: 8888, name: notebook-port}
+            - {containerPort: 8888, name: notebook-port, protocol: TCP}
           resources:
             requests: {cpu: '1', memory: 2Gi}
             limits: {cpu: '2', memory: 4Gi}

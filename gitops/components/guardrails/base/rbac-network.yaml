@@ -3,20 +3,24 @@ kind: Role
 metadata:
   name: showroom-rails-check
 rules:
-  - apiGroups: ['']
-    resources: [services]
-    # RHOAI3.5 proxy SAR omits the resource name in observed requests.
-    # Namespace-scoped get services is required; no list/watch/write/Secret access.
-    verbs: [get]
+- apiGroups:
+  - ''
+  resources:
+  - services
+  verbs:
+  - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: showroom-rails-check
 subjects:
-  - kind: ServiceAccount
-    name: aurora-science
-    namespace: ai-showroom
+- kind: ServiceAccount
+  name: aurora-science
+  namespace: ai-showroom
+- kind: ServiceAccount
+  name: aurora-lab
+  namespace: ai-showroom
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -30,14 +34,19 @@ spec:
   podSelector:
     matchLabels:
       app: showroom-rails
-  policyTypes: [Ingress]
+  policyTypes:
+  - Ingress
   ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: openshift-ingress
-        - podSelector:
-            matchLabels:
-              app: aurora-rag
-      ports:
-        - {protocol: TCP, port: 8443}
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openshift-ingress
+    - podSelector:
+        matchLabels:
+          app: aurora-rag
+    - podSelector:
+        matchLabels:
+          notebook-name: aurora-lab
+    ports:
+    - protocol: TCP
+      port: 8443

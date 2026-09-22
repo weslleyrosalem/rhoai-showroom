@@ -20,5 +20,5 @@ spec:
           patterns:
             - predicate: >-
                 auth.identity.user.username == 'aiadmin' ||
-                auth.identity.user.username in ['system:serviceaccount:ai-showroom:showroom-visitor', 'system:serviceaccount:ai-showroom:showroom-engineer', 'system:serviceaccount:ai-showroom:aurora-science'] ||
+                auth.identity.user.username in ['system:serviceaccount:ai-showroom:showroom-visitor', 'system:serviceaccount:ai-showroom:showroom-engineer', 'system:serviceaccount:ai-showroom:aurora-science', 'system:serviceaccount:ai-showroom:aurora-lab'] ||
                 (has(auth.identity.user.groups) && auth.identity.user.groups.exists(g, g in ['showroom-visitors', 'showroom-data-scientists', 'showroom-platform-admins']))

@@ -180,6 +180,38 @@ data:
     \ []\nexternal_providers_dir: /opt/app-root/.llama/providers.d\nserver:\n  port:\
     \ 8321\n"
 ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-ogx-private
+  namespace: ai-showroom
+spec:
+  podSelector:
+    matchLabels:
+      app: ogx
+      app.kubernetes.io/instance: lsd-genai-playground
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: {notebook-name: aurora-lab}
+        - podSelector:
+            matchLabels: {app: aurora-rag}
+        - podSelector:
+            matchExpressions:
+              - {key: workflows.argoproj.io/workflow, operator: Exists}
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: redhat-ods-applications}
+          podSelector:
+            matchLabels: {app: rhods-dashboard}
+      ports:
+        - {port: 8321, protocol: TCP}
+    - from:
+        - namespaceSelector:
+            matchLabels: {network.openshift.io/policy-group: monitoring}
+      ports:
+        - {port: 9464, protocol: TCP}
+---
 apiVersion: ogx.io/v1beta1
 kind: OGXServer
 metadata:
@@ -192,10 +224,15 @@ spec:
     name: rh
   network:
     port: 8321
+    policy:
+      enabled: false
   overrideConfig:
     name: aurora-ogx-config
     key: config.yaml
   workload:
+    storage:
+      size: 5Gi
+      mountPath: /opt/app-root/src/.llama/distributions/rh
     replicas: 1
     resources:
       requests:

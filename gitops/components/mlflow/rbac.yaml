@@ -24,4 +24,5 @@ metadata:
   namespace: ai-showroom
 subjects:
   - {kind: ServiceAccount, name: aurora-science, namespace: ai-showroom}
+  - {kind: ServiceAccount, name: aurora-lab, namespace: ai-showroom}
 roleRef: {apiGroup: rbac.authorization.k8s.io, kind: Role, name: aurora-mlflow-writer}

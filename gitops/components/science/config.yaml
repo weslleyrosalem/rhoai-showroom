@@ -21,3 +21,6 @@ data:
   MLFLOW_TRACKING_SERVER_CERT_PATH: /etc/service-ca/service-ca.crt
   MLFLOW_WORKSPACE: ai-showroom
   MCP_URL: http://showroom-mcp-istio.ai-showroom.svc:8080/mcp
+  EVALHUB_URL: https://evalhub.redhat-ods-applications.svc:8443
+  EVALHUB_CA: /etc/service-ca/service-ca.crt
+  OGX_CLIENT_BASE_URL: http://lsd-genai-playground-service.ai-showroom.svc:8321

@@ -5,11 +5,9 @@ metadata:
   namespace: ai-showroom
 spec:
   apiServer:
+    cacheEnabled: false
     managedPipelines:
-      pipelines:
-        - name: autogluon-timeseries-training-pipeline
-        - name: autogluon-tabular-training-pipeline
-        - name: documents-rag-optimization-pipeline
+      image: registry.redhat.io/rhoai/odh-pipelines-components-rhel9@sha256:509cc5943bb396a888c3e2ee66b20d868b60536e4f2e52bc06a7e85cdf70199e
   mlflow:
     integrationMode: AUTODETECT
     injectUserEnvVars: true

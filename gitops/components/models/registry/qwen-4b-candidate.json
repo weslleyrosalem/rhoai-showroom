@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "registered_model_name": "Aurora Supply - Qwen3-4B",
+  "version_name": "instruct-2507-cdbee75f",
+  "artifact_name": "aurora-qwen-4b-cdbee75f",
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "license": "apache-2.0",
+  "source": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507",
+  "catalog_source": "showroom-qwen",
+  "uri": "hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554",
+  "runtime_image": "registry.redhat.io/rhaii/vllm-cuda-rhel9@sha256:c056e61672b6aea489ad5dde0bd2f8497230f5333e87f7cf6c494eba3bfdc808",
+  "hardware_profile": "showroom-l40s-1",
+  "deployment_manifest": "gitops/components/models/qwen-4b",
+  "lifecycle": "candidate",
+  "runtime_validation": "NOT_RUN",
+  "safety_evaluation": "NOT_RUN",
+  "performance_evaluation": "NOT_RUN"
+}

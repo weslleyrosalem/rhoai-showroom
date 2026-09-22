@@ -47,3 +47,11 @@ Argo does not provision ROSA pools. ResourceQuota limits Kubernetes requests, no
 ## Publish the guide
 
 Build with `mkdocs build --strict` and publish the generated site on `gh-pages`. The template `ci/pages.workflow.yaml` supports GitHub Actions; copy it to `.github/workflows/pages.yaml` using a credential authorized to manage workflows. The initial publication used branch-based Pages because the available credential lacked that scope.
+
+## Operator-managed Workbench fields
+
+The Workbench operator injects its authentication proxy, CA mounts, and MLflow environment settings. The Application ignores only those named fields on `aurora-lab`; it continues to compare the user container, requested resources, application configuration, and data mounts. The manifest uses the operator-created `aurora-lab` service account, with explicit bindings for the lab's services.
+
+Generated business-data ConfigMaps use `IgnoreExtraneous` so retained previous snapshots do not keep the application OutOfSync when pruning is disabled. Current referenced data is still compared. This follows the [Argo CD generated-resource guidance](https://argo-cd.readthedocs.io/en/stable/user-guide/compare-options/).
+
+The lifecycle example's AdminNetworkPolicy synchronizes before its MCPServer. Its subject is limited to the labeled lifecycle pods in `ai-showroom`; it compensates for the alpha lifecycle operator's permissive generated NetworkPolicy. Review this optional example's cluster-scoped dependency when installing in another cluster.

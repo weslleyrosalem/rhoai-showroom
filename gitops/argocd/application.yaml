@@ -25,6 +25,18 @@ spec:
     kind: Notebook
     jqPathExpressions:
     - .metadata.annotations["kubeflow-resource-stopped"]
+    - .spec.template.spec.containers[] | select(.name == "kube-rbac-proxy")
+    - .spec.template.spec.volumes[] | select(.name == "trusted-ca" or .name == "runtime-images"
+      or .name == "kube-rbac-proxy-config" or .name == "kube-rbac-proxy-tls-certificates")
+    - .spec.template.spec.containers[] | select(.name == "aurora-lab") | .volumeMounts[]
+      | select(.name == "trusted-ca" or .name == "runtime-images")
+    - .spec.template.spec.containers[] | select(.name == "aurora-lab") | .env[] |
+      select(.name == "PIP_CERT" or .name == "REQUESTS_CA_BUNDLE" or .name == "SSL_CERT_FILE"
+      or .name == "PIPELINES_SSL_SA_CERTS" or .name == "KF_PIPELINES_SSL_SA_CERTS"
+      or .name == "GIT_SSL_CAINFO" or .name == "MLFLOW_K8S_INTEGRATION" or .name ==
+      "MLFLOW_TRACKING_AUTH" or .name == "MLFLOW_TRACKING_URI")
+    name: aurora-lab
+    namespace: ai-showroom
   - group: kuadrant.io
     kind: AuthPolicy
     name: showroom-mcp-auth

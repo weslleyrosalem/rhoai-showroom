@@ -3,9 +3,7 @@ kind: ConfigMap
 metadata:
   name: showroom-mcp-options
 data:
-  service: |
-    spec:
-      type: ClusterIP
+  service: "spec:\n  type: ClusterIP\n"
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -21,17 +19,19 @@ spec:
       kind: ConfigMap
       name: showroom-mcp-options
   listeners:
-    - name: mcp
-      port: 8080
-      protocol: HTTP
-      allowedRoutes:
-        namespaces: {from: Same}
-    - name: mcps
-      port: 8081
-      protocol: HTTP
-      hostname: '*.mcp.internal'
-      allowedRoutes:
-        namespaces: {from: Same}
+  - name: mcp
+    port: 8080
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: Same
+  - name: mcps
+    port: 8081
+    protocol: HTTP
+    hostname: '*.mcp.internal'
+    allowedRoutes:
+      namespaces:
+        from: Same
 ---
 apiVersion: mcp.kuadrant.io/v1alpha1
 kind: MCPGatewayExtension
@@ -44,9 +44,7 @@ spec:
     name: showroom-mcp
     namespace: ai-showroom
     sectionName: mcp
-  # No cluster-specific hostname in Git; refresh to public Route host when exposing.
   publicHost: showroom-mcp-istio.ai-showroom.svc.cluster.local:8080
-  # Hairpin initialize must traverse the ext_proc listener in MCP Gateway 0.7.1.
   privateHost: http://showroom-mcp-istio.ai-showroom.svc.cluster.local:8080
   httpRouteManagement: Disabled
 ---
@@ -56,16 +54,22 @@ metadata:
   name: showroom-mcp-entry
 spec:
   parentRefs:
-    - {name: showroom-mcp, sectionName: mcp}
+  - name: showroom-mcp
+    sectionName: mcp
+    group: gateway.networking.k8s.io
+    kind: Gateway
   rules:
-    - matches:
-        - path: {type: PathPrefix, value: /mcp}
-      backendRefs:
-        - {name: mcp-gateway, port: 8080}
-
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /mcp
+    backendRefs:
+    - name: mcp-gateway
+      port: 8080
+      group: ''
+      kind: Service
+      weight: 1
 ---
-# Stable application-facing service; OpenShift's generated service suffix varies
-# with the GatewayClass (observed: -openshift-default, not -istio).
 apiVersion: v1
 kind: Service
 metadata:
@@ -75,5 +79,9 @@ spec:
   selector:
     gateway.networking.k8s.io/gateway-name: showroom-mcp
   ports:
-    - {name: mcp, port: 8080, targetPort: 8080}
-    - {name: mcps, port: 8081, targetPort: 8081}
+  - name: mcp
+    port: 8080
+    targetPort: 8080
+  - name: mcps
+    port: 8081
+    targetPort: 8081

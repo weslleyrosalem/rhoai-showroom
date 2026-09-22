@@ -2,14 +2,16 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: ai-showroom
 resources:
-  - deployment.yaml
-  - build.yaml
-  - networkpolicy.yaml
+- deployment.yaml
+- build.yaml
+- networkpolicy.yaml
 configMapGenerator:
-  - name: aurora-business-data
-    files:
-      - products.json
-      - forecasts.json
+- name: aurora-business-data
+  files:
+  - products.json
+  - forecasts.json
 generatorOptions:
   labels:
     app.kubernetes.io/part-of: rhoai-showroom
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous

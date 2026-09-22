@@ -1,0 +1,27 @@
+apiVersion: modelregistry.opendatahub.io/v1beta1
+kind: ModelRegistry
+metadata:
+  name: aurora-registry
+  namespace: rhoai-model-registries
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+  annotations:
+    openshift.io/display-name: Aurora Supply Model Registry
+    openshift.io/description: Candidate model provenance and measured lifecycle evidence for the Aurora Supply showroom.
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  postgres:
+    generateDeployment: true
+  rest:
+    port: 8080
+    serviceRoute: disabled
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: '1'
+        memory: 1Gi
+  kubeRBACProxy:
+    port: 8443
+    serviceRoute: enabled
