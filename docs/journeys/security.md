@@ -2,7 +2,7 @@
 
 Aurora Supply needs inventory answers and replenishment proposals without autonomous purchasing. The customer follows one request through documents, models, tools, and policy decisions, then inspects the evidence.
 
-State the maturity boundaries before starting: MCP Gateway/Lifecycle and Playground tracing are Technology Preview; NeMo core is generally available; OpenShell is Developer Preview and its runtime lab is pending. Do not present documented modules as deployed.
+State the maturity boundaries before starting: MCP Gateway/Lifecycle and Playground tracing are Technology Preview; NeMo core is generally available; OpenShell is Developer Preview with a tested private runtime lab. Do not present documented modules as deployed.
 
 ## Twenty-minute presentation
 
@@ -40,4 +40,4 @@ Use only fictional sensitive text such as `customer@example.invalid` and `DEMO_S
 
 ## Acceptance
 
-The tools return canonical SKUs and model provenance without side effects. The authenticated gateway rejects missing and unlisted identities; private endpoints do not bypass policy. NeMo distinguishes allowed, blocked, and failed checks. A fresh trace and an actual EvalHub run remain inspectable. Public MCP protocol and output-enforcement claims require their complete tests. OpenShell remains pending until implemented and tested. Existing `maas-how-to` demonstrations remain healthy.
+The tools return canonical SKUs and model provenance without side effects. The authenticated gateway rejects missing and unlisted identities; private endpoints do not bypass policy. NeMo distinguishes allowed, blocked, and failed checks. A fresh trace and an actual EvalHub run remain inspectable. Public MCP protocol and output-enforcement claims require their complete tests. The optional OpenShell lab demonstrates tested filesystem, process, network, identity, and real MaaS inference controls through its CLI/TUI; its unlimited PID cgroup remains a documented limitation. Existing `maas-how-to` demonstrations remain healthy.

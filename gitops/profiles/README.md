@@ -7,7 +7,8 @@ Kustomizations deploy application/platform objects, not AWS/ROSA machinepools. `
 | `core` | Profiles, groups, and MaaS definitions. Its default Qwen reference needs a deployed backend. |
 | `existing-cluster` | Core with references to `maas-how-to/redhataillama-31-8b-instruct`; preserves that model and `subplus`. |
 | `interactive` | Platform plus Qwen4B; needs one free, labeled L40S. |
-| `active-l40s-9` | Reference cluster's existing Llama plus Qwen4B and a single Qwen32B/TP4 replica. |
+| `active-l40s-11` | Current existing Llama plus Qwen4B on a new single-GPU pool; physical maximum 11 including surge. |
+| `active-l40s-9` | Historical four-GPU-node alternative, superseded for the reference cluster. |
 | `full-l40s-13` | Alternative Qwen4B plus two Qwen32B/TP4 replicas; nominally one preserved GPU plus three four-L40S nodes. |
 | `mig-9` / `mig-13` | Alternative A100 cloud plans and a disabled hardware profile. No automatic repartitioning. |
 | `mig-h100-single` | Planned one-H100 option, preserving the current single MIG strategy. Includes a disabled profile, not the optional model workload or node labels. |
@@ -18,8 +19,8 @@ The fixed ceiling is **16 physical GPUs**, including existing, pending, and desi
 
 ## Reference cluster plan
 
-`active-l40s-9` keeps showroom subscriptions on the existing Llama and gives new Qwen models their own subscriptions. `aiml-node` has 1–3 one-GPU nodes and surge 1. `showroom-l40s4` has 1–2 four-GPU nodes during warmup and surge 1. The combined bound is 16. The name 9 describes one preserved plus eight new GPUs, not the maximum autoscaled total.
+`active-l40s-11` keeps showroom subscriptions on the existing Llama and exposes Qwen4B only through the private native-auth benchmark Gateway, without a MaaS subscription. `aiml-node` has 1–3 one-GPU nodes and surge 1. `showroom-l40s1` has 1–2 one-GPU nodes and surge 1. Optional `showroom-l40s4` has 0–1 four-GPU nodes and surge 0. The combined maximum including surge is 11. The optional pending Qwen32B workload was removed; its manifests remain for a future verified run.
 
-The proposed H100 option needs verified L40S surge 0/maxUnavailable 1 before adding one H100 with surge 1; its bound is 14. Existing surge 1 instead produces 18 and is blocked. Only an observed cloud policy change can reduce the inventory's bound.
+The proposed H100 option adds maximum 1 plus surge 1 to this plan, reaching 13. It remains unprovisioned and untested. Only observed cloud settings can establish the actual bound. No automated ROSA/OCM polling is allowed in the reference environment.
 
 Do not automatically synchronize GPU workloads. Run the guard against fresh ROSA/OCM inventory, review capacity, and apply deliberately. Full and A100 MIG are alternative plans, not additive expansions. Free Qwen4B before allocating both new L40S nodes to Qwen32B replicas. Read the [hardware](../../docs/labs/hardware.md) and [benchmark](../../docs/labs/benchmark.md) labs before changing capacity.

@@ -1,0 +1,28 @@
+apiVersion: serving.kserve.io/v1alpha2
+kind: LLMInferenceService
+metadata:
+  name: aurora-qwen-4b
+  namespace: ai-showroom
+  annotations:
+    showroom.openshift.ai/access: private-benchmark-authorized-port-forward-only
+    opendatahub.io/display-name: Aurora Qwen3 4B — private inference benchmark
+    showroom.openshift.ai/validation: private-native-auth-and-epp-verified-topology-requires-live-check
+spec:
+  router:
+    gateway:
+      refs:
+      - name: showroom-inference
+        namespace: ai-showroom
+        sectionName: inference
+  replicas: 2
+  template:
+    nodeSelector:
+      node.kubernetes.io/instance-type: g6e.2xlarge
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: aurora-qwen-4b
+              kserve.io/component: workload
+          topologyKey: kubernetes.io/hostname

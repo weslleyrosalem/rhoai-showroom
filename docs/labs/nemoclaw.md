@@ -1,6 +1,6 @@
 # NeMoClaw and OpenShell
 
-**Status: integration research; no completed NeMoClaw deployment is claimed.** This is a required showroom extension, with its own acceptance gate.
+**Status: blocked for the existing Kubernetes gateway in the pinned release.** OpenShell has passed its separate private runtime checks; NeMoClaw onboarding and an agent turn have not been completed.
 
 These components have different jobs:
 
@@ -30,3 +30,15 @@ Record the exact NeMoClaw/OpenShell versions, deployment topology, image digests
 The Kubernetes OpenShell chart is documented as experimental and requires the Agent Sandbox controller. Review the [upstream Kubernetes setup](https://docs.nvidia.com/openshell/kubernetes/setup) and the OpenShift-specific Developer Preview guide before selecting a deployment path. Do not install a nested workstation container runtime into the shared cluster as an undocumented shortcut.
 
 Keep this module out of the live presentation until these checks pass. The [security journey](../journeys/security.md) can still show the independently validated MCP and NeMo controls while this extension is completed.
+
+## Version compatibility under review
+
+The upstream NeMoClaw tag `v0.0.127` resolves to commit `37ca4cb4220265c2a12b9d9b8a120d0d23a338dd`. Its blueprint requires OpenShell `0.0.116` as both its minimum and maximum version, matching this showroom's OpenShell deployment work. It pins the OpenClaw sandbox image to `sha256:b3d832b596ab6b7184a9dcb4ae93337ca32851a4f93b00765cc12de26baa3a9a` and includes a vLLM-compatible inference profile. This is a compatibility finding, not a completed NeMoClaw run. [Pinned upstream blueprint](https://github.com/NVIDIA/NemoClaw/blob/37ca4cb4220265c2a12b9d9b8a120d0d23a338dd/nemoclaw-blueprint/blueprint.yaml).
+
+## Verified integration limit
+
+The pinned NeMoClaw release offers an experimental external-target path for configuration planning and a public health request. NVIDIA explicitly excludes Kubernetes and machine authentication from that path; it cannot manage sandbox lifecycle or policies. The showroom uses an existing Kubernetes gateway with required authentication, so this path does not satisfy the deployment contract. [Pinned external-target documentation](https://github.com/NVIDIA/NemoClaw/blob/37ca4cb4220265c2a12b9d9b8a120d0d23a338dd/docs/about/how-it-works.mdx#inspect-an-external-openshell-gateway).
+
+The blueprint runner rejects `apply` when `openshell_target` is present. Its corresponding test verifies that rejection occurs before a subprocess or run-state change. This is a source-verified limit; the upstream test was inspected, not executed in this showroom. [Pinned runner](https://github.com/NVIDIA/NemoClaw/blob/37ca4cb4220265c2a12b9d9b8a120d0d23a338dd/nemoclaw/src/blueprint/runner.ts#L1715), [upstream rejection test](https://github.com/NVIDIA/NemoClaw/blob/37ca4cb4220265c2a12b9d9b8a120d0d23a338dd/nemoclaw/src/blueprint/runner-external-target.test.ts#L230).
+
+No NeMoClaw sandbox was created, no agent trace was produced, and no additional GPU capacity was requested. Deploying the pinned OpenClaw image alone would not demonstrate NeMoClaw onboarding or lifecycle management. Revisit this lab when the official workflow supports authenticated external Kubernetes gateways, then rerun the acceptance gate above. For today's runtime-security demonstration, use the separately validated [OpenShell walkthrough](red-teaming.md).

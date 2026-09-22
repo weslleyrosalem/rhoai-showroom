@@ -36,6 +36,7 @@ def main():
     p.add_argument('--expected-server', required=True)
     p.add_argument('--expected-user', default='aiadmin')
     p.add_argument('--subscription', default='showroom-standard')
+    p.add_argument('--expires-in', choices=('24h', '2d', '3d'), default='24h', help='Requested key lifetime; the server enforces its own maximum')
     p.add_argument('--namespace', default='ai-showroom')
     p.add_argument('--secret-name', default='showroom-maas-key')
     p.add_argument('--model-id', required=True)
@@ -68,7 +69,7 @@ def main():
         if raw and json.loads(raw)['metadata'].get('labels', {}).get('app.kubernetes.io/part-of') != OWNER:
             raise ValueError('Refusing to replace a Secret not owned by this showroom')
         if not args.apply:
-            print(json.dumps({'status': 'PLAN', 'subscription': args.subscription, 'secret': args.namespace + '/' + args.secret_name, 'duration': '24h'}))
+            print(json.dumps({'status': 'PLAN', 'subscription': args.subscription, 'secret': args.namespace + '/' + args.secret_name, 'duration': args.expires_in}))
             return 0
         if key_file.exists():
             if key_file.stat().st_mode & 0o077:
@@ -84,7 +85,7 @@ def main():
             if key_file.parent.stat().st_mode & 0o077:
                 raise ValueError('Private key directory permissions must be 0700')
             name = args.secret_name + '-' + dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%S')
-            body = json.dumps({'name': name, 'expiresIn': '24h', 'subscription': args.subscription}).encode()
+            body = json.dumps({'name': name, 'expiresIn': args.expires_in, 'subscription': args.subscription}).encode()
             req = urllib.request.Request(base + '/maas-api/v1/api-keys', data=body, headers={'Authorization': 'Bearer ' + oc('whoami', '-t'), 'Content-Type': 'application/json'})
             with urllib.request.build_opener(NoRedirect).open(req, timeout=60) as response:
                 credential = json.load(response)

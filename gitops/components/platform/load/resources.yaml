@@ -1,0 +1,139 @@
+{
+  "apiVersion": "v1",
+  "kind": "List",
+  "items": [
+    {
+      "apiVersion": "maas.opendatahub.io/v1alpha1",
+      "kind": "MaaSSubscription",
+      "metadata": {
+        "name": "showroom-load",
+        "namespace": "models-as-a-service",
+        "labels": {
+          "app.kubernetes.io/part-of": "rhoai-showroom",
+          "app.kubernetes.io/component": "guidellm-load"
+        }
+      },
+      "spec": {
+        "owner": {
+          "groups": [
+            {
+              "name": "showroom-platform-admins"
+            }
+          ]
+        },
+        "priority": 25,
+        "modelRefs": [
+          {
+            "name": "redhataillama-31-8b-instruct",
+            "namespace": "maas-how-to",
+            "tokenRateLimits": [
+              {
+                "limit": 1500000,
+                "window": "1h"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "ServiceAccount",
+      "metadata": {
+        "name": "showroom-guidellm",
+        "namespace": "ai-showroom",
+        "labels": {
+          "app.kubernetes.io/part-of": "rhoai-showroom",
+          "app.kubernetes.io/component": "guidellm-load"
+        }
+      },
+      "automountServiceAccountToken": false
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "name": "showroom-guidellm-results",
+        "namespace": "ai-showroom",
+        "labels": {
+          "app.kubernetes.io/part-of": "rhoai-showroom",
+          "app.kubernetes.io/component": "guidellm-load"
+        }
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "storageClassName": "gp3-csi",
+        "resources": {
+          "requests": {
+            "storage": "5Gi"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "networking.k8s.io/v1",
+      "kind": "NetworkPolicy",
+      "metadata": {
+        "name": "showroom-guidellm-private",
+        "namespace": "ai-showroom",
+        "labels": {
+          "app.kubernetes.io/part-of": "rhoai-showroom",
+          "app.kubernetes.io/component": "guidellm-load"
+        }
+      },
+      "spec": {
+        "podSelector": {
+          "matchLabels": {
+            "app": "showroom-guidellm"
+          }
+        },
+        "policyTypes": [
+          "Ingress",
+          "Egress"
+        ],
+        "ingress": [],
+        "egress": [
+          {
+            "ports": [
+              {
+                "protocol": "UDP",
+                "port": 53
+              },
+              {
+                "protocol": "TCP",
+                "port": 53
+              },
+              {
+                "protocol": "UDP",
+                "port": 5353
+              },
+              {
+                "protocol": "TCP",
+                "port": 5353
+              }
+            ],
+            "to": [
+              {
+                "namespaceSelector": {
+                  "matchLabels": {
+                    "kubernetes.io/metadata.name": "openshift-dns"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ports": [
+              {
+                "protocol": "TCP",
+                "port": 443
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -2,7 +2,9 @@
 
 Three connected journeys on OpenShift AI 3.5.1: **security and agents**, **inference platform**, and **data science and ML engineering**. Aurora Supply is a fictional distributor. All business documents and demand records are synthetic.
 
-**[Open the presentation and lab guide](https://weslleyrosalem.github.io/rhoai-showroom/)** · [Architecture](docs/architecture/story.md) · [Installation](docs/operations/install.md) · [Validation status](docs/operations/validation.md)
+**[Open the presentation and lab guide](https://weslleyrosalem.com/rhoai-showroom/)** · [Architecture](docs/architecture/story.md) · [Installation](docs/operations/install.md) · [Validation status](docs/operations/validation.md)
+
+Start with the [inference presentation](docs/demos/inference.md), [MaaS presentation](docs/demos/maas.md), or [project plan](docs/operations/project-plan.md). Collaboration conventions live in [AGENTS.md](AGENTS.md); the reusable operations skill is in [.agents/skills/showroom-operations](.agents/skills/showroom-operations/SKILL.md).
 
 The primary namespace is `ai-showroom`. Shared services remain in their operators' namespaces. GPU profiles enforce a ceiling of **16 physical GPUs**, counting existing pools, pending nodes, and upgrade surge. GPU workloads and expensive experiments require an explicit capacity preflight.
 

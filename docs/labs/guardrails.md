@@ -25,7 +25,7 @@ MCP client → authenticated Gateway → IPP → private TLS adapter → NeMo
 
 The adapter uses a fixed upstream, verifies service certificates, rejects redirects, and attaches a rotating service-account token. It translates `success` to `passed` for the pinned older IPP plugin; this is showroom compatibility code, not a product feature. Both NeMo hops use verified HTTPS. Gateway-to-IPP uses private gRPC protected by NetworkPolicy; this is not end-to-end mTLS.
 
-Observed checks include allowed stock calls (200), prohibited synthetic arguments (403), anonymous initialization (401), an unlisted service account (403), and checker outage (503). The internal SDK completed initialization, discovery, and all three tools. A public-route SDK sequence exposed an intermittent duplicated-body HTTP 400 in the pinned IPP stack; public protocol acceptance remains open until the complete sequence passes. A configured response plugin alone is not proof of MCP output enforcement: an output challenge must also pass before claiming it.
+Observed checks include allowed stock calls (200), prohibited synthetic arguments (403), anonymous initialization (401), an unlisted service account (403), and checker outage (503). The internal SDK completed initialization, discovery, and all three tools. The public SDK sequence also passed after buffering the MCP router request before IPP. A dedicated output challenge placed a synthetic email in a backend product response; an otherwise allowed stock request returned 403, and the canonical data was restored. This verifies output enforcement for that configured pattern; it does not establish universal semantic protection.
 
 ## Customer test drive
 

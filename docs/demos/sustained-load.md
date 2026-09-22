@@ -1,0 +1,75 @@
+# Sustained GuideLLM load and retained evidence
+
+The opt-in load generator uses **GuideLLM v0.7.4** to send actual streaming inference requests through a dedicated MaaS subscription. Its prompts are synthetic; the resulting traffic, token counts, errors, and timing are measured. The generator requests no GPU and never restarts the model.
+
+For the September 22–23 rehearsal, the absolute stop is **September 23, 2026, 11:59 a.m. America/New_York / 15:59 UTC**. The protected customer window is **September 22, 8:00–11:00 a.m. New York / 12:00–15:00 UTC**. The runner enforces the absolute deadline even after a restart; Kubernetes also imposes a bounded active deadline.
+
+## Operating limits
+
+| Control | Configuration |
+|---|---|
+| Normal steps | 0.1 → 0.25 → 0.5 requested requests/second, repeating |
+| Pilot cap | 0.1 requests/second until a successful pilot is reviewed |
+| Normal concurrency | At most two in-flight requests |
+| Customer window | 0.05 requests/second, at most one in flight |
+| Payload | 256 synthetic input tokens, at most 128 generated tokens |
+| Timeouts | 10-second connect and 30-second read timeout; bounded subprocess duration |
+| Failure bound | Five errors end a segment; three failed segments stop the Job |
+| MaaS quota | `showroom-load`, 1,500,000 tokens/hour, separate from interactive subscriptions |
+| Credential | `ai-showroom/showroom-guidellm-key`; expiration must be after the absolute stop |
+| CPU container | 250m CPU / 512Mi requested, 1 CPU / 2Gi limit |
+| Results | Retained 5Gi `showroom-guidellm-results` PVC; unique segment directories |
+
+Requested rate is not achieved throughput. Startup, warmup, quota, backend latency, errors, and the concurrency cap can reduce achieved rate. Review the report before presenting a rate or token-throughput claim. The sequence includes startup and short gaps between measured segments; it is not a seamless constant-rate soak test.
+
+## Reproduce the run
+
+The component is deliberately excluded from normal Argo overlays: a Git sync must not start a long load test automatically. Inspect [the opt-in resources](https://github.com/weslleyrosalem/rhoai-showroom/tree/main/gitops/components/platform/load), edit the dates and model reference for the new environment, and verify its StorageClass (`gp3-csi` in the demonstrated cluster).
+
+1. Apply the owned load subscription, ServiceAccount, PVC, and NetworkPolicy after confirming the cluster and identity. This changes only the explicitly named showroom resources.
+2. Provision a dedicated key with a lifetime covering the run; no key belongs in Git or a command argument.
+3. Stage the exact deployed model's tokenizer files in a private local directory. Copy only `tokenizer.json`, `tokenizer_config.json`, `special_tokens_map.json`, and `config.json`, subject to that model's license. No model weights are needed.
+4. Inspect the launch plan, then apply it. A waiting CPU pod can be resumed by repeating the guarded helper; it preserves the PVC, history, and existing Job.
+
+From the repository root, set `SHOWROOM_SERVER` and `SHOWROOM_USER` from the independently approved environment record. Compare the following read-only identity output with those expected values; do not populate the guard variables from the current context:
+
+```bash
+oc whoami --show-server
+oc whoami
+oc apply --server-side --field-manager=rhoai-showroom-load \
+  -f gitops/components/platform/load/resources.yaml
+
+python3 gitops/components/platform/credentials/provision_maas.py \
+  --expected-server "$SHOWROOM_SERVER" --expected-user "$SHOWROOM_USER" \
+  --subscription showroom-load --secret-name showroom-guidellm-key --expires-in 2d \
+  --model-id publishers/maas-how-to/models/redhataillama-31-8b-instruct \
+  --key-file /private/path/maas-load.json --apply
+
+python3 scripts/guidellm_load.py \
+  --expected-server "$SHOWROOM_SERVER" --expected-user "$SHOWROOM_USER" \
+  --tokenizer-dir /private/path/llama-tokenizer
+```
+
+Add `--apply` to the last command to start the reviewed plan. The helper verifies checksums before the tokenizer-ready marker releases traffic. It uses the authenticated `/v1/models` endpoint for connectivity validation because MaaS does not expose a generic `/health` route. The sustained run uses the working standard MaaS endpoint without an explicit model-selection header. Isolated header-based requests reached Llama’s endpoint picker, but repeated GuideLLM streaming qualification produced empty responses under both HTTP/2 and HTTP/1.1; those failed reports are retained. Consequently this load is evidence of MaaS/vLLM traffic, not successful sustained EPP processing. The separate private Qwen rehearsal demonstrates that request path. The client explicitly uses HTTP/1.1 after a prior HTTP/2 connection-protocol error. TLS validation stays enabled, redirects stay disabled, the API key is supplied through the child environment, and raw key material is redacted from retained output.
+
+After reviewing a successful pilot and confirming the interactive endpoint remains responsive, rerun the same helper with `--apply --max-rate 0.5`. The runner checks the control file between segments; the customer protection window still takes precedence. Use `--max-rate 0.1` to reduce the next segment. The launcher refuses foreign resources, expired deadlines, insufficient key lifetime, and replacement of finished Jobs.
+
+## Observe and export
+
+```bash
+oc get job,pvc -n ai-showroom -l app.kubernetes.io/component=guidellm-load
+oc get pods -n ai-showroom -l app=showroom-guidellm -o wide
+oc logs -n ai-showroom job/showroom-guidellm-20260922 --tail=10
+```
+
+The wrapper prints sanitized start/finish records and actual report summaries. Each completed segment retains `benchmarks.json`, `benchmarks.csv`, `benchmarks.html`, and a redacted `console.log`. `/results/history.jsonl` appends across restarts. Export the results directory to a private local location using `oc cp`; if the local WebSocket transport fails, set `KUBECTL_REMOTE_COMMAND_WEBSOCKETS=false` for that copy. Inspect an exported HTML report locally. There is no public unauthenticated results server.
+
+For dashboards, correlate the same UTC window across successful request counts, prompt/generated tokens, latency distributions, prefix-cache hits and queries, GPU utilization, and waiting/running requests. Keep the `showroom-load` subscription and `X-Showroom-Client: guidellm-sustained` traffic class identifiable. Client TTFT across the gateway can include buffering; it is not interchangeable with engine TTFT.
+
+## Stop and retain
+
+The absolute deadline ends load without a running laptop or an active chat. To stop early, delete only `job/showroom-guidellm-20260922` in `ai-showroom`; leave the PVC for evidence. Do not delete the original model, shared subscriptions, or an operator. Revoke the dedicated key through the MaaS API/UI after collecting evidence if early termination is required. Keep the PVC until reports have been exported and checked.
+
+Do not add ROSA or OCM polling to the load runner, dashboards, or a monitor. In this environment, the user explicitly prohibits frequent control-plane API requests. Inspect Kubernetes nodes and workloads with `oc` only; cloud operations remain a separate, bounded activity.
+
+Primary sources: [GuideLLM v0.7.4 release](https://github.com/vllm-project/guidellm/releases/tag/v0.7.4), [pinned CLI and profile documentation](https://github.com/vllm-project/guidellm/blob/v0.7.4/README.md), [output and sampling options](https://github.com/vllm-project/guidellm/blob/v0.7.4/docs/guides/outputs.md), and [local tokenizer setup](https://github.com/vllm-project/guidellm/blob/v0.7.4/docs/examples/custom-jsonl-dataset.md).

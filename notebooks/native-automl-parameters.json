@@ -7,7 +7,7 @@
   "id_column": "sku",
   "known_covariates_names": [],
   "prediction_length": 7,
-  "top_n": 1,
+  "top_n": 3,
   "eval_metric": "mean_absolute_error",
   "preset": "speed"
 }

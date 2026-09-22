@@ -3,7 +3,7 @@
   "profile": "mig-h100-single",
   "physical_gpu_limit": 16,
   "mode": "planned-opt-in",
-  "description": "Dedicated 1xH100 pool. Requires observed L40S pool surge=0/maxUnavailable=1 before this plan can pass.",
+  "description": "Dedicated optional H100 added to active-l40s-11; conservative maximum 13 including both one-GPU surge nodes. Requires fresh complete inventory and actual availability.",
   "pools": [
     {
       "id": "aiml-node",
@@ -13,10 +13,17 @@
       "upgrade_surge_nodes": 1
     },
     {
-      "id": "showroom-l40s4",
-      "instance_type": "g6e.12xlarge",
+      "id": "showroom-l40s1",
+      "instance_type": "g6e.2xlarge",
       "min_nodes": 1,
       "max_nodes": 2,
+      "upgrade_surge_nodes": 1
+    },
+    {
+      "id": "showroom-l40s4",
+      "instance_type": "g6e.12xlarge",
+      "min_nodes": 0,
+      "max_nodes": 1,
       "upgrade_surge_nodes": 0
     },
     {

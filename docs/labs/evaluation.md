@@ -18,3 +18,13 @@ Lower attack success rate is better. A measured rate of 1.0 means the single pro
 The adapter reported HTML/JSONL artifact upload success while its MLflow PUT requests returned HTTP 307 and the S3 prefix was empty. Metrics and EvalHub results were present. Do not claim reports were persisted without checking the artifact store. MLflow with workspaces rejects a client-specified `artifact_location`, so disabling workspace isolation is not used as a workaround.
 
 [EvalHub API source](https://github.com/eval-hub/eval-hub) and [TrustyAI operator](https://github.com/opendatahub-io/trustyai-service-operator).
+
+## Preserve the measured result
+
+Observed job `d0ac37c7-63ab-4335-93bf-b1a67508afdf` completed on September 22, 2026. Its benchmark metrics were recorded in MLflow run `54397cc5023c4427b9c69cacb51ed0fb`. The following workaround persisted and verified the actual EvalHub result JSON:
+
+```bash
+python3 scripts/science.py eval-export --job-id <job-id>
+```
+
+Run it from the configured workbench with `EVALHUB_URL=https://evalhub.redhat-ods-applications.svc:8443` and `EVALHUB_CA=/etc/service-ca/service-ca.crt`. The artifact is `evaluation/evalhub-result.json`. Original HTML/JSONL reports remain unavailable in this observed run. See [model scores and onboarding gates](model-score.md) for how failed or incomplete evidence affects promotion.

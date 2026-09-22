@@ -24,7 +24,9 @@ The current [official NeMo plugin example](https://github.com/opendatahub-io/ai-
 
 ## Envoy contract
 
-The filter name must be `envoy.filters.http.ext_proc.bbr`. Real active Envoy configuration must show Authorino's `envoy.filters.http.wasm` before that filter, then `mcp-sse-strip`'s Lua filter before the router. The overlay sets both body directions to `FULL_DUPLEX_STREAMED`, headers/trailers to `SEND`, and `failure_mode_allow:false`. Envoy rejects FULL_DUPLEX_STREAMED with trailer mode SKIP, keeping an older active listener; therefore a created EnvoyFilter and CR Ready status do not prove enforcement.
+The filter name must be `envoy.filters.http.ext_proc.bbr`. Real active Envoy configuration must show Authorino's `envoy.filters.http.wasm` before that filter, then `mcp-sse-strip`'s Lua filter before the router. The IPP filter sets both body directions to `FULL_DUPLEX_STREAMED`, headers/trailers to `SEND`, and `failure_mode_allow:false`. Envoy rejects FULL_DUPLEX_STREAMED with trailer mode SKIP, keeping an older active listener; therefore a created EnvoyFilter and CR Ready status do not prove enforcement.
+
+The preceding MCP router filter is merged to use `BUFFERED` request bodies. With its original `STREAMED` request mode, the pinned two-processor chain intermittently delivered duplicate JSON to IPP and failed with HTTP400. Buffering that router stage resolved full internal/public SDK sequences while retaining downstream input/output enforcement. This is distinct from IPP itself, which still requires FULL_DUPLEX_STREAMED.
 
 The TrustyAI CR Gateway reference causes creation of `mcp-sse-strip`. Applying the base while this overlay is active removes the reference; Argo must own this complete overlay to prevent competing configuration. It must not self-heal the base over the integration.
 
@@ -35,7 +37,7 @@ The TrustyAI CR Gateway reference causes creation of `mcp-sse-strip`. Applying t
 - Anonymous initialization401, valid but unlisted SA403, listed identities200.
 - Valid stock tool call200; synthetic email or `DEMO_SECRET_AURORA` in tool arguments403 before tool execution.
 - A genuinely unavailable bridge/checker fails closed; wait for termination, since existing keep-alive connections may finish while a pod drains.
-- A dedicated output challenge is required before claiming MCP output enforcement. Merely configuring the response plugin or checking NeMo directly is insufficient.
+- A dedicated output challenge returned403 when a permitted stock request received a backend response containing a synthetic email. The original fixture was restored immediately. Repeat this gate after upgrades; merely configuring the response plugin is insufficient.
 - No pod without the allowed network labels reaches backend, broker, private listener or adapter.
 
 Use only synthetic challenges and record status/result metadata, never tokens or full request logs. The MCP Gateway itself can log session JWTs at INFO in this version; do not publish raw pod logs, and configure log handling/retention before a production use case.

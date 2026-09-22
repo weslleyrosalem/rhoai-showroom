@@ -1,0 +1,37 @@
+--- a/templates/gateway-config.yaml
++++ b/templates/gateway-config.yaml
+@@ -134,12 +134,8 @@
+     {{- if .Values.server.oidc.rolesClaim }}
+     roles_claim   = {{ .Values.server.oidc.rolesClaim | quote }}
+     {{- end }}
+-    {{- if .Values.server.oidc.adminRole }}
+     admin_role    = {{ .Values.server.oidc.adminRole | quote }}
+-    {{- end }}
+-    {{- if .Values.server.oidc.userRole }}
+     user_role     = {{ .Values.server.oidc.userRole | quote }}
+-    {{- end }}
+     {{- if .Values.server.oidc.scopesClaim }}
+     scopes_claim  = {{ .Values.server.oidc.scopesClaim | quote }}
+     {{- end }}
+--- a/templates/service.yaml
++++ b/templates/service.yaml
+@@ -25,4 +25,4 @@
+       name: metrics
+     {{- end }}
+   selector:
+-    {{- include "openshell.selectorLabels" . | nindent 4 }}
++    app: showroom-openshell-access
+--- a/templates/networkpolicy.yaml
++++ b/templates/networkpolicy.yaml
+@@ -16,8 +16,9 @@
+     {{- include "openshell.labels" . | nindent 4 }}
+ spec:
+   podSelector:
+-    matchLabels:
+-      openshell.ai/managed-by: openshell
++    matchExpressions:
++      - key: agents.x-k8s.io/sandbox-name-hash
++        operator: Exists
+   policyTypes:
+     - Ingress
+   ingress:

@@ -2,8 +2,8 @@
   "schema_version": 1,
   "profile": "active-l40s-9",
   "physical_gpu_limit": 16,
-  "mode": "active-existing-cluster",
-  "description": "One preserved L40S plus one warm and up to two new 4xL40S nodes; existing pool may scale to three. Both pool surges count.",
+  "mode": "historical-alternative",
+  "description": "Earlier four-GPU-node plan; superseded in the live reference cluster by active-l40s-11. Do not apply as the current cloud plan.",
   "pools": [
     {
       "id": "aiml-node",

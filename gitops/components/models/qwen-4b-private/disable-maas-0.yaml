@@ -1,0 +1,9 @@
+{
+  "apiVersion": "maas.opendatahub.io/v1alpha1",
+  "kind": "MaaSModelRef",
+  "metadata": {
+    "name": "aurora-qwen-4b",
+    "namespace": "ai-showroom"
+  },
+  "$patch": "delete"
+}

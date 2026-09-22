@@ -11,9 +11,14 @@ mcp_servers:
       Its three tools list products, read stock, and propose replenishment with a
       deterministic total and approval role. No external purchases or writes exist.
 
-      Build aurora-tools in ai-showroom first. For the prepared test drive, apply
-      gitops/components/mcp/lifecycle. The operator-managed server is isolated and
-      has no public Route; inspect it through an administrator port-forward.
+      Build aurora-tools in ai-showroom and apply lifecycle-isolation first.
+      In Deploy MCP server, replace the generated YAML with this reviewed manifest:
+      https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/components/mcp/catalog/testdrive.yaml
+      It uses aurora-tools-testdrive, the existing canonical data ConfigMap,
+      an explicit host allowlist, and the required lifecycle-test-drive isolation
+      label. Preserve these fields. Bare generated YAML does not establish this
+      isolation boundary. The server has no public Route; inspect it through an
+      administrator port-forward.
       The main application uses the separately authenticated showroom-mcp Gateway.
       Lifecycle management does not provide Gateway authorization automatically.
 

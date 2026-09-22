@@ -1,78 +1,340 @@
-{
-  "apiVersion": "serving.kserve.io/v1alpha2",
-  "kind": "LLMInferenceService",
-  "metadata": {
-    "name": "aurora-qwen-4b",
-    "namespace": "ai-showroom",
-    "labels": {
-      "app.kubernetes.io/part-of": "rhoai-showroom",
-      "opendatahub.io/dashboard": "true"
-    },
-    "annotations": {
-      "opendatahub.io/display-name": "aurora-qwen-4b",
-      "showroom.openshift.ai/model-revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
-      "showroom.openshift.ai/license": "apache-2.0",
-      "showroom.openshift.ai/validation": "manifest-only-until-runtime-acceptance"
-    }
-  },
-  "spec": {
-    "model": {
-      "name": "aurora-qwen-4b",
-      "uri": "hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554"
-    },
-    "replicas": 1,
-    "parallelism": {
-      "tensor": 1
-    },
-    "router": {
-      "gateway": {
-        "refs": [
-          {
-            "name": "maas-default-gateway",
-            "namespace": "openshift-ingress"
-          }
-        ]
-      },
-      "route": {},
-      "scheduler": {}
-    },
-    "template": {
-      "nodeSelector": {
-        "nvidia.com/gpu.product": "NVIDIA-L40S",
-        "showroom.openshift.ai/gpu-pool": "true"
-      },
-      "tolerations": [
-        {
-          "key": "nvidia.com/gpu",
-          "operator": "Equal",
-          "value": "true",
-          "effect": "NoSchedule"
-        }
-      ],
-      "containers": [
-        {
-          "name": "main",
-          "image": "registry.redhat.io/rhaii/vllm-cuda-rhel9@sha256:c056e61672b6aea489ad5dde0bd2f8497230f5333e87f7cf6c494eba3bfdc808",
-          "env": [
-            {
-              "name": "VLLM_ADDITIONAL_ARGS",
-              "value": "--dtype bfloat16 --max-model-len 8192 --max-num-seqs 8 --gpu-memory-utilization 0.85 --enable-prefix-caching --enable-auto-tool-choice --tool-call-parser hermes"
-            }
-          ],
-          "resources": {
-            "requests": {
-              "cpu": "4",
-              "memory": "24Gi",
-              "nvidia.com/gpu": "1"
-            },
-            "limits": {
-              "cpu": "4",
-              "memory": "24Gi",
-              "nvidia.com/gpu": "1"
-            }
-          }
-        }
-      ]
-    }
-  }
-}
+apiVersion: serving.kserve.io/v1alpha2
+kind: LLMInferenceService
+metadata:
+  name: aurora-qwen-4b
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    opendatahub.io/dashboard: 'true'
+  annotations:
+    opendatahub.io/display-name: aurora-qwen-4b
+    showroom.openshift.ai/model-revision: cdbee75f17c01a7cc42f958dc650907174af0554
+    showroom.openshift.ai/license: apache-2.0
+    showroom.openshift.ai/validation: shared-gateway-base-requires-environment-specific-acceptance
+spec:
+  model:
+    name: aurora-qwen-4b
+    uri: hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554
+  replicas: 1
+  parallelism:
+    tensor: 1
+  router:
+    gateway:
+      refs:
+      - name: maas-default-gateway
+        namespace: openshift-ingress
+    route:
+      http:
+        spec:
+          rules:
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: aurora-qwen-4b-inference-pool
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/completions
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /ai-showroom/aurora-qwen-4b/v1/completions
+            name: aurora-qwen-4b-v1-completions-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: aurora-qwen-4b-inference-pool
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/chat/completions
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /ai-showroom/aurora-qwen-4b/v1/chat/completions
+            name: aurora-qwen-4b-v1-chat-completions-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: aurora-qwen-4b-inference-pool
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/responses
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /ai-showroom/aurora-qwen-4b/v1/responses
+            name: aurora-qwen-4b-v1-responses-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: aurora-qwen-4b-inference-pool
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/messages
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /ai-showroom/aurora-qwen-4b/v1/messages
+            name: aurora-qwen-4b-v1-messages-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: aurora-qwen-4b-inference-pool
+              port: 8000
+              weight: 1
+            matches:
+            - headers:
+              - name: X-Gateway-Model-Name
+                type: Exact
+                value: publishers/ai-showroom/models/aurora-qwen-4b
+              path:
+                type: Exact
+                value: /v1/completions
+            - headers:
+              - name: X-Gateway-Model-Name
+                type: Exact
+                value: publishers/ai-showroom/models/aurora-qwen-4b
+              path:
+                type: Exact
+                value: /v1/completions/
+            - headers:
+              - name: X-Gateway-Model-Name
+                type: Exact
+                value: publishers/ai-showroom/models/aurora-qwen-4b
+              path:
+                type: Exact
+                value: /v1/chat/completions
+            - headers:
+              - name: X-Gateway-Model-Name
+                type: Exact
+                value: publishers/ai-showroom/models/aurora-qwen-4b
+              path:
+                type: Exact
+                value: /v1/chat/completions/
+            - headers:
+              - name: X-Gateway-Model-Name
+                type: Exact
+                value: publishers/ai-showroom/models/aurora-qwen-4b
+              path:
+                type: Exact
+                value: /v1/responses
+            - headers:
+              - name: X-Gateway-Model-Name
+                type: Exact
+                value: publishers/ai-showroom/models/aurora-qwen-4b
+              path:
+                type: Exact
+                value: /v1/responses/
+            - headers:
+              - name: X-Gateway-Model-Name
+                type: Exact
+                value: publishers/ai-showroom/models/aurora-qwen-4b
+              path:
+                type: Exact
+                value: /v1/messages
+            - headers:
+              - name: X-Gateway-Model-Name
+                type: Exact
+                value: publishers/ai-showroom/models/aurora-qwen-4b
+              path:
+                type: Exact
+                value: /v1/messages/
+            name: aurora-qwen-4b-v1-model-routing
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: aurora-qwen-4b-inference-pool
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/completions
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /publishers/ai-showroom/models/aurora-qwen-4b/v1/completions
+            name: aurora-qwen-4b-v1-completions-publisher-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: aurora-qwen-4b-inference-pool
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/chat/completions
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /publishers/ai-showroom/models/aurora-qwen-4b/v1/chat/completions
+            name: aurora-qwen-4b-v1-chat-completions-publisher-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: aurora-qwen-4b-inference-pool
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/responses
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /publishers/ai-showroom/models/aurora-qwen-4b/v1/responses
+            name: aurora-qwen-4b-v1-responses-publisher-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: inference.networking.k8s.io
+              kind: InferencePool
+              name: aurora-qwen-4b-inference-pool
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /v1/messages
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /publishers/ai-showroom/models/aurora-qwen-4b/v1/messages
+            name: aurora-qwen-4b-v1-messages-publisher-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: ''
+              kind: Service
+              name: aurora-qwen-4b-kserve-workload-svc
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /publishers/ai-showroom/models/aurora-qwen-4b
+            name: aurora-qwen-4b-v1-publisher-path-catch-all
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: ''
+              kind: Service
+              name: aurora-qwen-4b-kserve-workload-svc
+              port: 8000
+              weight: 1
+            filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  replacePrefixMatch: /
+                  type: ReplacePrefixMatch
+            matches:
+            - path:
+                type: PathPrefix
+                value: /ai-showroom/aurora-qwen-4b
+            name: aurora-qwen-4b-v1-catch-all-path
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+          - backendRefs:
+            - group: ''
+              kind: Service
+              name: aurora-qwen-4b-kserve-workload-svc
+              port: 8000
+              weight: 1
+            matches:
+            - headers:
+              - name: X-Gateway-Model-Name
+                type: Exact
+                value: publishers/ai-showroom/models/aurora-qwen-4b
+              path:
+                type: PathPrefix
+                value: /
+            name: aurora-qwen-4b-v1-catch-all-model-routing
+            timeouts:
+              backendRequest: 0s
+              request: 0s
+    scheduler: {}
+  template:
+    nodeSelector:
+      nvidia.com/gpu.product: NVIDIA-L40S
+      showroom.openshift.ai/gpu-pool: 'true'
+    tolerations:
+    - key: nvidia.com/gpu
+      operator: Equal
+      value: 'true'
+      effect: NoSchedule
+    containers:
+    - name: main
+      image: registry.redhat.io/rhaii/vllm-cuda-rhel9@sha256:c056e61672b6aea489ad5dde0bd2f8497230f5333e87f7cf6c494eba3bfdc808
+      env:
+      - name: VLLM_ADDITIONAL_ARGS
+        value: --dtype bfloat16 --max-model-len 8192 --max-num-seqs 8 --gpu-memory-utilization 0.85 --enable-prefix-caching
+          --enable-auto-tool-choice --tool-call-parser hermes
+      resources:
+        requests:
+          cpu: '4'
+          memory: 24Gi
+          nvidia.com/gpu: '1'
+        limits:
+          cpu: '4'
+          memory: 24Gi
+          nvidia.com/gpu: '1'

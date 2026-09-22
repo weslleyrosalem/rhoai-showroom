@@ -34,4 +34,8 @@ Model revisions and runtime digests are pinned in `gitops/components/models/mode
 
 ## OpenShell maturity clarification
 
-The [OpenShift AI 3.5 Developer Preview release notes](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/developer-preview-features_relnotes) explicitly list “Secure agent sandboxing and policy enforcement using OpenShell.” This is a product Developer Preview using upstream artifacts. NVIDIA separately labels its [Kubernetes Helm chart](https://docs.nvidia.com/openshell/kubernetes/setup) experimental. The showroom has not completed that runtime lab; neither source implies a generally available deployment here.
+The [OpenShift AI 3.5 Developer Preview release notes](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/release_notes/developer-preview-features_relnotes) explicitly list “Secure agent sandboxing and policy enforcement using OpenShell.” This is a product Developer Preview using upstream artifacts. NVIDIA separately labels its [Kubernetes Helm chart](https://docs.nvidia.com/openshell/kubernetes/setup) experimental. This showroom has tested a private runtime with an explicit subject-authorization proxy and scoped SCC; that evidence does not change its product maturity or imply a complete NeMoClaw integration.
+
+## Guide design and typography
+
+The guide uses local Red Hat Display and Red Hat Text font files from the [official Red Hat Font repository](https://github.com/RedHatOfficial/RedHatFont), with its OFL license retained under `docs/assets/fonts`. Color and hierarchy decisions reference the [Red Hat design system color guidance](https://ux.redhat.com/foundations/color/usage/) and [typography guidance](https://ux.redhat.com/foundations/typography/type-specifics/). The showroom mark is original; this community site does not claim to be an official Red Hat documentation site.

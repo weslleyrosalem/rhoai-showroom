@@ -304,7 +304,9 @@ def native_submit(kind):
     if pipeline is None:
         raise ValueError("Enable managedPipelines in the showroom DSPA first")
     versions = native_request("/apis/v2beta1/pipelines/" + pipeline["pipeline_id"] + "/versions?page_size=100")["pipeline_versions"]
-    version = next((v for v in versions if v["display_name"] == "3.5.1"), versions[-1])
+    version = next((v for v in versions if v["display_name"] == "3.5.1"), None)
+    if version is None:
+        raise ValueError("The required managed pipeline version 3.5.1 is not installed")
     parameters = json.loads((ROOT / "notebooks" / ("native-" + kind + "-parameters.json")).read_text())
     if kind == "autorag":
         import base64
@@ -317,9 +319,12 @@ def native_submit(kind):
         prefix = corpus_prefix(ROOT / "data")
         parameters["input_data_key"] = prefix + "/documents"
         parameters["test_data_key"] = prefix + "/eval/autorag.json"
-    experiment = native_request("/apis/v2beta1/experiments", {"display_name": "Aurora Supply " + kind, "namespace": "ai-showroom"})
+    experiments = native_request("/apis/v2beta1/experiments?page_size=100").get("experiments", [])
+    experiment = next((e for e in experiments if e["display_name"] == "Aurora Supply " + kind), None)
+    if experiment is None:
+        experiment = native_request("/apis/v2beta1/experiments", {"display_name": "Aurora Supply " + kind, "namespace": "ai-showroom"})
     result = native_request("/apis/v2beta1/runs", {"experiment_id": experiment["experiment_id"],
-        "display_name": "Aurora " + kind + " 3.5.1", "pipeline_version_reference": {
+        "display_name": {"automl": "Aurora demand forecast — three-model comparison", "autorag": "Aurora policy assistant — retrieval quality comparison"}[kind], "pipeline_version_reference": {
             "pipeline_id": pipeline["pipeline_id"], "pipeline_version_id": version["pipeline_version_id"]},
         "runtime_config": {"parameters": parameters}})
     print(json.dumps({"run_id": result["run_id"], "state": result.get("state"), "pipeline": names[kind], "version": version["display_name"]}))
@@ -347,22 +352,30 @@ def native_export(kind, run_id):
         mlflow.set_tags({"pipeline_run_id": run_id, "tracking_method": "explicit-workspace-sdk-export"})
         mlflow.log_dict({"pipeline_run_id": run_id, "artifacts": ["s3://aurora-artifacts/" + key for key in keys]}, "pipeline/artifact-index.json")
         selected = [k for k in keys if k.endswith("/metrics/metrics.json") or k.endswith("/pattern.json")]
+        scored_models = []
         for index, key in enumerate(selected):
             value = json.loads(client.get_object(Bucket="aurora-artifacts", Key=key)["Body"].read())
             mlflow.log_dict(value, "pipeline/result-" + str(index) + ".json")
             if kind == "automl":
-                mlflow.log_metrics({"autogluon_score_" + k: v for k, v in value.items() if isinstance(v, (float, int))})
+                model_name = key.split("/models_artifact/")[-1].split("/")[0]
+                mlflow.log_metrics({"model_" + model_name + "_autogluon_score_" + k: v
+                                    for k, v in value.items() if isinstance(v, (float, int))})
                 if "mean_absolute_error" in value:
-                    mlflow.log_metric("mean_absolute_error", -value["mean_absolute_error"])
+                    scored_models.append((value["mean_absolute_error"], model_name))
             else:
                 mlflow.log_metrics({"pattern_" + str(index) + "_" + m["name"]: m["scores"]["mean"] for m in value["evaluation"]["metrics"]})
+        if scored_models:
+            winning_score, winning_model = max(scored_models)
+            mlflow.set_tag("selected_model", winning_model)
+            mlflow.log_metric("mean_absolute_error", -winning_score)
+            mlflow.log_metric("selected_autogluon_score_mean_absolute_error", winning_score)
         result = {"pipeline_run_id": run_id, "mlflow_run_id": run.info.run_id, "artifact_count": len(keys), "exported_result_count": len(selected)}
     print(json.dumps(result))
     return result
 
 
-def native_infer(run_id, question):
-    """Execute the highest-scoring generated AutoRAG Responses API template."""
+def native_infer(run_id, question, use_responses=False, vector_store_id=None):
+    """Run the winning native pattern through real OGX retrieval and inference APIs."""
     import urllib.request
     client, keys = native_artifacts("autorag", run_id)
     patterns = [json.loads(client.get_object(Bucket="aurora-artifacts", Key=k)["Body"].read()) for k in keys if k.endswith("/pattern.json")]
@@ -371,29 +384,85 @@ def native_infer(run_id, question):
     def score(pattern):
         return next(m["scores"]["mean"] for m in pattern["evaluation"]["metrics"] if m.get("optimization_metric"))
     pattern = max(patterns, key=score)
-    request_body = pattern["inference"]["responses_template"]
-    for message in request_body["input"]:
-        if message.get("role") == "user":
-            message["content"] = [{"type": "input_text", "text": question}]
     base = os.environ.get("OGX_CLIENT_BASE_URL", "http://lsd-genai-playground-service.ai-showroom.svc:8321")
     headers = {"Content-Type": "application/json"}
     if os.environ.get("OGX_CLIENT_API_KEY"):
         headers["Authorization"] = "Bearer " + os.environ["OGX_CLIENT_API_KEY"]
-    request = urllib.request.Request(base.rstrip("/") + "/v1/responses", data=json.dumps(request_body).encode(), headers=headers)
-    with urllib.request.urlopen(request, timeout=120) as response:
-        result = json.load(response)
-    print(json.dumps({"pipeline_run_id": run_id, "optimization_score": score(pattern), "response": result}, ensure_ascii=False, indent=2))
+    def request(path, body):
+        req = urllib.request.Request(base.rstrip("/") + path, data=json.dumps(body).encode(), headers=headers)
+        with urllib.request.urlopen(req, timeout=120) as response:
+            return json.load(response)
+    settings = pattern["settings"]
+    selected_store = vector_store_id or settings["vector_store_binding"]["vector_store_id"]
+    if use_responses:
+        body = pattern["inference"]["responses_template"]
+        body["max_output_tokens"] = 256
+        for tool in body.get("tools", []):
+            if tool.get("type") == "file_search":
+                tool["vector_store_ids"] = [selected_store]
+        for message in body["input"]:
+            if message.get("role") == "user":
+                message["content"] = [{"type": "input_text", "text": question}]
+        result = {"api_path": "responses", "response": request("/v1/responses", body)}
+    else:
+        retrieval = settings["retrieval"]
+        params = {"max_chunks": retrieval["number_of_chunks"], "mode": retrieval["search_mode"],
+                  "reranker_type": retrieval.get("ranker_strategy", "rrf")}
+        if retrieval.get("ranker_strategy") == "weighted":
+            params["reranker_params"] = {"alpha": retrieval.get("ranker_alpha", 0.5)}
+        elif retrieval.get("ranker_strategy") == "rrf":
+            params["reranker_params"] = {"impact_factor": retrieval.get("ranker_k", 60)}
+        found = request("/v1/vector-io/query", {"vector_store_id": selected_store,
+                        "query": question, "params": params})
+        if not found.get("chunks"):
+            raise ValueError("The selected pattern returned no indexed chunks")
+        generation = settings["generation"]
+        context = "\n\n".join("Source " + json.dumps(chunk.get("metadata", {})) + "\n" +
+                              (chunk["content"] if isinstance(chunk["content"], str) else json.dumps(chunk["content"]))
+                              for chunk in found["chunks"])
+        body = {"model": generation["model_id"], "temperature": generation.get("temperature", 0.2),
+                "max_tokens": 256, "stream": False, "messages": [
+                    {"role": "system", "content": generation["system_message_text"] +
+                     " Answer in U.S. English from the provided sources. Cite the document ID. Admit missing facts."},
+                    {"role": "user", "content": context + "\n\nQuestion: " + question}]}
+        result = {"api_path": "vector-io/query + chat/completions", "retrieval": found,
+                  "response": request("/v1/chat/completions", body)}
+    result.update({"pipeline_run_id": run_id, "optimization_score": score(pattern),
+                   "vector_store_id": selected_store,
+                   "original_optimization_vector_store_id": settings["vector_store_binding"]["vector_store_id"]})
+    print(json.dumps(result, ensure_ascii=False, indent=2))
     return result
+
+
+
+def trainer_export(path):
+    """Track an actual completed TrainJob result without promoting its model."""
+    result = json.loads(Path(path).read_text())
+    if result.get("event") != "training_completed" or result.get("world_size") != 2:
+        raise ValueError("Expected a real completed two-rank training result")
+    mlflow = configure_mlflow()
+    mlflow.set_experiment("aurora-native-distributed-training")
+    with mlflow.start_run(run_name="Aurora demand — two-node CPU comparison") as run:
+        mlflow.log_params({k: result[k] for k in ["framework", "world_size", "epochs", "train_rows", "holdout_rows", "train_end", "holdout_end"]})
+        mlflow.log_metrics({k: result[k] for k in ["mae", "seasonal_naive_mae"]})
+        mlflow.set_tags({"showroom.company": "Aurora Supply", "showroom.promotion": "comparison-only",
+                         "showroom.trainjob": "aurora-demand-ddp", "beats_baseline": str(result["beats_baseline"]).lower()})
+        mlflow.log_dict(result, "training/result.json")
+        mlflow.log_artifact(str(ROOT / "notebooks/train_distributed.py"), "training")
+        print(json.dumps({"mlflow_run_id": run.info.run_id, "mae": result["mae"], "promoted": False}))
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["generate", "train", "ray", "upload", "eval-submit", "eval-status", "native-submit", "native-status", "ray-submit", "eval-export", "native-export", "native-infer"])
+    parser.add_argument("command", choices=["generate", "train", "ray", "upload", "eval-submit", "eval-status", "native-submit", "native-status", "ray-submit", "eval-export", "native-export", "native-infer", "trainer-export"])
     parser.add_argument("--data-dir", default=str(ROOT / "data"))
     parser.add_argument("--output", default=None)
     parser.add_argument("--job-id")
+    parser.add_argument("--result", help="Path to the actual TrainJob result JSON")
     parser.add_argument("--pipeline", choices=["automl", "autorag"])
     parser.add_argument("--run-id")
+    parser.add_argument("--vector-store-id", help="Use the store returned by the selected pattern's native indexing run")
+    parser.add_argument("--use-responses", action="store_true", help="Exercise the optional generated Responses API template")
     parser.add_argument("--question", default="What is the return deadline?")
     args = parser.parse_args()
     dest = Path(args.data_dir)
@@ -418,6 +487,10 @@ def main():
             parser.error("--job-id is required")
         result = eval_request("/api/v1/evaluations/jobs/" + args.job_id)
         print(json.dumps({"job_id": args.job_id, "status": result.get("status"), "results": result.get("results")}, indent=2))
+    elif args.command == "trainer-export":
+        if not args.result:
+            parser.error("--result is required")
+        trainer_export(args.result)
     elif args.command == "ray-submit":
         ray_submit()
     elif args.command == "native-export":
@@ -427,7 +500,7 @@ def main():
     elif args.command == "native-infer":
         if not args.run_id:
             parser.error("--run-id is required")
-        native_infer(args.run_id, args.question)
+        native_infer(args.run_id, args.question, args.use_responses, args.vector_store_id)
     elif args.command == "native-submit":
         if not args.pipeline:
             parser.error("--pipeline is required")

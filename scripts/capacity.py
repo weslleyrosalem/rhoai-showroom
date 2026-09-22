@@ -154,7 +154,7 @@ def assess(profile, nodes, inventory=None, now=None, expected_server=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', required=True, choices=['core', 'interactive', 'active-l40s-9', 'mig-h100-single', 'full-l40s-13', 'mig-9', 'mig-13'])
+    parser.add_argument('--profile', required=True, choices=['core', 'interactive', 'active-l40s-9', 'active-l40s-11', 'mig-h100-single', 'full-l40s-13', 'mig-9', 'mig-13'])
     parser.add_argument('--inventory', type=Path, help='Private complete ROSA/OCM JSON snapshot; see hardware lab')
     parser.add_argument('--nodes', type=Path, help='Saved oc get nodes -o json; otherwise query current cluster')
     parser.add_argument('--expected-server', help='Require an exact oc API server before querying live nodes')

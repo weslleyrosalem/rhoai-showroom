@@ -1,60 +1,94 @@
-<div class="showroom-hero" markdown>
-<div class="showroom-eyebrow">Aurora Supply · OpenShift AI 3.5.1</div>
+---
+hide:
+  - toc
+---
 
-# See AI at work. Then take the controls.
+<div class="showroom-intro" markdown>
+<div class="showroom-eyebrow">Technical presales · OpenShift AI 3.5.1</div>
 
-One fictional company. Connected documents, inventory, and demand. Three ways to explore the same platform through demonstrations, experiments, and a test drive you can reproduce in your own cluster.
+# From a model endpoint to an AI platform.
 
-<div class="showroom-tags"><span>ROSA</span><span>GitOps</span><span>Synthetic data</span><span>Up to 16 physical GPUs</span><span>GA · TP · Developer Preview · Ecosystem</span></div>
+<p class="lead">Serve a model. Put it behind a governed API. Use it in an application with data, tools, and a trace you can inspect.</p>
+
+This showroom follows one company, Aurora Supply, across the platform. Start with a guided demonstration, take the controls, or deploy the labs in your own ROSA cluster.
+
+[Prepare your presentation](operations/presenter.md){ .md-button .md-button--primary }
+[Take the test drive](operations/test-drive.md){ .md-button }
 </div>
 
-## Choose your journey
+<div class="showroom-agenda" markdown>
+<section class="showroom-session" markdown>
+<span class="session-time">8:00 a.m. · Inference</span>
 
-<div class="showroom-cards" markdown>
-<div class="showroom-card" markdown>
-<span class="number">01 / SECURITY AND AGENTS</span>
+## What makes a model service efficient?
 
-### Trust before action
+Follow a request through vLLM and llm-d. Inspect local prefix-cache reuse and the history of a real load test. See where more replicas and distributed KV handling would change the architecture.
 
-The assistant uses tools and documents. Follow authentication, test boundaries, inspect traces, and compare evaluations.
+[Open the inference presentation →](demos/inference.md)
+</section>
+<section class="showroom-session" markdown>
+<span class="session-time">10:00 a.m. · Models as a Service</span>
 
-[Explore security →](journeys/security.md)
-</div>
-<div class="showroom-card" markdown>
-<span class="number">02 / AI PLATFORM</span>
+## Who can use the models, and how much?
 
-### From model to service
+Discover a model, use a scoped API key, reach a quota, and observe recovery. Connect the consumer experience to the platform administrator's view.
 
-Publish models, select capacity, govern consumption, and measure inference. Compare vLLM and llm-d under controlled conditions.
-
-[Explore the platform →](journeys/platform.md)
-</div>
-<div class="showroom-card" markdown>
-<span class="number">03 / DATA SCIENCE AND ML</span>
-
-### From hypothesis to experience
-
-Train with Ray, track experiments in MLflow, and feed a forecast into the assistant. Explore RAG, evaluation, and automation.
-
-[Explore data science →](journeys/science.md)
-</div>
+[Open the MaaS presentation →](demos/maas.md)
+</section>
 </div>
 
-## One story connects the components
+<section class="showroom-story" markdown>
 
-Aurora Supply needs to answer: **“What should we replenish next week, how much, and under which policy?”**
+## The customer story
 
-Inventory comes from an MCP tool. Demand comes from a trained model. Policy comes from documents retrieved by RAG. An LLM explains the proposal. MaaS governs access and quotas. Guardrails and evaluations test defined behaviors, while traces help investigate the flow. The proposal is synthetic and never places an order.
+> What should we replenish next week, how much, and under which policy?
 
-<div class="showroom-flow"><div><b>Ask</b><span>Playground and documents</span></div><div><b>Observe</b><span>MCP, models, and traces</span></div><div><b>Experiment</b><span>One small change, one visible result</span></div><div><b>Reproduce</b><span>Git, Argo CD, and acceptance criteria</span></div></div>
+Aurora Supply is a fictional distributor. Its assistant reads purchasing policies, calls inventory tools, and uses a demand forecast to prepare a proposal. A person reviews the result. No real order is placed.
 
-[Start the test drive](operations/test-drive.md){ .md-button .md-button--primary }
-[Install in another cluster](operations/install.md){ .md-button }
+The same question gives every component a job: RAG retrieves policy, MCP supplies stock, Ray produces a forecast, the LLM explains the proposal, and MaaS governs consumption. Guardrails and evaluation test defined behaviors; MLflow records experiments and traces.
 
-## Present it or explore on your own
+<div class="showroom-path"><b>Question</b><span aria-hidden="true">→</span><b>Policy + inventory + forecast</b><span aria-hidden="true">→</span><b>Proposal</b><span aria-hidden="true">→</span><b>Human review</b></div>
+</section>
 
-Each journey includes a story, what to show, a visitor interaction, and what to observe. Each lab identifies prerequisites, commands, expected results, maturity, and recovery steps.
+## Choose the conversation
 
-**Validation status is separate from product maturity.** A GA feature still needs a rehearsal in this environment. A working TP lab does not make the feature supported for production. Review the [validation record](operations/validation.md) before presenting.
+<div class="showroom-journey" markdown>
+<span class="step" aria-hidden="true">01</span>
+<div markdown>
 
-This is a community demonstration project. Its compact storage and supporting services are suitable for a showroom and require review before production use.
+### Platform engineering
+
+Turn inference into a service that teams can discover, consume, measure, and operate. Follow serving, catalog, quotas, hardware, observability, and GitOps.
+</div>
+<div class="journey-link" markdown>[Explore the platform →](journeys/platform.md)</div>
+</div>
+<div class="showroom-journey" markdown>
+<span class="step" aria-hidden="true">02</span>
+<div markdown>
+
+### Security and agents
+
+Follow an allowed request and a denied request. Inspect tool access, policy checks, evaluations, and traces; challenge what the evidence actually proves.
+</div>
+<div class="journey-link" markdown>[Explore the controls →](journeys/security.md)</div>
+</div>
+<div class="showroom-journey" markdown>
+<span class="step" aria-hidden="true">03</span>
+<div markdown>
+
+### Data science and ML engineering
+
+Change a hypothesis, train with Ray, and compare results in MLflow. Explore the native AutoML and AutoRAG preview modules, then bring the result into the application.
+</div>
+<div class="journey-link" markdown>[Explore the experiments →](journeys/science.md)</div>
+</div>
+
+## Reproduce what you see
+
+The repository contains manifests, notebooks, sample data, and acceptance criteria. Choose the appropriate cluster profile, provide credentials locally, and follow the installation guide. Labs identify product maturity and the tests completed in this showroom.
+
+[Installation guide →](operations/install.md) · [Architecture →](architecture/story.md) · [Source repository →](https://github.com/weslleyrosalem/rhoai-showroom)
+
+<div class="showroom-note" markdown>
+**Before presenting:** read the [validation record](operations/validation.md). Tested behavior, resource readiness, and product support are separate. This community showroom uses synthetic data and compact services; it is not a production reference architecture.
+</div>

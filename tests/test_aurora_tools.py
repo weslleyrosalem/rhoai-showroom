@@ -107,3 +107,36 @@ def test_forecast_policy_uses_21_days_and_deterministic_approval(tmp_path):
     assert proposal["mlflow_run_id"] == "run-123"
     products.write_text(json.dumps([{"sku":"A","name":"Filter","category":"Filters","stock":0,"reorder_point":10,"unit_price":500}]))
     assert Catalog(str(products)).get_replenishment_recommendation("A")["approval_role"] == "assigned_buyer"
+
+
+def test_openshell_subject_gate_requires_review_and_limits_callback_paths():
+    import base64
+    import importlib.util
+    path = Path(__file__).resolve().parents[1] / "gitops/components/guardrails/openshell/authz.py"
+    spec = importlib.util.spec_from_file_location("openshell_authz", path)
+    gate = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gate)
+
+    def token(payload):
+        return "e30." + base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().rstrip("=") + ".signature"
+
+    calls = []
+    def allowed_review(value, audience, subject):
+        calls.append((audience, subject))
+        return True
+
+    admin_path = gate.PREFIX + "ListSandboxes"
+    admin = "Bearer " + token({"iss": "https://issuer.example", "sub": gate.ADMIN})
+    assert gate.authorize(admin_path, admin, allowed_review)
+    assert calls[-1] == ("showroom-openshell", gate.ADMIN)
+    assert not gate.authorize(admin_path, admin, lambda *args: False)
+    assert not gate.authorize(admin_path, "")
+    workload = "Bearer " + token({"iss": "https://issuer.example", "sub": gate.WORKLOAD})
+    assert gate.authorize(gate.BOOTSTRAP, workload, allowed_review)
+    assert calls[-1] == ("openshell-gateway", gate.WORKLOAD)
+    native = "Bearer " + token({"iss": "openshell-gateway:example", "sub": "spiffe://openshell/sandbox/example"})
+    assert not gate.authorize(admin_path, native, allowed_review)
+    assert not gate.authorize(gate.PREFIX + "UnknownFutureMethod", native, allowed_review)
+    # This passes only the front gate; the native gateway must verify signature,
+    # audience, expiry, and same-sandbox binding before executing the callback.
+    assert gate.authorize(gate.PREFIX + "GetSandboxConfig", native, lambda *args: False)

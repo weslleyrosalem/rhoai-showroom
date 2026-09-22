@@ -55,3 +55,7 @@ The Workbench operator injects its authentication proxy, CA mounts, and MLflow e
 Generated business-data ConfigMaps use `IgnoreExtraneous` so retained previous snapshots do not keep the application OutOfSync when pruning is disabled. Current referenced data is still compared. This follows the [Argo CD generated-resource guidance](https://argo-cd.readthedocs.io/en/stable/user-guide/compare-options/).
 
 The lifecycle example's AdminNetworkPolicy synchronizes before its MCPServer. Its subject is limited to the labeled lifecycle pods in `ai-showroom`; it compensates for the alpha lifecycle operator's permissive generated NetworkPolicy. Review this optional example's cluster-scoped dependency when installing in another cluster.
+
+## Recorded rehearsal
+
+On September 22, the existing-cluster application reached **Synced / Healthy** at source revision `fba92fa`. A temporary change to the showroom namespace's display name was restored automatically to `AI Showroom` within the 32-second observation window. No workload restart was needed. An unused previous business-data ConfigMap was removed after confirming that no current Pod, Deployment, or StatefulSet referenced it.

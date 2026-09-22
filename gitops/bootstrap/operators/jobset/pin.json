@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "package": "job-set",
+  "channel": "stable-v1.0",
+  "csv": "jobset-operator.v1.0.0",
+  "catalog": "redhat-operators",
+  "catalog_namespace": "openshift-marketplace",
+  "namespace": "openshift-jobset-operator",
+  "rhoaiversion": "3.5.1",
+  "related_images": [
+    "registry.redhat.io/job-set/jobset-rhel9@sha256:8a0ce916ed17d4244f97ee967d341532365cbab4b4287639509dee914f50c8a1",
+    "registry.redhat.io/job-set/jobset-operator-bundle@sha256:b3b31783dd90e41df75a3911bb6f7834c03d4a0fa7a372628086d19432496c01",
+    "registry.redhat.io/job-set/jobset-rhel9-operator@sha256:2d4920bf64a24ebf9ee726b363b0db54c5d14ec37935770766458b09e4661ba0"
+  ],
+  "required_crds": [
+    "jobsetoperators.operator.openshift.io",
+    "jobsets.jobset.x-k8s.io",
+    "trainjobs.trainer.kubeflow.org",
+    "clustertrainingruntimes.trainer.kubeflow.org"
+  ],
+  "sources": [
+    "https://docs.redhat.com/en/documentation/openshift_container_platform/4.22/html/ai_workloads/jobset-operator",
+    "https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/installing_and_uninstalling_openshift_ai_self-managed/installing-the-distributed-workloads-components_install"
+  ]
+}

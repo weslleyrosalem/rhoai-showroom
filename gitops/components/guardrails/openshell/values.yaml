@@ -1,0 +1,51 @@
+# OpenShell 0.0.116; no public Route, no anonymous user mode, no GPU request.
+fullnameOverride: showroom-openshell
+service:
+  metricsPort: 0
+image:
+  repository: quay.io/opendatahub/odh-openshell-gateway
+  tag: v0.0.116-rhaiv.0@sha256:456650bc420ff3bda27e81c13bea3ebad721b6a00d8541251f48ec999f92af6d
+supervisor:
+  image:
+    repository: quay.io/opendatahub/odh-openshell-supervisor
+    tag: v0.0.116-rhaiv.0@sha256:6c56ca2495ee10a77773b154cefd7309ebcab071962ea069ac349a3d9ec8c55a
+  sideloadMethod: image-volume
+  topology: combined
+podSecurityContext:
+  fsGroup: null
+securityContext:
+  runAsUser: null
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  capabilities: {drop: [ALL]}
+resources:
+  requests: {cpu: 100m, memory: 256Mi}
+  limits: {cpu: '1', memory: 1Gi}
+server:
+  telemetryEnabled: false
+  disableTls: false
+  sandboxNamespace: ai-showroom-sandbox
+  sandboxImage: ghcr.io/nvidia/openshell-community/sandboxes/base@sha256:c2a43bb0d765774e2790b3babfb20997bb2eac7b4bf4c6d7d8661e99817bf904
+  workspaceDefaultStorageSize: 2Gi
+  appArmorProfile: ''
+  enableUserNamespaces: false
+  auth:
+    allowUnauthenticatedUsers: false
+  oidc:
+    issuer: https://configure-your-cluster-oidc-issuer.invalid
+    audience: showroom-openshell
+  sandboxJwt:
+    secretDefaultMode: '0440'
+  policyValidationFailureMode: fail_closed
+  grpcRateLimit: {requests: 30, windowSeconds: 60}
+  drivers:
+    kubernetes:
+      workspaceMode: shared
+networkPolicy:
+  enabled: true
+pkiInitJob:
+  serverDnsNames:
+    - showroom-openshell.ai-showroom-sandbox.svc
+    - showroom-openshell.ai-showroom-sandbox.svc.cluster.local
+openshiftRoute:
+  enabled: false

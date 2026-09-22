@@ -87,7 +87,7 @@ python3 scripts/benchmark.py compare \
 
 For round-robin/EPP, use `--kind routing`; the vLLM image digest must also match. Use the same backend pool in separate stages and verify actual backend selection. Do not create two additional eight-GPU pools simultaneously. The script measures existing endpoints; it does not configure a load balancer or rewrite routes.
 
-Under `active-l40s-9`, stop the Qwen4B experiment before allocating both four-GPU nodes to Qwen32B replicas. Keep the original Llama running. Validate single-node TP4 before attempting the two-node experiment.
+The current `active-l40s-11` plan demonstrates Qwen4B on single-GPU hosts and keeps the original Llama running. Qwen32B/TP4 was removed from the live cluster after capacity did not become Ready. An eight-GPU routing comparison requires a separately verified alternative pool plan and actual Ready TP4 replicas; it has not been measured.
 
 ## Cache and Endpoint Picker evidence
 

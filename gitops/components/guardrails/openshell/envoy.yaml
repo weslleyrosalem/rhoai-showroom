@@ -1,0 +1,96 @@
+static_resources:
+  listeners:
+  - name: private-access
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 8443
+    filter_chains:
+    - transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+          common_tls_context:
+            tls_certificates:
+            - certificate_chain:
+                filename: /tls/tls.crt
+              private_key:
+                filename: /tls/tls.key
+            alpn_protocols:
+            - h2
+            - http/1.1
+      filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: openshell_access
+          codec_type: AUTO
+          stream_idle_timeout: 0s
+          route_config:
+            name: gateway
+            virtual_hosts:
+            - name: gateway
+              domains:
+              - '*'
+              routes:
+              - match:
+                  prefix: /
+                route:
+                  cluster: gateway
+                  timeout: 0s
+          http_filters:
+          - name: envoy.filters.http.ext_authz
+            typed_config:
+              '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+              failure_mode_allow: false
+              http_service:
+                server_uri:
+                  uri: http://127.0.0.1:9000
+                  cluster: authorizer
+                  timeout: 5s
+                authorization_request:
+                  allowed_headers:
+                    patterns:
+                    - exact: authorization
+          - name: envoy.filters.http.router
+            typed_config:
+              '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+  clusters:
+  - name: gateway
+    connect_timeout: 5s
+    type: STRICT_DNS
+    load_assignment:
+      cluster_name: gateway
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: showroom-openshell-backend.ai-showroom-sandbox.svc
+                port_value: 8080
+    http2_protocol_options: {}
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        sni: showroom-openshell.ai-showroom-sandbox.svc
+        common_tls_context:
+          validation_context:
+            trusted_ca:
+              filename: /tls/ca.crt
+            match_typed_subject_alt_names:
+            - san_type: DNS
+              matcher:
+                exact: showroom-openshell.ai-showroom-sandbox.svc
+  - name: authorizer
+    connect_timeout: 5s
+    type: STRICT_DNS
+    load_assignment:
+      cluster_name: authorizer
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 127.0.0.1
+                port_value: 9000

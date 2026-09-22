@@ -10,7 +10,10 @@ Run notebooks in order:
 2. `02-rag.ipynb`: retrieval and the real assistant request.
 3. `03-ray.ipynb`: inspect and launch distributed CPU training.
 4. `04-evaluation.ipynb`: inspect providers and run a measured evaluation.
+5. `05-native-autorag.ipynb`: inspect a completed native pattern and run semantic inference.
 
 The notebook controller creates its own service account, `aurora-lab`. Evaluation access is explicitly bound to that account. Administrative setup commands run from the presenter's authenticated terminal, not by granting cluster administration to the notebook.
 
 Acceptance: authenticated access, persisted files after restart, dataset execution, and a real MLflow write.
+
+The base image uses its own Python environment. Re-run each notebook's pinned dependency cell after a workbench restart; the workspace files persist, while packages installed in the container environment do not.

@@ -21,3 +21,7 @@ python3 scripts/science.py ray-submit
 ```
 
 Completed jobs shut down their cluster after the configured grace period. GitOps manages the reusable service components; the presenter triggers training runs explicitly. See the [official Ray memory guidance](https://docs.ray.io/en/latest/ray-core/scheduling/ray-oom-prevention.html).
+
+## Observed execution
+
+On September 22, 2026, RayJob `aurora-demand-train` completed with `SUCCEEDED`. Two distinct worker pods produced eight SKU forecasts. MLflow parent run `36ff7fb1b995454f9c6ff840ce211520` has eight child runs; model version `395399423837` was retrieved from `s3://aurora-artifacts/models/forecast/latest.json` and promoted into the MCP fixture. The forecast origin is December 31, 2025, with a seven-day horizon. These identifiers document this cluster's result; a new run produces new identifiers.

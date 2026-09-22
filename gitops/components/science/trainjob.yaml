@@ -1,0 +1,36 @@
+# Explicit test-drive run: intentionally excluded from continuous reconciliation.
+# Create the source ConfigMap using the commands in docs/labs/trainer.md first.
+apiVersion: trainer.kubeflow.org/v1alpha1
+kind: TrainJob
+metadata:
+  name: aurora-demand-ddp
+  namespace: ai-showroom
+  annotations:
+    openshift.io/display-name: Aurora demand — two-worker CPU training
+    openshift.io/description: PyTorch DDP comparison on historical synthetic demand; no model promotion
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+spec:
+  runtimeRef:
+    name: torch-distributed-cpu
+  trainer:
+    numNodes: 2
+    numProcPerNode: 1
+    command: [torchrun, /workspace/train.py]
+    env:
+      - {name: OMP_NUM_THREADS, value: '1'}
+      - {name: PYTHONUNBUFFERED, value: '1'}
+    resourcesPerNode:
+      requests: {cpu: '1', memory: 2Gi}
+      limits: {cpu: '1', memory: 2Gi}
+  podTemplateOverrides:
+    - targetJobs: [{name: node}]
+      spec:
+        serviceAccountName: aurora-science
+        volumes:
+          - name: source
+            configMap: {name: aurora-trainer-source}
+        containers:
+          - name: node
+            volumeMounts:
+              - {name: source, mountPath: /workspace, readOnly: true}

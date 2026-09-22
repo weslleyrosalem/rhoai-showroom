@@ -11,3 +11,9 @@ The application records retrieval, MCP Gateway calls, and MaaS inference spans a
 Acceptance: real parent/child runs, measured metrics, a downloadable model artifact, and a trace that can be retrieved after the request completes. An experiment appearing in the UI alone does not prove artifact upload succeeded.
 
 [Official MLflow integration documentation](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_mlflow/installing-and-authenticating-mlflow-sdk_mlflow).
+
+## Verified records
+
+The distributed forecast parent run is `36ff7fb1b995454f9c6ff840ce211520`; its eight child runs and S3 model artifact were verified. Assistant trace `tr-79086e46512f7aae798803c5c358d0f0` was retrieved with `aurora_replenishment`, `retrieve_tfidf`, `mcp_gateway_tools`, and `maas_inference` spans and saved output. These are real records from the September 22, 2026 validation.
+
+Native pipeline automatic tracking emitted a missing nested run-ID warning. The documented `native-export` helper logs the real S3 artifact index and measured metrics explicitly. EvalHub's `eval-export` helper similarly preserves the actual evaluation result; neither workaround is presented as a fix to the automatic integration.

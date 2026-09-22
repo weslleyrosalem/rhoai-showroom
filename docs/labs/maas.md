@@ -11,7 +11,7 @@ Aurora Supply uses a common model API. The platform decides who may call it and 
 | `showroom-visitors` | Initially empty; controlled test-drive access |
 | `showroom-model-access` | Authorizes the three groups for the curated model |
 | `showroom-test-drive` | 100 tokens/minute, priority 15, three groups |
-| `showroom-standard` | 20,000 tokens/hour, priority 20, administrators and scientists |
+| `showroom-standard` | 200,000 tokens/hour, priority 20, administrators and scientists |
 
 MaaS objects live in `models-as-a-service`. The portable profile references `ai-showroom/aurora-qwen-4b`. `gitops/profiles/existing-cluster` references the existing Llama in `maas-how-to`, preserving its model, `subplus`, and its AuthPolicy.
 
@@ -71,7 +71,7 @@ New model: `publishers/ai-showroom/models/aurora-qwen-4b`. Shared backend: `publ
 
 `ai-showroom/showroom-maas-key` holds `api-key`, `base-url` ending in `/v1`, and `model-id`. The reference installation's key belongs explicitly to `showroom-standard`. The installed API accepted a 24-hour expiration and rejected 168 hours. Renew before a demonstration; inspect the Secret's expiration annotation without reading its data.
 
-Qwen models have separate subscriptions, including `aurora-qwen-4b-interactive` and `aurora-qwen-32b-benchmark`. Deploying them does not switch the RAG application's key or model automatically.
+The optional public Qwen base manifests define separate subscriptions, including `aurora-qwen-4b-interactive` and `aurora-qwen-32b-benchmark`. In the current reference deployment, Qwen4B is a private native-auth routing benchmark and its MaaS resources were removed; the unready Qwen32B deployment and MaaS resources were also removed. Neither appears as a reachable MaaS model. The RAG application continues using its existing Llama key and model.
 
 The helper validates cluster identity, an Active subscription, and the associated model. By default it shows a plan; add `--apply` to issue a 24-hour key and configure the Secret without printing credentials:
 

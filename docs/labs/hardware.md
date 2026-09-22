@@ -2,21 +2,24 @@
 
 The showroom has a fixed ceiling of **16 physical GPUs total**, including existing pools, pending machines, and upgrade overlap. Kubernetes quotas, MIG devices, and time-slicing replicas count logical resources; they do not replace infrastructure accounting.
 
-## Active plan: active-l40s-9
+## Active plan: active-l40s-11
 
-The ROSA plan preserves `aiml-node` and adds `showroom-l40s4`. The preset name describes one preserved GPU plus up to eight new GPUs; the full ceiling also includes autoscaling on the existing pool.
+The current reference plan preserves `aiml-node`, adds a smaller single-GPU pool, and leaves the four-GPU pool optional at minimum zero. The profile name describes the conservative physical maximum including surge.
 
 | Pool | Instance type | Minimum / maximum nodes | GPUs/node | Surge nodes | Physical maximum including surge |
 |---|---|---|---|---|---|
 | aiml-node | g6e.4xlarge | 1 / 3 | 1 | 1 | 4 |
-| showroom-l40s4 | g6e.12xlarge | 1 / 2 | 4 | 1 | 12 |
-| workers | m8i.2xlarge | 1 / 4 | 0 | No GPU impact | 0 |
+| showroom-l40s1 | g6e.2xlarge | 1 / 2 | 1 | 1 | 3 |
+| showroom-l40s4 | g6e.12xlarge | 0 / 1 | 4 | 0 | 4 |
+| workers | m8i.2xlarge | 1 / 5 | 0 | No GPU impact | 0 |
 
-**3 + 8 + 1 + 4 = 16 physical GPUs**, with at most 11 outside upgrade overlap. Recalculate before increasing a maximum or adding a GPU pool. The new pool requires IMDSv2, `showroom.openshift.ai/gpu-pool=true`, `nvidia.com/gpu.product=NVIDIA-L40S`, and the taint `nvidia.com/gpu=true:NoSchedule`.
+**(3 + 1) + (2 + 1) + (1 × 4) = 11 physical GPUs**, with at most nine outside upgrade overlap. The user limit remains 16. Recalculate before increasing any maximum or adding a pool. Both new L40S pools use `showroom.openshift.ai/gpu-pool=true`, `nvidia.com/gpu.product=NVIDIA-L40S`, and `nvidia.com/gpu=true:NoSchedule`.
 
-The minimum was raised from 0 to 1 for initial warmup because the autoscaler recognized the pool but did not initiate scale-from-zero. Returning to 0 is an explicit cloud operation after verifying that behavior; this guide does not assume it happened.
+A new `g6e.2xlarge` node became Ready during the September 22 rehearsal; Qwen4B subsequently became Ready and returned successful authenticated responses. It now uses a dedicated private Gateway for a reproducible llm-d request path. Its two-replica overlay requires distinct `g6e.2xlarge` hosts; the second host remains a runtime acceptance item until observed Ready. Node readiness alone does not prove model readiness.
 
-The first stage runs Qwen4B/TP1 and one Qwen32B/TP4 replica while preserving Llama. Before comparing two Qwen32B replicas on two four-GPU nodes, stop Qwen4B. GPU workloads remain outside default automatic Argo synchronization until the capacity guard passes.
+The optional pending Qwen32B/TP4 workload and its dedicated MaaS references were removed from the live cluster after the four-GPU warmup failed to register a node. Its source remains available for a later capacity-verified run. The smaller pool cannot satisfy a four-GPU request. No TP4 or multi-node performance result was recorded. GPU workloads remain outside automatic Argo synchronization.
+
+The older `active-l40s-9` plan remains a historical alternative, not the current reference deployment. Do not use it to recreate the live pool settings.
 
 ## Alternative plans
 
@@ -27,7 +30,7 @@ The first stage runs Qwen4B/TP1 and one Qwen32B/TP4 replica while preserving Lla
 | Full L40S13 | Existing GPU + three four-L40S nodes = 13 | Does not fit the active pool maxima and surge policies |
 | MIG9 | Existing GPU + eight A100 GPUs = 9 | Alternative after removing/reducing incompatible pools |
 | MIG13 | Existing GPU + eight A100 + four L40S = 13 | Also requires an upgrade-overlap review |
-| MIG H100 single | Active pools plus one H100 | Planned option below; requires a verified change to the new L40S pool's surge policy |
+| MIG H100 single | Active pools plus one H100 | Planned option below; conservative maximum 13 with the current pool settings |
 
 These plans are not additive. Full13 plus one four-GPU surge node reaches 17. An eight-GPU A100 node with one surge node plus the existing L40S also exceeds 16. Do not invent a zero-surge value to make a plan pass.
 
@@ -60,10 +63,10 @@ Private inventory format — illustrative values, not evidence:
 }
 ```
 
-Include CPU pools with `gpus_per_node: 0`. Unknown GPU types require a verified mapping, not a CPU declaration. Unmapped AWS g*/p* GPU families are rejected even before their device plugin publishes GPU labels. Set `complete: true` only after inspecting every cloud API page or OCM pool. If current/desired counts are unavailable, use `count_semantics: "upper-bound"` and conservatively set them to verified pool maxima. Record the source and actual observation time; never refresh a timestamp without observing state. Zero surge requires a verified maintenance policy.
+Include CPU pools with `gpus_per_node: 0`. Unknown GPU types require a verified mapping, not a CPU declaration. Unmapped AWS g*/p* GPU families are rejected even before their device plugin publishes GPU labels. Set `complete: true` only after a bounded, authorized inspection of every pool. Do not add ROSA/OCM polling: the user prohibits frequent cloud control-plane requests in this environment. Reuse recorded evidence for read-only discussion; if it is stale, the guard must block new capacity changes until the cloud owner supplies a fresh authorized observation. If current/desired counts are unavailable, use `count_semantics: "upper-bound"` and conservatively set them to verified pool maxima. Record the source and actual observation time; never refresh a timestamp without observing state. Zero surge requires a verified maintenance policy.
 
 ```bash
-python3 scripts/capacity.py --profile active-l40s-9 \
+python3 scripts/capacity.py --profile active-l40s-11 \
   --expected-server "$EXPECTED_OPENSHIFT_SERVER" \
   --inventory /private/directory/rosa-inventory.json \
   --output /private/directory/capacity-result.json
@@ -81,7 +84,7 @@ Host RAM and VRAM are separate. Creating a hardware profile does not create a no
 
 ## Dedicated H100 MIG option
 
-The `mig-h100-single` plan proposes `showroom-h100-mig`, one `p5.4xlarge` node, maximum 1 and surge 1. It requires the **owned** L40S pool to have an observed surge 0/maxUnavailable 1 maintenance policy. The preserved pool remains unchanged. The resulting bound is **3 + 8 + 1 + 1 + 1 = 14**. With the current L40S surge 1, the guard calculates 18 and blocks this addition. A plan file cannot override the live inventory's higher surge value.
+The `mig-h100-single` plan proposes `showroom-h100-mig`, one `p5.4xlarge` node, maximum 1 and surge 1. With the current `active-l40s-11` pool settings, its conservative bound is **11 + 1 + 1 = 13**. This is a capacity plan, not proof that an H100 is available or provisioned. The guard preserves every existing pool and uses the higher of planned versus observed maxima and surge; it cannot make a larger live plan disappear.
 
 The inspected GPU Operator 26.7.0 already has MIG Manager enabled and strategy `single`. Keep that strategy for the first H100 experiment. On a dedicated, empty H100 node, the `all-1g.10gb` configuration creates seven equal slices. Single strategy advertises them as `nvidia.com/gpu`; the hardware profile must identify each request as a slice. Mixed strategy uses resource names such as `nvidia.com/mig-1g.10gb` and needs a separate operator configuration review. [NVIDIA MIG profiles](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-mig-profiles.html), [OpenShift MIG strategies](https://docs.nvidia.com/datacenter/cloud-native/openshift/26.3/mig-ocp.html).
 

@@ -1,0 +1,147 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: showroom-openshell-access
+  namespace: ai-showroom-sandbox
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: showroom-openshell-access
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: showroom-openshell-access
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: showroom-openshell-access
+subjects:
+- kind: ServiceAccount
+  name: showroom-openshell-access
+  namespace: ai-showroom-sandbox
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: showroom-openshell-backend
+  namespace: ai-showroom-sandbox
+spec:
+  selector:
+    app.kubernetes.io/instance: showroom-openshell
+    app.kubernetes.io/name: openshell
+  ports:
+  - name: grpc
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: showroom-openshell-access
+  namespace: ai-showroom-sandbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: showroom-openshell-access
+  template:
+    metadata:
+      labels:
+        app: showroom-openshell-access
+    spec:
+      serviceAccountName: showroom-openshell-access
+      containers:
+      - name: envoy
+        image: registry.redhat.io/openshift-service-mesh/istio-proxyv2-rhel9@sha256:bc34f81266d8b0d2f5a8e71e966098d4edef70ac8dbb077a014a27fe1b71ec0a
+        command:
+        - /usr/local/bin/envoy
+        args:
+        - -c
+        - /config/envoy.yaml
+        - --log-level
+        - warning
+        - --concurrency
+        - '1'
+        ports:
+        - name: grpc
+          containerPort: 8443
+        securityContext: &id001
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+        resources:
+          requests:
+            cpu: 50m
+            memory: 96Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        readinessProbe:
+          tcpSocket:
+            port: 8443
+        volumeMounts:
+        - name: config
+          mountPath: /config
+          readOnly: true
+        - name: tls
+          mountPath: /tls
+          readOnly: true
+      - name: authorizer
+        image: registry.access.redhat.com/ubi9/python-312@sha256:ff373f4b42b662e99954adea770ca87b4ea963186cc752174ccb94aa08fa702d
+        command:
+        - python
+        - /config/authz.py
+        securityContext: *id001
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 128Mi
+        volumeMounts:
+        - name: config
+          mountPath: /config
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: showroom-openshell-access
+      - name: tls
+        secret:
+          secretName: openshell-server-tls
+          defaultMode: 288
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-openshell-access
+  namespace: ai-showroom-sandbox
+spec:
+  podSelector:
+    matchLabels:
+      app: showroom-openshell-access
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchExpressions:
+        - key: agents.x-k8s.io/sandbox-name-hash
+          operator: Exists
+    ports:
+    - protocol: TCP
+      port: 8443

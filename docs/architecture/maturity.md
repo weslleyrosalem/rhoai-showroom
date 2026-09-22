@@ -16,7 +16,7 @@ Product maturity and test results are separate dimensions. This table identifies
 | Inline Playground tracing | Technology Preview | MLflow application traces and Tempo inference traces are different flows |
 | Saved Playground agents | Developer Preview | Requires a working configuration and clear maturity labeling |
 | EvalHub MCP and UI comparisons | Technology Preview | Verify the backend and UI independently |
-| OpenShell | Developer Preview in RHOAI 3.5; upstream Helm chart is experimental | Runtime lab pending; no production or completed-isolation claim |
+| OpenShell | Developer Preview in RHOAI 3.5; upstream Helm chart is experimental | Private runtime tested: subject authorization, filesystem/process/network controls, verified MaaS inference; unlimited PID cgroup remains a limitation |
 | MIG | NVIDIA infrastructure feature | Unsupported on L40S; requires compatible A100/H100 hardware |
 | External frontier models | Separate provider integration and contract | No local GPU, but provider credentials and budget are required |
 

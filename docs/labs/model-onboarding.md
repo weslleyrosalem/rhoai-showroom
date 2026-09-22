@@ -1,6 +1,6 @@
 # Model onboarding: from candidate to governed service
 
-**Status:** the curated catalog is available. Registry onboarding and the complete promotion rehearsal are being validated. Candidate registration does not mean a model has passed evaluation or is approved for customer use.
+**Status:** the curated catalog and native registry candidate onboarding are verified. GPU deployment and the complete promotion rehearsal remain separate validation gates. Candidate registration does not mean a model has passed evaluation or is approved for customer use.
 
 Use the Aurora replenishment assistant as the acceptance scenario. Start with `Qwen/Qwen3-4B-Instruct-2507`, pinned to the revision in `gitops/components/models/models.lock.json`. Its initial role is a candidate alternative to the existing demonstration model.
 
@@ -41,3 +41,37 @@ A failed or incomplete candidate stays available for analysis without replacing 
 The catalog supports discovery and comparison; the model registry holds versioned metadata for the model lifecycle. Follow the [OpenShift AI 3.5 registry overview](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_model_registries/overview-of-model-registries_working-model-registry) and [catalog workflow](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.5/html/working_with_the_model_catalog/index).
 
 Continue with [model catalog](model-catalog.md), [evaluations](evaluation.md), [red teaming](red-teaming.md), [benchmarking](benchmark.md), and [MaaS](maas.md).
+
+
+## Rehearse the verified native registration
+
+Open **Settings → Model resources and operations → Model registry settings** and select **Aurora Supply Model Registry** (`aurora-registry`, namespace `rhoai-model-registries`). The cluster-scoped `default-modelregistry` resource is the enabled component; it is not the namespaced registry instance.
+
+The September 22, 2026 rehearsal registered these linked native records:
+
+| Record | Name | Registry-local ID |
+|---|---|---|
+| Registered model | Aurora Supply - Qwen3-4B | 1 |
+| Model version | instruct-2507-cdbee75f | 2 |
+| Model artifact | aurora-qwen-4b-cdbee75f | 1 |
+
+The artifact location is `hf://Qwen/Qwen3-4B-Instruct-2507:cdbee75f17c01a7cc42f958dc650907174af0554`. Version metadata includes the runtime image digest, Apache 2.0 license, catalog source, hardware profile, and deployment manifest. Its lifecycle is `candidate`; runtime, safety, and performance validation are `NOT_RUN`. IDs are local to this registry and can differ on a fresh installation.
+
+Run the read-only onboarding plan from the repository root. Replace the guarded server and identity with values that you have intentionally selected.
+
+```bash
+oc get modelregistries.modelregistry.opendatahub.io -A
+python3 gitops/components/models/register_model.py \
+  --expected-server https://api.YOUR-CLUSTER:443 \
+  --expected-user YOUR-ADMIN
+```
+
+On a fresh cluster, create the dedicated instance using the [registry prerequisites and manifests](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/components/models/registry/README.md). After reviewing the helper plan, repeat the command with `--apply` to create absent metadata records. On the current showroom, the repeated apply preserved all three IDs. It did not duplicate the version, reset lifecycle evidence, download weights, or start a GPU deployment.
+
+For a test drive, open the version's properties and ask the visitor to find the immutable weight revision, hardware target, and three missing validation gates. Then run the helper without `--apply` and explain the `preserved` actions. A second candidate can be prepared by copying the [candidate example](https://github.com/weslleyrosalem/rhoai-showroom/blob/main/gitops/components/models/registry/qwen-4b-candidate.json) with unique names and verified pins. Registering it is an explicit write; it still does not promote it.
+
+The registry is protected by kube-rbac-proxy with verified TLS. The generated registry role is granted to showroom platform administrators and data scientists. Visitors are not granted editing access. The demo PostgreSQL database has a Bound 5Gi persistent volume. Preserve the registry and its database during resets; the generated database is intended for nonproduction use.
+
+The access rehearsal returned **401** without a token, **403** for an unbound short-lived ServiceAccount token, and **200** for the same identity after granting the generated registry role. Separate SubjectAccessReviews confirmed the data scientist group grant and visitor denial. This tests group authorization and equivalent-role API access; it does not claim a separate human login was exercised. The temporary ServiceAccount and binding were deleted after the test. Allow for the authorization cache to expire when testing a newly granted role.
+
+A direct TCP connection from the RAG pod to the registry pod's REST port 8080 timed out while the authenticated Route's port 443 remained reachable. The backend cannot be used from that application pod to bypass the registry proxy. This is a scoped network test, not a claim about cluster-administrator port forwarding or every possible source namespace.

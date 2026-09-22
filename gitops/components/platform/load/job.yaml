@@ -1,0 +1,123 @@
+{
+  "apiVersion": "batch/v1",
+  "kind": "Job",
+  "metadata": {
+    "name": "showroom-guidellm-20260922",
+    "namespace": "ai-showroom",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "app.kubernetes.io/component": "guidellm-load"
+    }
+  },
+  "spec": {
+    "backoffLimit": 0,
+    "activeDeadlineSeconds": 125557,
+    "template": {
+      "metadata": {
+        "labels": {
+          "app.kubernetes.io/part-of": "rhoai-showroom",
+          "app.kubernetes.io/component": "guidellm-load",
+          "app": "showroom-guidellm"
+        }
+      },
+      "spec": {
+        "serviceAccountName": "showroom-guidellm",
+        "automountServiceAccountToken": false,
+        "restartPolicy": "Never",
+        "terminationGracePeriodSeconds": 15,
+        "securityContext": {
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        },
+        "containers": [
+          {
+            "name": "load",
+            "image": "ghcr.io/vllm-project/guidellm@sha256:15372f9f3f407366495470706b7a07f64addcce5d134a49cab64149b44ab1233",
+            "command": [
+              "python",
+              "/opt/showroom/runner.py"
+            ],
+            "env": [
+              {
+                "name": "STOP_AT",
+                "value": "2026-09-23T15:59:00Z"
+              },
+              {
+                "name": "DEMO_START",
+                "value": "2026-09-22T12:00:00Z"
+              },
+              {
+                "name": "DEMO_END",
+                "value": "2026-09-22T15:00:00Z"
+              },
+              {
+                "name": "HOME",
+                "value": "/tmp"
+              },
+              {
+                "name": "HF_HOME",
+                "value": "/tmp/huggingface"
+              }
+            ],
+            "resources": {
+              "requests": {
+                "cpu": "250m",
+                "memory": "512Mi"
+              },
+              "limits": {
+                "cpu": "1",
+                "memory": "2Gi"
+              }
+            },
+            "securityContext": {
+              "allowPrivilegeEscalation": false,
+              "capabilities": {
+                "drop": [
+                  "ALL"
+                ]
+              }
+            },
+            "volumeMounts": [
+              {
+                "name": "runner",
+                "mountPath": "/opt/showroom",
+                "readOnly": true
+              },
+              {
+                "name": "credentials",
+                "mountPath": "/credentials",
+                "readOnly": true
+              },
+              {
+                "name": "results",
+                "mountPath": "/results"
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "runner",
+            "configMap": {
+              "name": "showroom-guidellm-runner"
+            }
+          },
+          {
+            "name": "credentials",
+            "secret": {
+              "secretName": "showroom-guidellm-key"
+            }
+          },
+          {
+            "name": "results",
+            "persistentVolumeClaim": {
+              "claimName": "showroom-guidellm-results"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

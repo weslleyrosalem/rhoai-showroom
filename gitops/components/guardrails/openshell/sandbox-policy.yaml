@@ -1,0 +1,30 @@
+version: 1
+filesystem_policy:
+  include_workdir: true
+  read_only:
+    - /usr
+    - /lib
+    - /etc/ssl
+    - /etc/openshell-tls/ca-bundle.pem
+    - /etc/openshell-tls/openshell-ca.pem
+    - /etc/profile
+    - /etc/profile.d
+    - /etc/bash.bashrc
+    - /etc/resolv.conf
+    - /etc/hosts
+    - /etc/passwd
+    - /etc/group
+    - /etc/nsswitch.conf
+    - /etc/localtime
+    - /proc/self
+    - /dev/urandom
+  read_write:
+    - /sandbox
+    - /tmp
+    - /dev/null
+landlock:
+  compatibility: hard_requirement
+process:
+  run_as_user: sandbox
+  run_as_group: sandbox
+network_policies: {}

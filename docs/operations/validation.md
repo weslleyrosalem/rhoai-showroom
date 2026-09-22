@@ -5,24 +5,31 @@ Validation started on **September 22, 2026 UTC**. This record separates actual f
 | Area | Observed evidence | Status |
 |---|---|---|
 | Namespace and storage | ai-showroom, quota, RBAC, and S3 storage are available | Deployed |
-| MLflow | Available; migration succeeded; server 3.14.0; experiment metrics recorded | Functional services; integrated flows under test |
+| MLflow | Available; training/evaluation artifacts exported; real application trace fetched with span data | Integrated persistence passed |
 | Tempo | Ready, persistent storage, 168-hour retention | Service ready; workload spans need verification |
-| GitOps | Operator services Running; application created | Reconciliation paused while validated fixes are consolidated |
+| GitOps | Synced/Healthy after native feature integration; cosmetic namespace drift restored within a 32-second observation window | Reconciliation and self-heal passed |
+| GuideLLM | Actual pilot: seven successful requests, zero errors; persisted reports; interactive control HTTP200 in 1.102s during load | Sustained run active, deadline September 23 at 15:59 UTC |
 | MaaS | Anonymous 401; standard 200; limited subscription 200→429; recovery 200 | Functional test passed |
 | NeMo | Valid inputs/outputs allowed; synthetic email/secret/override blocked | Direct checks passed |
-| MCP and IPP | Internal SDK calls and allow/deny tests passed; fail-closed behavior verified | Public-route protocol issue and catalog/lifecycle rehearsal in progress |
+| MCP and IPP | Public SDK tools; 14 auth/input cases; unsafe output 403; checker outage 503; private bypass denials | Functional security gates passed |
+| MCP catalog and lifecycle | Catalog source visible; native MCPServer handshake; isolated lifecycle protocol and denial tests | Functional gates passed |
+| Aurora web app | Authenticated English response, sources, tools, live model, Ray forecast, MLflow trace; synthetic email blocked | Public test drive passed |
 | Workbench, DSPA, Playground | Services Running; native pipeline runs submitted | Individual services ready; complete journeys under test |
+| Native Trainer | Two CPU workers on distinct hosts; complete job, resource/pod/log tabs inspected; holdout MAE0.82070 vs baseline1.33036 | Distributed training and native Jobs UI passed |
+| Feature Store | Feast0.65 Ready; eight-SKU materialization; authenticated200 and anonymous401 | Runtime passed; native UI review in progress |
+| Prompt registry | Version1 @baseline and Version2 @demo visible with actual templates | Native version details passed; application runtime prompt remains separate |
 | Ray | Succeeded with two distinct workers; eight forecast models published to MLflow and S3 | Distributed training passed |
-| GPU models | Four-L40S node pool configured, at most 2 nodes; first node requested | Node registration, startup, and benchmarks pending |
-| AutoML | Native managed pipeline succeeded; selected SeasonalNaive_FULL and published 23 S3 artifacts | Pipeline passed; automatic task tracking investigated separately |
-| AutoRAG | First native pipeline succeeded with 24 S3 artifacts; English corpus rerun submitted | Initial execution passed; English quality review pending |
-| EvalHub/Garak | A real quick evaluation completed; one probe, attack_success_rate 1, benchmark pass=false | Evaluation executed; safety did not pass this baseline |
-| Model onboarding/scoring | Catalog available; candidate registry workflow being rehearsed | Complete promotion gate pending |
-| MIG/OpenShell/NeMoClaw | Prerequisites and deployment options researched | Not yet validated |
+| GPU models | Two Qwen4B replicas Ready on distinct hosts; 8/8 authorized requests, EPP +8, backend successful counts +2/+6; anonymous401 | Two-node routing and backend use passed; comparative efficiency not measured |
+| AutoML | Native module, completed run, full training DAG and model leaderboard visible; Three models compared; SeasonalNaive_FULL signed MAE−0.571, RecursiveTabular_FULL−0.651, WeightedEnsemble_FULL−0.675 | Native three-model results UI passed |
+| AutoRAG | Native module enabled; real DAG and four-pattern leaderboard visible; Pattern3 correctness0.8129 | Native results UI passed; real semantic query passed before and after restart |
+| EvalHub/Garak | A real quick evaluation completed; one probe, attack_success_rate 1, benchmark pass=false | Completed marker test; meaningful security assessment under review |
+| Model onboarding/scoring | Native registry Available; pinned candidate created once; repeated apply stable; authenticated and unauthorized tests passed | Registration passed; candidate safety/performance approval pending |
+| OpenShell | Exact-subject authentication, denied alternate identity, network boundaries, agent filesystem restrictions, denied external egress, real MaaS inference | Private administrator-led preview passed the documented gates |
+| MIG / NeMoClaw | Prerequisites and pinned deployment options researched | Not yet validated |
 
-The active cloud plan has a conservative ceiling of 16 physical GPUs, including existing pool maxima and upgrade surge. This does not mean 16 GPUs run continuously or that every profile can be combined.
+The active cloud configuration has a conservative maximum of 11 physical GPUs, including every pool maximum and upgrade surge. The user-authorized hard ceiling is 16. These are allocation bounds, not the number of GPUs running continuously, and optional profiles cannot be combined without recalculating them.
 
-The Garak quick run is a small baseline check, not a security certification. The aggregate evaluation status and per-benchmark result disagreed; use the per-benchmark result. The complete result JSON was explicitly exported through the MLflow SDK and confirmed in S3. Automatic report delivery is being checked separately from recorded metrics.
+The original Garak quick run used a DAN marker detector with one example. A matched marker is not sufficient evidence of harmful behavior; its result is being replaced by a better documented assessment with retained responses. The UI percentage is the attack-success metric, not a safety score. The aggregate evaluation status and per-benchmark result disagreed; use the per-benchmark result. The complete result JSON was explicitly exported through the MLflow SDK and confirmed in S3. Automatic report delivery is being checked separately from recorded metrics.
 
 ## Journey acceptance criteria
 

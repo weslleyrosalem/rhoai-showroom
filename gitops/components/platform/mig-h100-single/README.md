@@ -2,7 +2,7 @@
 
 This opt-in hardware profile is disabled. It does not patch ClusterPolicy, create a machinepool, configure device geometry, or change the existing Llama.
 
-The proposed pool `showroom-h100-mig` uses `p5.4xlarge`: one H100 with 80GB HBM3. Require a fresh `mig-h100-single` capacity PASS before creating capacity. The active L40S pool's current surge policy would make that plan exceed 16; the cloud owner must first verify the proposed maintenance-policy change.
+The proposed pool `showroom-h100-mig` uses `p5.4xlarge`: one H100 with 80GB HBM3. Require a fresh `mig-h100-single` capacity PASS before creating capacity. The current active-l40s-11 plan plus one H100 and its surge totals 13 physical GPUs. This does not establish cloud availability or authorize a new pool; require the cloud owner's bounded verification before changing capacity.
 
 Use a new, empty H100 node with a dedicated `showroom.openshift.ai/mig=true:NoSchedule` taint and `showroom.openshift.ai/mig-pool=true` label. Confirm `mig.capable=true`. GPU Operator already uses `single`, so a homogeneous `all-1g.10gb` configuration does not require changing the global strategy. Inspect the node's generated MIG configuration, then apply geometry only to that node through an authorized maintenance step.
 

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "profile": "active-l40s-11",
+  "physical_gpu_limit": 16,
+  "mode": "active-existing-cluster",
+  "description": "Current conservative maximum 11 physical GPUs including preserved pool, new single-GPU pool, optional four-GPU pool, and surge. The optional TP4 workload is not deployed.",
+  "pools": [
+    {
+      "id": "aiml-node",
+      "instance_type": "g6e.4xlarge",
+      "min_nodes": 1,
+      "max_nodes": 3,
+      "upgrade_surge_nodes": 1
+    },
+    {
+      "id": "showroom-l40s1",
+      "instance_type": "g6e.2xlarge",
+      "min_nodes": 1,
+      "max_nodes": 2,
+      "upgrade_surge_nodes": 1
+    },
+    {
+      "id": "showroom-l40s4",
+      "instance_type": "g6e.12xlarge",
+      "min_nodes": 0,
+      "max_nodes": 1,
+      "upgrade_surge_nodes": 0
+    }
+  ],
+  "required_free_gpus": 1,
+  "validated_runtime": false
+}

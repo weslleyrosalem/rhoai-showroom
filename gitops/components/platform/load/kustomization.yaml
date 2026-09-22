@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- resources.yaml
+- job.yaml
+configMapGenerator:
+- name: showroom-guidellm-runner
+  namespace: ai-showroom
+  files:
+  - runner.py
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: guidellm-load

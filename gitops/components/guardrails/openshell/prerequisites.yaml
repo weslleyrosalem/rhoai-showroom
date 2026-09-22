@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai-showroom-sandbox
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: showroom-openshell-client
+  namespace: ai-showroom-sandbox
+automountServiceAccountToken: false
+---
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: showroom-openshell-sandbox
+allowPrivilegedContainer: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostIPC: false
+allowHostPorts: false
+allowHostDirVolumePlugin: false
+allowPrivilegeEscalation: true
+allowedCapabilities:
+- SYS_ADMIN
+- NET_ADMIN
+- SYS_PTRACE
+- SYSLOG
+defaultAddCapabilities: []
+requiredDropCapabilities: []
+readOnlyRootFilesystem: false
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: MustRunAs
+fsGroup:
+  type: MustRunAs
+supplementalGroups:
+  type: RunAsAny
+seccompProfiles:
+- runtime/default
+volumes:
+- configMap
+- downwardAPI
+- emptyDir
+- persistentVolumeClaim
+- projected
+- secret
+- image
+users: []
+groups: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: showroom-openshell-scc
+  namespace: ai-showroom-sandbox
+rules:
+- apiGroups:
+  - security.openshift.io
+  resources:
+  - securitycontextconstraints
+  resourceNames:
+  - showroom-openshell-sandbox
+  verbs:
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-openshell-scc
+  namespace: ai-showroom-sandbox
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: showroom-openshell-scc
+subjects:
+- kind: ServiceAccount
+  name: showroom-openshell-sandbox
+  namespace: ai-showroom-sandbox
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-openshell-gateway-private
+  namespace: ai-showroom-sandbox
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: showroom-openshell
+      app.kubernetes.io/name: openshell
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: showroom-openshell-access
+    ports:
+    - protocol: TCP
+      port: 8080

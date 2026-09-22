@@ -2,7 +2,7 @@
 
 Aurora Supply wants its assistant to use policies, inventory, and forecasts without making every team operate infrastructure. The visitor acts as a platform engineer: curate models, offer a governed API, and measure the results.
 
-The reference installation uses OpenShift AI **3.5.1**. The curated catalog and MaaS controls have passed real tests: three Qwen models are available; missing credentials return 401; authorized requests return 200; the short quota produces 429 and recovers after its window. GPU benchmarks, MIG, and large models have separate acceptance gates. Check the [validation record](../operations/validation.md) before presenting them.
+The reference installation uses OpenShift AI **3.5.1**. The curated catalog and MaaS controls have passed real tests: three Qwen models are discoverable in the curated catalog; missing credentials return 401; authorized requests return 200; the short quota produces 429 and recovers after its window. GPU benchmarks, MIG, and large models have separate acceptance gates. Check the [validation record](../operations/validation.md) before presenting them.
 
 ## Three visit formats
 
@@ -16,18 +16,32 @@ The reference installation uses OpenShift AI **3.5.1**. The curated catalog and 
 
 1. **0–3 minutes: show the connected experience.** Open `ai-showroom`. The same Aurora workflow connects RAG policies, MCP inventory, demand forecasts, and an assistant. Explain the project boundary and shared platform services.
 2. **3–6 minutes: curate.** Open the Qwen source in Model Catalog. Let the visitor select an included model, read its license, and inspect the hardware profile. A catalog entry does not guarantee available GPUs.
-3. **6–10 minutes: take a test drive.** Ask an inventory question in Playground. Show the model, subscription, and metrics. The existing-cluster experience reuses the Llama in `maas-how-to`; the optional new GPU experience uses `aurora-qwen-4b` after runtime acceptance.
+3. **6–10 minutes: take a test drive.** Ask an inventory question in Playground. Show the model, subscription, and metrics. The existing-cluster experience reuses the Llama in `maas-how-to`; the separate private inference rehearsal uses the Ready `aurora-qwen-4b` deployment through native Kubernetes authentication, without advertising it as a public MaaS endpoint.
 4. **10–14 minutes: govern consumption.** Use keys issued explicitly for `showroom-test-drive` and `showroom-standard`. Show 401 without a key, 200 when authorized, 429 after the short quota, the standard subscription still working, and recovery after the window. Keep keys off-screen.
 5. **14–18 minutes: operate.** Relate the request to token, latency, and GPU metrics. Distinguish the current request from a previously recorded experiment. Application traces and infrastructure metrics answer different questions.
 6. **18–20 minutes: use GitOps.** Show a small diff and the reconciled resource. Explain the catalog's concurrency-protected merge and environment-owned credentials.
 
 ## Extend to 45 minutes
 
-- **5 minutes:** select another catalog model and inspect an already warmed deployment.
-- **8 minutes:** open measured Transformers/vLLM results with the same GPU, model, precision, and load. Inspect errors, TTFT, and tokens/second.
-- **7 minutes:** repeat prefixes across two replicas and confirm actual Endpoint Picker activity. Compare round-robin and llm-d using the same eight GPUs.
-- **3 minutes:** distinguish TP4 on one node, two TP4 replicas on separate nodes, and one model partitioned across nodes. The last case requires its own experiment.
-- **2 minutes:** explain capacity, autoscaling, and MIG. L40S does not support MIG; H100 and A100 use separate hardware plans.
+- **5 minutes:** inspect Qwen4B's pinned catalog source, native registry candidate, and the Ready private deployment. These are different lifecycle states.
+- **8 minutes:** open actual GuideLLM reports from the shared Llama endpoint. Explain successful/error counts, client timing, requested versus achieved rate, and the protected customer window. This is measured traffic, not a Transformers/vLLM comparison.
+- **7 minutes:** send a request through the isolated Qwen Gateway and observe the real Endpoint Picker counter increase. Require two Ready backends on distinct hosts before demonstrating placement across replicas. The shared MaaS load uses its working standard path. A matching model header reached Llama EPP in isolated calls but failed repeated streaming qualification, so it is not the sustained demonstration path.
+- **3 minutes:** repeat a controlled prefix and inspect local cache hits. Distinguish local prefix reuse from cross-node KV transfer; only the former has recorded evidence.
+- **2 minutes:** review the current 11-GPU infrastructure maximum including surge and the user ceiling of 16. Explain autoscaling and the separate H100/A100 MIG plans; no MIG execution claim is made.
+
+A fair Transformers/vLLM engine benchmark and an eight-GPU routing comparison are future extensions until their raw results and identical configurations are measured. Do not substitute a Llama8B/Qwen4B comparison. Larger TP4 topologies remain source examples with explicit capacity gates. Use the [inference](../demos/inference.md) and [MaaS](../demos/maas.md) cue sheets for the currently demonstrated path.
+
+## Connect each screen to a customer decision
+
+| Screen | Aurora Supply decision | Visitor action and interpretation |
+|---|---|---|
+| Model Catalog | Which model should the assistant team investigate? | Open the curated Qwen source, select 4B, inspect license and revision; compare 32B's memory needs without claiming it is deployed. |
+| Model Registry | Has this exact model passed the acceptance process? | Open `Aurora Supply - Qwen3-4B` and its pinned candidate version. Candidate status is intentional; serving success and a catalog listing are not safety approval. Failed or incomplete evaluations must remain visible. |
+| Models / deployments | Which endpoint is actually serving this interaction? | Follow the existing Llama for Aurora application traffic, and private Qwen for the isolated inference experiment. Inspect readiness, replica count, and actual requests. |
+| Hardware profiles | Where would this workload fit? | Match Qwen4B to one L40S per replica. Treat the four-GPU profile as a prepared option requiring Ready four-GPU capacity; do not launch it during the customer visit. |
+| MaaS / API keys | How do platform and visitor consumption differ? | Select the subscription explicitly. Compare the visitor's short quota with the standard application budget and the separately identifiable GuideLLM load. Never display key material. |
+| Playground | Can the assistant use current inventory and policy together? | Ask for a replenishment recommendation for `AUR-001`; inspect the tool's exact SKU, forecast provenance, and required approval. No purchase is executed. |
+| Observability | Is the platform processing real work? | Correlate the request window with successful requests, errors, token counts, GPU utilization, and endpoint-picker/cache counters. Do not equate pod readiness or a counter increase with model quality. |
 
 ## Product maturity and laboratory scope
 
