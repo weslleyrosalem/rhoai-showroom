@@ -2248,8 +2248,8 @@
 </tr>
 <tr>
 <td>GuideLLM</td>
-<td>At 07:19 UTC: latest completed block: 60 successes, 0 errors, 0 incomplete requests; persisted reports; prior interactive control HTTP 200 in 1.102 s during load</td>
-<td>Sustained run active, deadline September 23 at 15:59 UTC</td>
+<td>At 10:44 UTC: 36 persisted reports; latest completed block: 60 successes, 0 errors, 0 incomplete requests; earlier qualification failures remain in the full history</td>
+<td>Sustained run active; reduced load September 22, 12:00–15:00 UTC; absolute deadline September 23 at 15:59 UTC</td>
 </tr>
 <tr>
 <td>MaaS</td>
@@ -2312,6 +2312,11 @@
 <td>Two-node routing passed; matched same-GPU engine comparison passed (48/48 requests); no causal distributed-routing efficiency claim</td>
 </tr>
 <tr>
+<td>Private Qwen gateway</td>
+<td>At 10:44 UTC: inherited autoscaler aligned with one fixed gateway replica; original serving pod and pod template preserved; anonymous401, two authorized200 responses in 0.484s and 0.417s</td>
+<td>Access checks passed after the configuration fix; single CPU gateway is not highly available</td>
+</tr>
+<tr>
 <td>AutoML</td>
 <td>Native module, completed run, full training DAG and model leaderboard visible; Three models compared; SeasonalNaive_FULL signed MAE−0.571, RecursiveTabular_FULL−0.651, WeightedEnsemble_FULL−0.675</td>
 <td>Native three-model results UI passed</td>
@@ -2349,6 +2354,7 @@
 </tbody>
 </table>
 <p>The active cloud configuration has a conservative maximum of 11 physical GPUs, including every pool maximum and upgrade surge. The user-authorized hard ceiling is 16. These are allocation bounds, not the number of GPUs running continuously, and optional profiles cannot be combined without recalculating them.</p>
+<p>The private Qwen gateway previously alternated between one and two desired replicas: its local Deployment override conflicted with the inherited autoscaler's minimum. The profile now sets both autoscaler bounds to one through its per-Gateway ConfigMap. This keeps the existing demo topology and does not change GPU capacity or shared gateway defaults. This optional profile was applied separately; the core Argo application's healthy status is not evidence that it reconciles this ConfigMap. See the <a href="https://github.com/weslleyrosalem/rhoai-showroom/tree/main/gitops/components/models/qwen-4b-private">private inference profile</a> for the reproducible configuration.</p>
 <p>The original Garak quick run used a one-example DAN marker detector. A marker alone does not establish harmful behavior. The final <a href="../../labs/owasp-evaluations/">matched OWASP pair</a> has complete per-response evidence and explicit matching thresholds: lower ASR is better; a zero-hit benchmark gate corresponds to an overall transformed score threshold of 1.0. Both final results fail consistently. The current deterministic NeMo regex rules do not improve the selected 33-response corpus. This is a four-probe subset mapped to the 2025 taxonomy, with separate controls and untested gaps for all ten risks; it is not full OWASP coverage. Report JSONL and HTML were explicitly uploaded through the workspace-aware MLflow SDK, then downloaded and SHA256-verified.</p>
 <h2 id="journey-acceptance-criteria">Journey acceptance criteria<a class="headerlink" href="#journey-acceptance-criteria" title="Permanent link">&para;</a></h2>
 <p><strong>Security:</strong> authenticated initialize/tools-list/tools-call; anonymous and unauthorized identities denied; allowed and blocked inputs; observable decisions. Direct NeMo checks and MCP IPP enforcement are separate tests. Backend traces currently identify a shared service account, not an individual visitor.</p>
