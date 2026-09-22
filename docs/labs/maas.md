@@ -31,6 +31,8 @@ On a new cluster, use `interactive` after the GPU preflight. `core` installs pla
 
 ## Test drive
 
+For the application view, open `09-maas-api.ipynb` in the [Aurora Workbench](workbench.md). Enter the approved inference endpoint and exact model ID, then supply the key through its masked prompt. Run the single-request path first; the optional quota probe is off by default.
+
 1. In the dashboard, create short-lived keys, selecting each subscription **explicitly**. `aiadmin` may also belong to the higher-priority `subplus`; automatic selection would invalidate the small-quota experiment.
 2. Store keys in a secret manager or session environment variables. Keep them out of shell history, documents, and screenshots.
 3. Make a request without credentials and confirm denial.

@@ -3,7 +3,8 @@
   "kind": "Kustomization",
   "resources": [
     "../qwen-4b",
-    "gateway.yaml"
+    "gateway.yaml",
+    "workbench-access.yaml"
   ],
   "patches": [
     {

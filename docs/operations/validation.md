@@ -15,6 +15,7 @@ Validation started on **September 22, 2026 UTC**. This record separates actual f
 | MCP and IPP | Public SDK tools; 14 auth/input cases; unsafe output 403; checker outage 503; private bypass denials | Functional security gates passed |
 | MCP catalog and lifecycle | Catalog source visible; native MCPServer handshake; isolated lifecycle protocol and denial tests | Functional gates passed |
 | Aurora web app | Authenticated English response, sources, tools, live model, Ray forecast, MLflow trace; synthetic email blocked | Functional flow passed; a later factual prose error is preserved in the human-review queue, with the deterministic proposal still correct |
+| Workbench inference and MaaS notebooks | September 22, 13:38–13:40 UTC: configurable 07 passed its test and six-request loop; real GuideLLM 08 completed 3/3 with no errors or incomplete requests; MaaS 09 discovery and one chat returned 200 with 156 provider-reported tokens | All three executed in the persistent Aurora Inference Demo kernel. GuideLLM observed 0.802 s mean latency and 40.46 ms client streaming TTFT across three requests; functional observation, not capacity or causal llm-d evidence |
 | Workbench and DSPA | Running; actual distributed jobs and native optimization pipeline results inspected | Individual notebook and pipeline paths passed |
 | Native Playground | Qwen chat; returns policy with clickable citation; unsupported facts rejected; actual MCP stock and proposal results | Browser test drive passed; temporary scoped MCP credential expires September 22 at 17:57 UTC |
 | Native Trainer | Two CPU workers on distinct hosts; complete job, resource/pod/log tabs inspected; holdout MAE0.82070 vs baseline1.33036 | Distributed training and native Jobs UI passed |
@@ -31,7 +32,7 @@ Validation started on **September 22, 2026 UTC**. This record separates actual f
 | Predictive TrustyAI | Native Project Settings shows installed; actual OVMS capture; baseline SPD0/DIR1, promotion SPD−0.30/DIR0.6667; demand drift measured | Functional metrics and native SPD/DIR chart history passed |
 | MIG / NeMoClaw | Prerequisites and pinned deployment options researched | Not yet validated |
 
-The active cloud configuration has a conservative maximum of 11 physical GPUs, including every pool maximum and upgrade surge. The user-authorized hard ceiling is 16. These are allocation bounds, not the number of GPUs running continuously, and optional profiles cannot be combined without recalculating them.
+The earlier capacity plan had a conservative maximum of 11 physical GPUs, including pool maxima and upgrade surge. The user is revising capacity through Red Hat OCM; that earlier bound is not a verification of the current pool settings. The authorized hard ceiling remains 16 physical GPUs. Recalculate every pool maximum plus surge before further changes. A registered Ready node must also advertise allocatable GPUs before it counts as available inference capacity.
 
 The private Qwen gateway previously alternated between one and two desired replicas: its local Deployment override conflicted with the inherited autoscaler's minimum. The profile now sets both autoscaler bounds to one through its per-Gateway ConfigMap. This keeps the existing demo topology and does not change GPU capacity or shared gateway defaults. This optional profile was applied separately; the core Argo application's healthy status is not evidence that it reconciles this ConfigMap. See the [private inference profile](https://github.com/weslleyrosalem/rhoai-showroom/tree/main/gitops/components/models/qwen-4b-private) for the reproducible configuration.
 
@@ -58,3 +59,9 @@ python scripts/showroom.py status --expected-server "$SHOWROOM_SERVER"
 ```
 
 MCP tests require their own dependencies, documented in the Aurora Tools README. Sanitize cluster evidence before publishing. Credentials, private hostnames, and customer data do not belong in this public guide.
+
+## Notebook rehearsal and extended presentation window
+
+The three [Workbench notebooks](../labs/workbench.md) have editable endpoint/model settings, explicit authentication boundaries, and bounded requests. The MaaS key was supplied through the real Jupyter password-input channel; no key was written into notebook source or output. Its optional quota exercise remained disabled. The supplied synthetic approval answer identified the required Operations manager; successful transport alone is not a general model-quality verdict. The idempotent kernel setup also passed on the persistent Workbench without downloading packages or starting inference.
+
+For the revised September 22 presentation, the sustained load's persistent rate cap is **0.05 requests/second through at least 12:30 p.m. Eastern**. The original runner retains concurrency 1 until 11:00 a.m. and a ceiling of 2 afterward; only the offered-rate cap was changed, without restarting the Job. The scheduled readiness check restores the prior cap after 12:30 p.m., preserving any later user change. The absolute September 23, 11:59 a.m. Eastern stop remains unchanged.
