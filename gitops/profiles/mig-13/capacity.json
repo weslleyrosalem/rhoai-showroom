@@ -1,0 +1,23 @@
+{
+  "pools": [
+    {
+      "id": "showroom-a100-eight",
+      "instance_type": "p4d.24xlarge",
+      "max_nodes": 1,
+      "upgrade_surge_nodes": 0
+    },
+    {
+      "id": "showroom-l40s-four",
+      "instance_type": "g6e.12xlarge",
+      "max_nodes": 1,
+      "upgrade_surge_nodes": 0
+    }
+  ],
+  "required_free_gpus": 12,
+  "schema_version": 1,
+  "profile": "mig-13",
+  "physical_gpu_limit": 16,
+  "existing_gpu_assumption": 1,
+  "mode": "mutually-exclusive",
+  "validated_runtime": false
+}

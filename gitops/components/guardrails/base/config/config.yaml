@@ -1,0 +1,24 @@
+# Deterministic CPU demo rails. These exact patterns are not a universal
+# prompt-injection or PII detector and make no model call.
+colang_version: '1.0'
+rails:
+  config:
+    regex_detection:
+      input:
+        patterns:
+          - '[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}'
+          - '\b\d{3}\.\d{3}\.\d{3}-\d{2}\b'
+          - '\bDEMO_SECRET_[A-Z0-9_]+\b'
+          - 'ignore\s+(all\s+)?previous\s+instructions'
+          - 'ignore\s+(todas\s+)?(as\s+)?instru[cç][oõ]es\s+anteriores'
+        case_insensitive: true
+      output:
+        patterns:
+          - '[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}'
+          - '\b\d{3}\.\d{3}\.\d{3}-\d{2}\b'
+          - '\bDEMO_SECRET_[A-Z0-9_]+\b'
+        case_insensitive: true
+  input:
+    flows: [regex check input]
+  output:
+    flows: [regex check output]

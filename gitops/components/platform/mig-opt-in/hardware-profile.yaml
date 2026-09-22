@@ -1,0 +1,42 @@
+apiVersion: infrastructure.opendatahub.io/v1
+kind: HardwareProfile
+metadata:
+  name: showroom-a100-mig-1g5gb
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+  annotations:
+    opendatahub.io/display-name: "Showroom A100 MIG · 1g.5gb"
+    opendatahub.io/disabled: "true"
+    opendatahub.io/description: "Enable only after A100 40GB mixed-strategy MIG allocation is verified. Not compatible with L40S or A100 80GB geometry."
+spec:
+  identifiers:
+  - identifier: cpu
+    displayName: CPU
+    resourceType: CPU
+    minCount: 1
+    defaultCount: 2
+    maxCount: 4
+  - identifier: memory
+    displayName: Memory
+    resourceType: Memory
+    minCount: 4Gi
+    defaultCount: 8Gi
+    maxCount: 16Gi
+  - identifier: nvidia.com/mig-1g.5gb
+    displayName: A100 MIG 1g.5gb
+    resourceType: Accelerator
+    minCount: 1
+    defaultCount: 1
+    maxCount: 1
+  scheduling:
+    type: Node
+    node:
+      nodeSelector:
+        nvidia.com/mig.capable: "true"
+        showroom.openshift.ai/gpu-pool: "true"
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Equal
+        value: "true"
+        effect: NoSchedule

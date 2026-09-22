@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    opendatahub.io/dashboard: 'true'
+    argocd.argoproj.io/managed-by: openshift-gitops
+  annotations:
+    openshift.io/display-name: AI Showroom
+    openshift.io/description: Aurora Supply — integrated AI demonstrations with synthetic data
+    argocd.argoproj.io/sync-options: Prune=false

@@ -1,0 +1,14 @@
+{
+  "apiVersion": "user.openshift.io/v1",
+  "kind": "Group",
+  "metadata": {
+    "name": "showroom-platform-admins",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "app.kubernetes.io/managed-by": "gitops"
+    }
+  },
+  "users": [
+    "aiadmin"
+  ]
+}

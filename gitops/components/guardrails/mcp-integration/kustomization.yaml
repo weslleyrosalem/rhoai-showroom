@@ -1,0 +1,20 @@
+# OPTIONAL: requires actual IPP plugins, trusted TLS, correct Envoy ordering,
+# and an end-to-end deny test. This overlay alone does not provide enforcement.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
+patches:
+  - target:
+      group: trustyai.opendatahub.io
+      version: v1alpha1
+      kind: NemoGuardrails
+      name: showroom-rails
+    patch: |-
+      - op: add
+        path: /spec/template
+        value:
+          pod:
+            mcpGateway:
+              name: showroom-mcp
+              namespace: ai-showroom

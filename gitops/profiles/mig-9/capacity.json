@@ -1,0 +1,17 @@
+{
+  "pools": [
+    {
+      "id": "showroom-a100-eight",
+      "instance_type": "p4d.24xlarge",
+      "max_nodes": 1,
+      "upgrade_surge_nodes": 0
+    }
+  ],
+  "required_free_gpus": 8,
+  "schema_version": 1,
+  "profile": "mig-9",
+  "physical_gpu_limit": 16,
+  "existing_gpu_assumption": 1,
+  "mode": "mutually-exclusive",
+  "validated_runtime": false
+}

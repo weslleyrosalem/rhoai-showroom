@@ -1,0 +1,225 @@
+# PIPELINE DEFINITION
+# Name: aurora-demand-lifecycle
+# Description: Synthetic demand → measured training → quality gate
+# Inputs:
+#    source_ref: str [Default: 'main']
+components:
+  comp-prepare-data:
+    executorLabel: exec-prepare-data
+    inputDefinitions:
+      parameters:
+        source_ref:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        demand:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+  comp-quality-gate:
+    executorLabel: exec-quality-gate
+    inputDefinitions:
+      artifacts:
+        model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+    outputDefinitions:
+      artifacts:
+        approved:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+  comp-train-model:
+    executorLabel: exec-train-model
+    inputDefinitions:
+      artifacts:
+        demand:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        source_ref:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+deploymentSpec:
+  executors:
+    exec-prepare-data:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - prepare_data
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.15.2'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
+          $0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef prepare_data(source_ref: str, demand: Output[Dataset]):\n   \
+          \ import importlib.util\n    import pathlib\n    import tempfile\n    import\
+          \ urllib.request\n    import shutil\n    path = pathlib.Path(tempfile.mkdtemp())\n\
+          \    code = path / \"science.py\"\n    urllib.request.urlretrieve(\"https://raw.githubusercontent.com/weslleyrosalem/rhoai-showroom/\"\
+          \ + source_ref + \"/scripts/science.py\", code)\n    spec = importlib.util.spec_from_file_location(\"\
+          science\", code)\n    module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)\n\
+          \    module.generate(path / \"data\")\n    shutil.copyfile(path / \"data/demand.csv\"\
+          , demand.path)\n    demand.metadata[\"license\"] = \"CC0-1.0\"\n    demand.metadata[\"\
+          synthetic\"] = True\n    demand.metadata[\"seed\"] = 351\n\n"
+        image: registry.redhat.io/rhoai/odh-pipeline-runtime-minimal-cpu-py312-rhel9@sha256:b65cee70b3abfa45f0e8ed4763f5c55fb48b75410184065b95b429b2b0a4717f
+    exec-quality-gate:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - quality_gate
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.15.2'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
+          $0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef quality_gate(model: Input[Model], approved: Output[Model]):\n\
+          \    import json\n    import pathlib\n    import math\n    import shutil\n\
+          \    result = json.loads(pathlib.Path(model.path).read_text())\n    for\
+          \ prediction in result[\"forecasts\"]:\n        if not prediction[\"passed_quality_gate\"\
+          ] or not math.isfinite(prediction[\"mae\"]):\n            raise ValueError(\"\
+          Quality gate rejected model\")\n    shutil.copyfile(model.path, approved.path)\n\
+          \    approved.metadata[\"version\"] = result[\"model_version\"]\n    approved.metadata[\"\
+          approved\"] = True\n\n"
+        image: registry.redhat.io/rhoai/odh-pipeline-runtime-minimal-cpu-py312-rhel9@sha256:b65cee70b3abfa45f0e8ed4763f5c55fb48b75410184065b95b429b2b0a4717f
+    exec-train-model:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.15.2'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
+          $0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(source_ref: str, demand: Input[Dataset], model: Output[Model],\
+          \ metrics: Output[Metrics]):\n    import importlib.util\n    import pathlib\n\
+          \    import tempfile\n    import urllib.request\n    import json\n    code\
+          \ = pathlib.Path(tempfile.mkdtemp()) / \"science.py\"\n    urllib.request.urlretrieve(\"\
+          https://raw.githubusercontent.com/weslleyrosalem/rhoai-showroom/\" + source_ref\
+          \ + \"/scripts/science.py\", code)\n    spec = importlib.util.spec_from_file_location(\"\
+          science\", code)\n    module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)\n\
+          \    rows = module.read_rows(demand.path)\n    models = [module.train_sku(rows,\
+          \ p[\"sku\"]) for p in module.PRODUCTS]\n    result = module.bundle(models,\
+          \ rows)\n    pathlib.Path(model.path).write_text(json.dumps(result))\n \
+          \   metrics.log_metric(\"mean_mae\", sum(m[\"mae\"] for m in models) / len(models))\n\
+          \    metrics.log_metric(\"mean_baseline_mae\", sum(m[\"baseline_mae\"] for\
+          \ m in models) / len(models))\n    model.metadata[\"version\"] = result[\"\
+          model_version\"]\n\n"
+        image: registry.redhat.io/rhoai/odh-pipeline-runtime-minimal-cpu-py312-rhel9@sha256:b65cee70b3abfa45f0e8ed4763f5c55fb48b75410184065b95b429b2b0a4717f
+pipelineInfo:
+  description: "Synthetic demand \u2192 measured training \u2192 quality gate"
+  name: aurora-demand-lifecycle
+root:
+  dag:
+    tasks:
+      prepare-data:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-prepare-data
+        inputs:
+          parameters:
+            source_ref:
+              componentInputParameter: source_ref
+        taskInfo:
+          name: prepare-data
+      quality-gate:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-quality-gate
+        dependentTasks:
+        - train-model
+        inputs:
+          artifacts:
+            model:
+              taskOutputArtifact:
+                outputArtifactKey: model
+                producerTask: train-model
+        taskInfo:
+          name: quality-gate
+      train-model:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-model
+        dependentTasks:
+        - prepare-data
+        inputs:
+          artifacts:
+            demand:
+              taskOutputArtifact:
+                outputArtifactKey: demand
+                producerTask: prepare-data
+          parameters:
+            source_ref:
+              componentInputParameter: source_ref
+        taskInfo:
+          name: train-model
+  inputDefinitions:
+    parameters:
+      source_ref:
+        defaultValue: main
+        isOptional: true
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.15.2

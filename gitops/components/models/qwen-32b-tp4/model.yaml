@@ -1,0 +1,78 @@
+{
+  "apiVersion": "serving.kserve.io/v1alpha2",
+  "kind": "LLMInferenceService",
+  "metadata": {
+    "name": "aurora-qwen-32b",
+    "namespace": "ai-showroom-bench",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "opendatahub.io/dashboard": "true"
+    },
+    "annotations": {
+      "opendatahub.io/display-name": "aurora-qwen-32b",
+      "showroom.openshift.ai/model-revision": "9216db5781bf21249d130ec9da846c4624c16137",
+      "showroom.openshift.ai/license": "apache-2.0",
+      "showroom.openshift.ai/validation": "manifest-only-until-runtime-acceptance"
+    }
+  },
+  "spec": {
+    "model": {
+      "name": "aurora-qwen-32b",
+      "uri": "hf://Qwen/Qwen3-32B:9216db5781bf21249d130ec9da846c4624c16137"
+    },
+    "replicas": 1,
+    "parallelism": {
+      "tensor": 4
+    },
+    "router": {
+      "gateway": {
+        "refs": [
+          {
+            "name": "maas-default-gateway",
+            "namespace": "openshift-ingress"
+          }
+        ]
+      },
+      "route": {},
+      "scheduler": {}
+    },
+    "template": {
+      "nodeSelector": {
+        "nvidia.com/gpu.product": "NVIDIA-L40S",
+        "showroom.openshift.ai/gpu-pool": "true"
+      },
+      "tolerations": [
+        {
+          "key": "nvidia.com/gpu",
+          "operator": "Equal",
+          "value": "true",
+          "effect": "NoSchedule"
+        }
+      ],
+      "containers": [
+        {
+          "name": "main",
+          "image": "registry.redhat.io/rhaii/vllm-cuda-rhel9@sha256:c056e61672b6aea489ad5dde0bd2f8497230f5333e87f7cf6c494eba3bfdc808",
+          "env": [
+            {
+              "name": "VLLM_ADDITIONAL_ARGS",
+              "value": "--dtype bfloat16 --max-model-len 8192 --max-num-seqs 8 --gpu-memory-utilization 0.85 --enable-prefix-caching"
+            }
+          ],
+          "resources": {
+            "requests": {
+              "cpu": "12",
+              "memory": "128Gi",
+              "nvidia.com/gpu": "4"
+            },
+            "limits": {
+              "cpu": "12",
+              "memory": "128Gi",
+              "nvidia.com/gpu": "4"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

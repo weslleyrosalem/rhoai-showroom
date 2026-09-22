@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ai-showroom
+resources:
+  - nemo.yaml
+configMapGenerator:
+  - name: showroom-safety
+    files:
+      - config.yaml=config/config.yaml
+      - rails.co=config/rails.co
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom

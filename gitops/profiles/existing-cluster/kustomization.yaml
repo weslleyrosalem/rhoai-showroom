@@ -1,0 +1,36 @@
+{
+  "apiVersion": "kustomize.config.k8s.io/v1beta1",
+  "kind": "Kustomization",
+  "resources": [
+    "../core"
+  ],
+  "patches": [
+    {
+      "target": {
+        "group": "maas.opendatahub.io",
+        "version": "v1alpha1",
+        "kind": "MaaSAuthPolicy",
+        "name": "showroom-model-access"
+      },
+      "patch": "[{\"op\": \"replace\", \"path\": \"/spec/modelRefs/0/name\", \"value\": \"redhataillama-31-8b-instruct\"}, {\"op\": \"replace\", \"path\": \"/spec/modelRefs/0/namespace\", \"value\": \"maas-how-to\"}]"
+    },
+    {
+      "target": {
+        "group": "maas.opendatahub.io",
+        "version": "v1alpha1",
+        "kind": "MaaSSubscription",
+        "name": "showroom-test-drive"
+      },
+      "patch": "[{\"op\": \"replace\", \"path\": \"/spec/modelRefs/0/name\", \"value\": \"redhataillama-31-8b-instruct\"}, {\"op\": \"replace\", \"path\": \"/spec/modelRefs/0/namespace\", \"value\": \"maas-how-to\"}]"
+    },
+    {
+      "target": {
+        "group": "maas.opendatahub.io",
+        "version": "v1alpha1",
+        "kind": "MaaSSubscription",
+        "name": "showroom-standard"
+      },
+      "patch": "[{\"op\": \"replace\", \"path\": \"/spec/modelRefs/0/name\", \"value\": \"redhataillama-31-8b-instruct\"}, {\"op\": \"replace\", \"path\": \"/spec/modelRefs/0/namespace\", \"value\": \"maas-how-to\"}]"
+    }
+  ]
+}

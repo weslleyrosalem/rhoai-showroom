@@ -1,0 +1,22 @@
+apiVersion: datasciencepipelinesapplications.opendatahub.io/v1
+kind: DataSciencePipelinesApplication
+metadata:
+  name: showroom-pipelines
+  namespace: ai-showroom
+spec:
+  apiServer:
+    managedPipelines: {}
+  mlflow:
+    integrationMode: AUTODETECT
+    injectUserEnvVars: true
+  objectStorage:
+    externalStorage:
+      host: showroom-s3.ai-showroom.svc.cluster.local
+      port: '8333'
+      scheme: http
+      bucket: aurora-artifacts
+      region: us-east-1
+      s3CredentialsSecret:
+        secretName: showroom-s3-credentials
+        accessKey: AWS_ACCESS_KEY_ID
+        secretKey: AWS_SECRET_ACCESS_KEY

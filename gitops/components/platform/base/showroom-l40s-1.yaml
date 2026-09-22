@@ -1,0 +1,62 @@
+{
+  "apiVersion": "infrastructure.opendatahub.io/v1",
+  "kind": "HardwareProfile",
+  "metadata": {
+    "name": "showroom-l40s-1",
+    "namespace": "ai-showroom",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "app.kubernetes.io/managed-by": "gitops"
+    },
+    "annotations": {
+      "opendatahub.io/display-name": "Showroom L40S \u00b7 1 GPU / 48 GB",
+      "opendatahub.io/disabled": "false",
+      "opendatahub.io/description": "Host RAM is separate from GPU VRAM. This profile does not provision GPU nodes."
+    }
+  },
+  "spec": {
+    "identifiers": [
+      {
+        "identifier": "cpu",
+        "displayName": "CPU",
+        "resourceType": "CPU",
+        "minCount": 4,
+        "defaultCount": 4,
+        "maxCount": 8
+      },
+      {
+        "identifier": "memory",
+        "displayName": "Memory",
+        "resourceType": "Memory",
+        "minCount": "24Gi",
+        "defaultCount": "24Gi",
+        "maxCount": "64Gi"
+      },
+      {
+        "identifier": "nvidia.com/gpu",
+        "displayName": "NVIDIA L40S",
+        "resourceType": "Accelerator",
+        "minCount": 1,
+        "defaultCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "scheduling": {
+      "type": "Node",
+      "node": {
+        "nodeSelector": {
+          "nvidia.com/gpu.product": "NVIDIA-L40S",
+          "showroom.openshift.ai/gpu-pool": "true"
+        },
+        "tolerations": [
+          {
+            "key": "nvidia.com/gpu",
+            "operator": "Equal",
+            "value": "true",
+            "effect": "NoSchedule"
+          }
+        ]
+      }
+    }
+  }
+}

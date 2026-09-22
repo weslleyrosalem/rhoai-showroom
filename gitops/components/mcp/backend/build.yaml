@@ -1,0 +1,28 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: aurora-tools
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: aurora-tools
+spec:
+  runPolicy: Serial
+  source:
+    type: Binary
+    binary: {}
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: Containerfile
+  output:
+    to:
+      kind: ImageStreamTag
+      name: aurora-tools:1.0.0
+  resources:
+    requests: {cpu: 200m, memory: 256Mi}
+    limits: {cpu: '1', memory: 1Gi}
+  successfulBuildsHistoryLimit: 2
+  failedBuildsHistoryLimit: 2
+  triggers: []

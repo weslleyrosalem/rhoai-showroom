@@ -1,0 +1,15 @@
+{
+  "name": "Aurora Supply \u00b7 Qwen curated",
+  "id": "showroom-qwen",
+  "type": "hf",
+  "enabled": true,
+  "properties": {
+    "allowedOrganization": "Qwen"
+  },
+  "includedModels": [
+    "Qwen3-4B-Instruct-2507",
+    "Qwen3-0.6B",
+    "Qwen3-32B"
+  ],
+  "excludedModels": []
+}

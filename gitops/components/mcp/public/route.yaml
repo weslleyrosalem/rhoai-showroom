@@ -1,0 +1,13 @@
+# Apply only after AuthPolicy Enforced=True and authentication acceptance tests.
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: showroom-mcp
+  annotations:
+    argocd.argoproj.io/sync-wave: '40'
+spec:
+  to: {kind: Service, name: showroom-mcp-istio}
+  port: {targetPort: 8080}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

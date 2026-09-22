@@ -1,0 +1,40 @@
+{
+  "apiVersion": "maas.opendatahub.io/v1alpha1",
+  "kind": "MaaSSubscription",
+  "metadata": {
+    "name": "showroom-test-drive",
+    "namespace": "models-as-a-service",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "app.kubernetes.io/managed-by": "gitops"
+    }
+  },
+  "spec": {
+    "owner": {
+      "groups": [
+        {
+          "name": "showroom-platform-admins"
+        },
+        {
+          "name": "showroom-data-scientists"
+        },
+        {
+          "name": "showroom-visitors"
+        }
+      ]
+    },
+    "priority": 15,
+    "modelRefs": [
+      {
+        "name": "aurora-qwen-4b",
+        "namespace": "ai-showroom",
+        "tokenRateLimits": [
+          {
+            "limit": 100,
+            "window": "1m"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: showroom-budget
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+spec:
+  hard:
+    requests.cpu: '160'
+    requests.memory: 768Gi
+    requests.nvidia.com/gpu: '15'
+    persistentvolumeclaims: '20'
+    requests.storage: 600Gi
+    pods: '100'
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: showroom-defaults
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+spec:
+  limits:
+    - type: Container
+      defaultRequest:
+        cpu: 100m
+        memory: 256Mi
+      default:
+        cpu: '2'
+        memory: 4Gi

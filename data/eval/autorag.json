@@ -1,0 +1,110 @@
+[
+  {
+    "question": "Qual é o estoque alvo?",
+    "correct_answers": [
+      "21 dias"
+    ],
+    "correct_answer_document_ids": [
+      "inventory-playbook.md"
+    ]
+  },
+  {
+    "question": "Qual cobertura gera alerta?",
+    "correct_answers": [
+      "inferior a sete dias"
+    ],
+    "correct_answer_document_ids": [
+      "inventory-playbook.md"
+    ]
+  },
+  {
+    "question": "Uma proposta de 6000 precisa de aprovação de quem?",
+    "correct_answers": [
+      "gerente de operações"
+    ],
+    "correct_answer_document_ids": [
+      "purchasing-policy.md"
+    ]
+  },
+  {
+    "question": "Uma proposta de 4000 precisa de aprovação?",
+    "correct_answers": [
+      "Sim, do comprador responsável"
+    ],
+    "correct_answer_document_ids": [
+      "purchasing-policy.md"
+    ]
+  },
+  {
+    "question": "O assistente pode comprar automaticamente?",
+    "correct_answers": [
+      "Não, só consultar e preparar propostas"
+    ],
+    "correct_answer_document_ids": [
+      "purchasing-policy.md"
+    ]
+  },
+  {
+    "question": "Qual é o prazo de devolução?",
+    "correct_answers": [
+      "30 dias corridos após recebimento"
+    ],
+    "correct_answer_document_ids": [
+      "returns-policy.md"
+    ]
+  },
+  {
+    "question": "Devolução exige comprovante?",
+    "correct_answers": [
+      "Sim, comprovante e inspeção"
+    ],
+    "correct_answer_document_ids": [
+      "returns-policy.md"
+    ]
+  },
+  {
+    "question": "Qual o preço de AS-001?",
+    "correct_answers": [
+      "42.00 unidades monetárias"
+    ],
+    "correct_answer_document_ids": [
+      "catalog.md"
+    ]
+  },
+  {
+    "question": "Qual o prazo do fornecedor de AS-007?",
+    "correct_answers": [
+      "14 dias"
+    ],
+    "correct_answer_document_ids": [
+      "catalog.md"
+    ]
+  },
+  {
+    "question": "O que fazer se não existe previsão para o SKU?",
+    "correct_answers": [
+      "Informar a ausência, não inventar valores"
+    ],
+    "correct_answer_document_ids": [
+      "inventory-playbook.md"
+    ]
+  },
+  {
+    "question": "Como transformar demanda de sete dias em alvo de estoque?",
+    "correct_answers": [
+      "Multiplicar por três para estimar 21 dias"
+    ],
+    "correct_answer_document_ids": [
+      "purchasing-policy.md"
+    ]
+  },
+  {
+    "question": "Quais dados identificam uma proposta?",
+    "correct_answers": [
+      "SKU, quantidade, preço unitário, justificativa, previsão e versão do modelo"
+    ],
+    "correct_answer_document_ids": [
+      "purchasing-policy.md"
+    ]
+  }
+]

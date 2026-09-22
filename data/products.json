@@ -1,0 +1,74 @@
+[
+  {
+    "sku": "AS-001",
+    "name": "Filtro hidráulico H20",
+    "category": "Filtros",
+    "stock": 45,
+    "reorder_point": 80,
+    "unit_price": 42.0,
+    "lead_time_days": 5
+  },
+  {
+    "sku": "AS-002",
+    "name": "Sensor de pressão P10",
+    "category": "Sensores",
+    "stock": 120,
+    "reorder_point": 35,
+    "unit_price": 125.0,
+    "lead_time_days": 7
+  },
+  {
+    "sku": "AS-003",
+    "name": "Válvula de controle V30",
+    "category": "Válvulas",
+    "stock": 18,
+    "reorder_point": 30,
+    "unit_price": 210.0,
+    "lead_time_days": 10
+  },
+  {
+    "sku": "AS-004",
+    "name": "Mangueira industrial M15",
+    "category": "Mangueiras",
+    "stock": 240,
+    "reorder_point": 70,
+    "unit_price": 32.0,
+    "lead_time_days": 4
+  },
+  {
+    "sku": "AS-005",
+    "name": "Vedação circular O25",
+    "category": "Vedações",
+    "stock": 75,
+    "reorder_point": 100,
+    "unit_price": 8.5,
+    "lead_time_days": 3
+  },
+  {
+    "sku": "AS-006",
+    "name": "Conector rápido C40",
+    "category": "Conectores",
+    "stock": 90,
+    "reorder_point": 50,
+    "unit_price": 18.0,
+    "lead_time_days": 6
+  },
+  {
+    "sku": "AS-007",
+    "name": "Bomba compacta B50",
+    "category": "Bombas",
+    "stock": 8,
+    "reorder_point": 12,
+    "unit_price": 650.0,
+    "lead_time_days": 14
+  },
+  {
+    "sku": "AS-008",
+    "name": "Medidor de vazão F60",
+    "category": "Medidores",
+    "stock": 35,
+    "reorder_point": 15,
+    "unit_price": 290.0,
+    "lead_time_days": 8
+  }
+]

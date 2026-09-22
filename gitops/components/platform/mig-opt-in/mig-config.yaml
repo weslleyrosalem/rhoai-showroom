@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: showroom-mig-config
+  namespace: nvidia-gpu-operator
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+data:
+  config.yaml: |
+    version: v1
+    mig-configs:
+      showroom-a100-40gb-one-gpu:
+        - devices: [0]
+          mig-enabled: true
+          mig-devices:
+            "1g.5gb": 7
+        - devices: [1, 2, 3, 4, 5, 6, 7]
+          mig-enabled: false

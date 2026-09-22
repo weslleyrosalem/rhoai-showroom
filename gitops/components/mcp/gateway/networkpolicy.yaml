@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-mcp-listeners
+spec:
+  podSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: showroom-mcp
+  policyTypes: [Ingress]
+  ingress:
+    # This listener requires an authenticated, authorized identity via AuthPolicy.
+    - ports:
+        - {protocol: TCP, port: 8080}
+    # Internal hairpin traffic from broker or gateway only.
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: mcp-gateway
+              app.kubernetes.io/managed-by: mcp-gateway-controller
+        - podSelector:
+            matchLabels:
+              gateway.networking.k8s.io/gateway-name: showroom-mcp
+      ports:
+        - {protocol: TCP, port: 8081}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-mcp-broker
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: mcp-gateway
+      app.kubernetes.io/managed-by: mcp-gateway-controller
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              gateway.networking.k8s.io/gateway-name: showroom-mcp
+      ports:
+        - {protocol: TCP, port: 8080}
+        - {protocol: TCP, port: 50051}
+    # Gateway 0.7.1 controller polls broker discovery status from its namespace.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-operators
+          podSelector:
+            matchLabels:
+              app: mcp-controller
+              component: controller
+      ports:
+        - {protocol: TCP, port: 8080}

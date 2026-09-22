@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: showroom-visitor
+  namespace: ai-showroom
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: showroom-engineer
+  namespace: ai-showroom
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-visitors
+  namespace: ai-showroom
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: showroom-visitors
+  - kind: ServiceAccount
+    name: showroom-visitor
+    namespace: ai-showroom
+roleRef:
+  kind: ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+  name: view
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-data-scientists
+  namespace: ai-showroom
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: showroom-data-scientists
+  - kind: ServiceAccount
+    name: showroom-engineer
+    namespace: ai-showroom
+roleRef:
+  kind: ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+  name: edit
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: showroom-platform-admins
+  namespace: ai-showroom
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: showroom-platform-admins
+roleRef:
+  kind: ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+  name: admin

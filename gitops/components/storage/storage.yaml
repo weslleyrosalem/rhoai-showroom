@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: showroom-s3
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: showroom-s3
+  namespace: ai-showroom
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: {app: showroom-s3}
+  template:
+    metadata:
+      labels: {app: showroom-s3, app.kubernetes.io/part-of: rhoai-showroom}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: s3
+          image: docker.io/chrislusf/seaweedfs@sha256:f83509b0721dfd8e2e07faf76c0a899f67a8a889c89abe2fa0a5227ba1320362
+          command: [weed]
+          args: [mini, -dir=/data, -ip=127.0.0.1, -ip.bind=0.0.0.0, -webdav=false, -admin.ui=false, -master.volumeSizeLimitMB=1024]
+          envFrom:
+            - secretRef: {name: showroom-s3-credentials}
+          env:
+            - {name: S3_BUCKET, value: 'aurora-data,aurora-artifacts,aurora-traces'}
+            - {name: HOME, value: /tmp}
+          ports:
+            - {name: s3, containerPort: 8333}
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {cpu: '1', memory: 1Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+          readinessProbe:
+            tcpSocket: {port: s3}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket: {port: s3}
+            initialDelaySeconds: 40
+            periodSeconds: 20
+          volumeMounts:
+            - {name: data, mountPath: /data}
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: showroom-s3}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: showroom-s3
+  namespace: ai-showroom
+spec:
+  selector: {app: showroom-s3}
+  ports:
+    - {name: s3, port: 8333, targetPort: s3}

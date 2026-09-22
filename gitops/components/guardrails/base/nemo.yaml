@@ -1,0 +1,16 @@
+apiVersion: trustyai.opendatahub.io/v1alpha1
+kind: NemoGuardrails
+metadata:
+  name: showroom-rails
+  annotations:
+    security.opendatahub.io/enable-auth: 'true'
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+spec:
+  replicas: 1
+  nemoConfigs:
+    - name: showroom-safety
+      configMaps: [showroom-safety]
+      default: true
+# CPU-only checks. This CR does not wire gateway traffic through guardrails.
+# The optional mcp-integration overlay requires a separately validated IPP.

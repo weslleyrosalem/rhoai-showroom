@@ -1,0 +1,9 @@
+{
+  "description": "Aurora Supply: fictional products and synthetic daily demand",
+  "license": "CC0-1.0",
+  "seed": 351,
+  "rows": 2920,
+  "days": 365,
+  "sha256": "466aec9bbff2225c26a31d7eff2348bcd8724f3ae14fb58b60c572ee8c8d7ba5",
+  "split": "chronological; last 28 days held out; target is next-day units"
+}

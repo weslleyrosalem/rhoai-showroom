@@ -1,0 +1,12 @@
+{
+  "apiVersion": "user.openshift.io/v1",
+  "kind": "Group",
+  "metadata": {
+    "name": "showroom-visitors",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "app.kubernetes.io/managed-by": "gitops"
+    }
+  },
+  "users": []
+}

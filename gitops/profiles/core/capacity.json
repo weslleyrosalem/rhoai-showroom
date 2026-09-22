@@ -1,0 +1,10 @@
+{
+  "pools": [],
+  "required_free_gpus": 0,
+  "schema_version": 1,
+  "profile": "core",
+  "physical_gpu_limit": 16,
+  "existing_gpu_assumption": 1,
+  "mode": "mutually-exclusive",
+  "validated_runtime": false
+}

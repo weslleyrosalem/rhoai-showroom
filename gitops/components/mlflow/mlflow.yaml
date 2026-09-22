@@ -1,0 +1,41 @@
+# Shared platform service. Apply before EvalHub. Secrets are bootstrapped separately.
+apiVersion: mlflow.opendatahub.io/v1
+kind: MLflow
+metadata:
+  name: mlflow
+  labels: {app.kubernetes.io/part-of: rhoai-showroom}
+spec:
+  replicas: 1
+  backendStoreUri: sqlite:////mlflow/mlflow.db
+  registryStoreUri: sqlite:////mlflow/mlflow.db
+  storage:
+    accessModes: [ReadWriteOnce]
+    resources:
+      requests: {storage: 5Gi}
+  artifactsDestination: s3://aurora-artifacts/mlflow
+  serveArtifacts: true
+  resources:
+    requests: {cpu: 250m, memory: 512Mi}
+    limits: {cpu: '2', memory: 2Gi}
+  envFrom:
+    - secretRef: {name: showroom-s3-credentials}
+  env:
+    - {name: MLFLOW_S3_ENDPOINT_URL, value: 'http://showroom-s3.ai-showroom.svc.cluster.local:8333'}
+    - {name: AWS_DEFAULT_REGION, value: us-east-1}
+  networkPolicyAdditionalEgressRules:
+    - to:
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: ai-showroom}
+          podSelector:
+            matchLabels: {app: showroom-s3}
+      ports:
+        - {protocol: TCP, port: 8333}
+---
+apiVersion: mlflow.kubeflow.org/v1
+kind: MLflowConfig
+metadata:
+  name: mlflow
+  namespace: ai-showroom
+spec:
+  artifactRootSecret: mlflow-artifact-connection
+  artifactRootPath: mlflow

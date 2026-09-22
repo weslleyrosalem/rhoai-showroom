@@ -1,0 +1,22 @@
+# MLflow must be Ready before creating this resource (RHOAIENG-67534).
+apiVersion: trustyai.opendatahub.io/v1
+kind: EvalHub
+metadata:
+  name: evalhub
+  namespace: redhat-ods-applications
+  labels: {app.kubernetes.io/part-of: rhoai-showroom}
+spec:
+  replicas: 1
+  tenancy: multi
+  database:
+    type: postgresql
+    secret: aurora-evaldb-credentials
+  providers:
+    - lm-evaluation-harness
+    - garak
+    - ragas
+  collections:
+    - instruction-following-v1
+  env:
+    - name: MLFLOW_TRACKING_URI
+      value: https://mlflow.redhat-ods-applications.svc:8443/mlflow

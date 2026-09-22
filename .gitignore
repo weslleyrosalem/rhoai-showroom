@@ -1,0 +1,11 @@
+.venv/
+site/
+__pycache__/
+*.pyc
+.env
+*.local.*
+*.credentials.json
+secrets/
+local/
+artifacts/
+.DS_Store

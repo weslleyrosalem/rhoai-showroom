@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: aurora-lab
+  namespace: ai-showroom
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests: {storage: 10Gi}
+---
+apiVersion: kubeflow.org/v1
+kind: Notebook
+metadata:
+  name: aurora-lab
+  namespace: ai-showroom
+  labels:
+    app: aurora-lab
+    opendatahub.io/dashboard: 'true'
+    opendatahub.io/odh-managed: 'true'
+  annotations:
+    notebooks.opendatahub.io/inject-auth: 'true'
+    opendatahub.io/mlflow-instance: mlflow
+    openshift.io/display-name: Aurora Supply — Data Science Lab
+    openshift.io/description: Synthetic demand, Ray, MLflow, RAG and evaluation notebooks
+    notebooks.opendatahub.io/last-image-selection: s2i-minimal-notebook:3.5
+    opendatahub.io/image-display-name: Jupyter | Minimal | CPU | Python 3.12
+spec:
+  template:
+    spec:
+      serviceAccountName: aurora-science
+      initContainers:
+        - name: clone-showroom
+          image: registry.redhat.io/rhoai/odh-workbench-jupyter-minimal-cpu-py312-rhel9@sha256:1e8c79265d905315b4e9e11185f8abac06823eb2441bc4e7466bad4e48c84f16
+          command: [sh, -c]
+          args:
+            - 'if [ ! -d /workspace/rhoai-showroom/.git ]; then git clone --depth 1 https://github.com/weslleyrosalem/rhoai-showroom.git /workspace/rhoai-showroom; fi'
+          volumeMounts:
+            - {name: workspace, mountPath: /workspace}
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: '1', memory: 512Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+      containers:
+        - name: aurora-lab
+          image: registry.redhat.io/rhoai/odh-workbench-jupyter-minimal-cpu-py312-rhel9@sha256:1e8c79265d905315b4e9e11185f8abac06823eb2441bc4e7466bad4e48c84f16
+          workingDir: /opt/app-root/src/rhoai-showroom
+          env:
+            - name: NOTEBOOK_ARGS
+              value: "--ServerApp.port=8888 --ServerApp.token='' --ServerApp.password='' --ServerApp.base_url=/notebook/ai-showroom/aurora-lab --ServerApp.quit_button=False"
+          envFrom:
+            - configMapRef: {name: aurora-science-config}
+            - secretRef: {name: showroom-s3-credentials}
+          ports:
+            - {containerPort: 8888, name: notebook-port}
+          resources:
+            requests: {cpu: '1', memory: 2Gi}
+            limits: {cpu: '2', memory: 4Gi}
+          readinessProbe:
+            httpGet: {path: /notebook/ai-showroom/aurora-lab/api, port: notebook-port}
+            initialDelaySeconds: 15
+          volumeMounts:
+            - {name: workspace, mountPath: /opt/app-root/src}
+            - {name: shm, mountPath: /dev/shm}
+            - {name: service-ca, mountPath: /etc/service-ca, readOnly: true}
+      volumes:
+        - name: workspace
+          persistentVolumeClaim: {claimName: aurora-lab}
+        - name: shm
+          emptyDir: {medium: Memory, sizeLimit: 512Mi}
+        - name: service-ca
+          configMap: {name: showroom-service-ca}

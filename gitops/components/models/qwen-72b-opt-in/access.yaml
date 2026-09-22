@@ -1,0 +1,30 @@
+{
+  "apiVersion": "maas.opendatahub.io/v1alpha1",
+  "kind": "MaaSAuthPolicy",
+  "metadata": {
+    "name": "aurora-qwen-72b-access",
+    "namespace": "models-as-a-service",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "opendatahub.io/dashboard": "true"
+    }
+  },
+  "spec": {
+    "modelRefs": [
+      {
+        "name": "aurora-qwen-72b",
+        "namespace": "ai-showroom-bench"
+      }
+    ],
+    "subjects": {
+      "groups": [
+        {
+          "name": "showroom-platform-admins"
+        },
+        {
+          "name": "showroom-data-scientists"
+        }
+      ]
+    }
+  }
+}

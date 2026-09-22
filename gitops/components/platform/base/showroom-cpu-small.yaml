@@ -1,0 +1,37 @@
+{
+  "apiVersion": "infrastructure.opendatahub.io/v1",
+  "kind": "HardwareProfile",
+  "metadata": {
+    "name": "showroom-cpu-small",
+    "namespace": "ai-showroom",
+    "labels": {
+      "app.kubernetes.io/part-of": "rhoai-showroom",
+      "app.kubernetes.io/managed-by": "gitops"
+    },
+    "annotations": {
+      "opendatahub.io/display-name": "Showroom CPU \u00b7 2 cores / 4 GiB",
+      "opendatahub.io/disabled": "false",
+      "opendatahub.io/description": "Host RAM is separate from GPU VRAM. This profile does not provision GPU nodes."
+    }
+  },
+  "spec": {
+    "identifiers": [
+      {
+        "identifier": "cpu",
+        "displayName": "CPU",
+        "resourceType": "CPU",
+        "minCount": 1,
+        "defaultCount": 2,
+        "maxCount": 4
+      },
+      {
+        "identifier": "memory",
+        "displayName": "Memory",
+        "resourceType": "Memory",
+        "minCount": "4Gi",
+        "defaultCount": "4Gi",
+        "maxCount": "8Gi"
+      }
+    ]
+  }
+}

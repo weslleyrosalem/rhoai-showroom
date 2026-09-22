@@ -1,0 +1,40 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: aurora-tools
+spec:
+  parentRefs:
+    - {name: showroom-mcp, sectionName: mcps}
+  hostnames: [aurora-tools.mcp.internal]
+  rules:
+    - matches:
+        - path: {type: PathPrefix, value: /}
+      backendRefs:
+        - {name: aurora-tools, port: 8000}
+---
+apiVersion: mcp.kuadrant.io/v1alpha1
+kind: MCPServerRegistration
+metadata:
+  name: aurora-tools
+spec:
+  prefix: aurora_
+  path: /mcp
+  category: [operations]
+  hint: Synthetic Aurora Supply catalog, inventory and read-only replenishment proposals.
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: aurora-tools
+    namespace: ai-showroom
+---
+apiVersion: mcp.kuadrant.io/v1alpha1
+kind: MCPVirtualServer
+metadata:
+  name: aurora-readonly
+spec:
+  description: Curated discovery view. This is NOT an authorization boundary.
+  tools:
+    - aurora_list_products
+    - aurora_get_stock
+    - aurora_get_replenishment_recommendation
+  prompts: []

@@ -1,0 +1,2 @@
+mlflow[kubernetes]==3.14.0
+mcp==1.27.2

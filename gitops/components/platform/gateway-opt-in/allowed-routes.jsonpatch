@@ -1,0 +1,21 @@
+[
+  {
+    "op": "test",
+    "path": "/spec/listeners/0/name",
+    "value": "https"
+  },
+  {
+    "op": "replace",
+    "path": "/spec/listeners/0/allowedRoutes",
+    "value": {
+      "namespaces": {
+        "from": "Selector",
+        "selector": {
+          "matchLabels": {
+            "showroom.openshift.ai/maas-gateway-access": "true"
+          }
+        }
+      }
+    }
+  }
+]

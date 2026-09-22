@@ -1,0 +1,24 @@
+apiVersion: kuadrant.io/v1
+kind: AuthPolicy
+metadata:
+  name: showroom-mcp-auth
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: showroom-mcp
+    sectionName: mcp
+  rules:
+    authentication:
+      openshift:
+        kubernetesTokenReview:
+          audiences:
+            - https://kubernetes.default.svc
+    authorization:
+      showroom-identities:
+        patternMatching:
+          patterns:
+            - predicate: >-
+                auth.identity.user.username == 'aiadmin' ||
+                auth.identity.user.username in ['system:serviceaccount:ai-showroom:showroom-visitor', 'system:serviceaccount:ai-showroom:showroom-engineer', 'system:serviceaccount:ai-showroom:aurora-science'] ||
+                (has(auth.identity.user.groups) && auth.identity.user.groups.exists(g, g in ['showroom-visitors', 'showroom-data-scientists', 'showroom-platform-admins']))

@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-09-22",
+  "runtime_image": "registry.redhat.io/rhaii/vllm-cuda-rhel9@sha256:c056e61672b6aea489ad5dde0bd2f8497230f5333e87f7cf6c494eba3bfdc808",
+  "runtime_source": "Installed OpenShift AI 3.5.1 LLMInferenceServiceConfig v3-5-1-kserve-config-llm-template",
+  "models": [
+    {
+      "model": "Qwen/Qwen3-4B-Instruct-2507",
+      "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+      "license": "apache-2.0",
+      "gated": false,
+      "source": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507",
+      "runtime_validation": "NOT_RUN",
+      "manifest": "qwen-4b"
+    },
+    {
+      "model": "Qwen/Qwen3-32B",
+      "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+      "license": "apache-2.0",
+      "gated": false,
+      "source": "https://huggingface.co/Qwen/Qwen3-32B",
+      "runtime_validation": "NOT_RUN",
+      "manifest": "qwen-32b-tp4"
+    },
+    {
+      "model": "Qwen/Qwen3-32B",
+      "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+      "license": "apache-2.0",
+      "gated": false,
+      "source": "https://huggingface.co/Qwen/Qwen3-32B",
+      "runtime_validation": "NOT_RUN",
+      "manifest": "qwen-32b-multinode"
+    },
+    {
+      "model": "Qwen/Qwen2.5-72B-Instruct",
+      "revision": "495f39366efef23836d0cfae4fbe635880d2be31",
+      "license": "qwen-custom",
+      "gated": false,
+      "source": "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct",
+      "runtime_validation": "NOT_RUN",
+      "manifest": "qwen-72b-opt-in"
+    }
+  ]
+}

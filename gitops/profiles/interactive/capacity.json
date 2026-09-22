@@ -1,0 +1,17 @@
+{
+  "pools": [
+    {
+      "id": "showroom-l40s-one",
+      "instance_type": "g6e.4xlarge",
+      "max_nodes": 1,
+      "upgrade_surge_nodes": 0
+    }
+  ],
+  "required_free_gpus": 1,
+  "schema_version": 1,
+  "profile": "interactive",
+  "physical_gpu_limit": 16,
+  "existing_gpu_assumption": 1,
+  "mode": "mutually-exclusive",
+  "validated_runtime": false
+}

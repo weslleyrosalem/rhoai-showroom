@@ -1,0 +1,313 @@
+{
+  "apiVersion": "ray.io/v1",
+  "kind": "RayJob",
+  "metadata": {
+    "name": "aurora-demand-train",
+    "namespace": "ai-showroom"
+  },
+  "spec": {
+    "entrypoint": "python /repo/source/scripts/science.py ray --data-dir /tmp/aurora-data",
+    "shutdownAfterJobFinishes": true,
+    "ttlSecondsAfterFinished": 300,
+    "activeDeadlineSeconds": 1800,
+    "runtimeEnvYAML": "pip:\n  - mlflow[kubernetes]==3.14.0\n  - boto3==1.42.74\n",
+    "rayClusterSpec": {
+      "rayVersion": "2.47.1",
+      "headGroupSpec": {
+        "rayStartParams": {
+          "num-cpus": "0",
+          "dashboard-host": "0.0.0.0"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app.kubernetes.io/part-of": "rhoai-showroom"
+            }
+          },
+          "spec": {
+            "serviceAccountName": "aurora-science",
+            "securityContext": {
+              "runAsNonRoot": true,
+              "seccompProfile": {
+                "type": "RuntimeDefault"
+              }
+            },
+            "initContainers": [
+              {
+                "name": "clone",
+                "image": "registry.redhat.io/rhoai/odh-workbench-jupyter-minimal-cpu-py312-rhel9@sha256:1e8c79265d905315b4e9e11185f8abac06823eb2441bc4e7466bad4e48c84f16",
+                "command": [
+                  "sh",
+                  "-c"
+                ],
+                "args": [
+                  "git clone --depth 1 https://github.com/weslleyrosalem/rhoai-showroom.git /repo/source"
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "source",
+                    "mountPath": "/repo"
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "cpu": "100m",
+                    "memory": "128Mi"
+                  },
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "512Mi"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  }
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "ray-head",
+                "image": "quay.io/modh/ray@sha256:6d076aeb38ab3c34a6a2ef0f58dc667089aa15826fa08a73273c629333e12f1e",
+                "envFrom": [
+                  {
+                    "configMapRef": {
+                      "name": "aurora-science-config"
+                    }
+                  },
+                  {
+                    "secretRef": {
+                      "name": "showroom-s3-credentials"
+                    }
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "HOME",
+                    "value": "/tmp"
+                  },
+                  {
+                    "name": "RAY_TMPDIR",
+                    "value": "/tmp/ray"
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "cpu": "1",
+                    "memory": "2Gi"
+                  },
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "3Gi"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "source",
+                    "mountPath": "/repo"
+                  },
+                  {
+                    "name": "service-ca",
+                    "mountPath": "/etc/service-ca",
+                    "readOnly": true
+                  },
+                  {
+                    "name": "shm",
+                    "mountPath": "/dev/shm"
+                  }
+                ],
+                "ports": [
+                  {
+                    "containerPort": 6379,
+                    "name": "gcs-server"
+                  },
+                  {
+                    "containerPort": 8265,
+                    "name": "dashboard"
+                  },
+                  {
+                    "containerPort": 10001,
+                    "name": "client"
+                  }
+                ]
+              }
+            ],
+            "volumes": [
+              {
+                "name": "source",
+                "emptyDir": {}
+              },
+              {
+                "name": "service-ca",
+                "configMap": {
+                  "name": "showroom-service-ca"
+                }
+              },
+              {
+                "name": "shm",
+                "emptyDir": {
+                  "medium": "Memory",
+                  "sizeLimit": "512Mi"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "workerGroupSpecs": [
+        {
+          "groupName": "cpu-workers",
+          "replicas": 2,
+          "minReplicas": 2,
+          "maxReplicas": 2,
+          "rayStartParams": {},
+          "template": {
+            "metadata": {
+              "labels": {
+                "app.kubernetes.io/part-of": "rhoai-showroom"
+              }
+            },
+            "spec": {
+              "serviceAccountName": "aurora-science",
+              "securityContext": {
+                "runAsNonRoot": true,
+                "seccompProfile": {
+                  "type": "RuntimeDefault"
+                }
+              },
+              "initContainers": [
+                {
+                  "name": "clone",
+                  "image": "registry.redhat.io/rhoai/odh-workbench-jupyter-minimal-cpu-py312-rhel9@sha256:1e8c79265d905315b4e9e11185f8abac06823eb2441bc4e7466bad4e48c84f16",
+                  "command": [
+                    "sh",
+                    "-c"
+                  ],
+                  "args": [
+                    "git clone --depth 1 https://github.com/weslleyrosalem/rhoai-showroom.git /repo/source"
+                  ],
+                  "volumeMounts": [
+                    {
+                      "name": "source",
+                      "mountPath": "/repo"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "100m",
+                      "memory": "128Mi"
+                    },
+                    "limits": {
+                      "cpu": "1",
+                      "memory": "512Mi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    }
+                  }
+                }
+              ],
+              "containers": [
+                {
+                  "name": "ray-worker",
+                  "image": "quay.io/modh/ray@sha256:6d076aeb38ab3c34a6a2ef0f58dc667089aa15826fa08a73273c629333e12f1e",
+                  "envFrom": [
+                    {
+                      "configMapRef": {
+                        "name": "aurora-science-config"
+                      }
+                    },
+                    {
+                      "secretRef": {
+                        "name": "showroom-s3-credentials"
+                      }
+                    }
+                  ],
+                  "env": [
+                    {
+                      "name": "HOME",
+                      "value": "/tmp"
+                    },
+                    {
+                      "name": "RAY_TMPDIR",
+                      "value": "/tmp/ray"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "1",
+                      "memory": "2Gi"
+                    },
+                    "limits": {
+                      "cpu": "1",
+                      "memory": "3Gi"
+                    }
+                  },
+                  "securityContext": {
+                    "allowPrivilegeEscalation": false,
+                    "capabilities": {
+                      "drop": [
+                        "ALL"
+                      ]
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "name": "source",
+                      "mountPath": "/repo"
+                    },
+                    {
+                      "name": "service-ca",
+                      "mountPath": "/etc/service-ca",
+                      "readOnly": true
+                    },
+                    {
+                      "name": "shm",
+                      "mountPath": "/dev/shm"
+                    }
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "name": "source",
+                  "emptyDir": {}
+                },
+                {
+                  "name": "service-ca",
+                  "configMap": {
+                    "name": "showroom-service-ca"
+                  }
+                },
+                {
+                  "name": "shm",
+                  "emptyDir": {
+                    "medium": "Memory",
+                    "sizeLimit": "512Mi"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

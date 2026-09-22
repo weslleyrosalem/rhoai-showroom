@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - backend
+  - gateway
+# Public Route is a separate kustomization. Apply only after AuthPolicy is Enforced
+# and real positive/negative authentication tests pass.

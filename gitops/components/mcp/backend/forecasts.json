@@ -1,0 +1,410 @@
+{
+  "schema_version": "1",
+  "dataset": "Aurora Supply synthetic demand; 2025 calendar year",
+  "model_version": "ca4c373b7d35",
+  "horizon_days": 7,
+  "forecast_origin": "2025-12-31",
+  "forecasts": [
+    {
+      "sku": "AS-001",
+      "model_type": "ridge-seasonal-trend",
+      "weights": [
+        12.113503988681659,
+        6.442605134840178,
+        3.2727551641375228,
+        -0.09315874440770866,
+        4.420379368843364
+      ],
+      "mae": 0.8099637851965975,
+      "baseline_mae": 1.5892857142857142,
+      "wape": 0.044555964608064304,
+      "train_end": "2025-12-03",
+      "test_start": "2025-12-04",
+      "test_end": "2025-12-31",
+      "forecast": [
+        {
+          "date": "2026-01-01",
+          "units": 20.06
+        },
+        {
+          "date": "2026-01-02",
+          "units": 17.24
+        },
+        {
+          "date": "2026-01-03",
+          "units": 15.42
+        },
+        {
+          "date": "2026-01-04",
+          "units": 15.99
+        },
+        {
+          "date": "2026-01-05",
+          "units": 18.53
+        },
+        {
+          "date": "2026-01-06",
+          "units": 21.15
+        },
+        {
+          "date": "2026-01-07",
+          "units": 21.87
+        }
+      ],
+      "forecast_7d_units": 130.26,
+      "worker": "Weslleys-MacBook-Air.local",
+      "passed_quality_gate": true
+    },
+    {
+      "sku": "AS-002",
+      "model_type": "ridge-seasonal-trend",
+      "weights": [
+        4.955371080169077,
+        2.8430132177111993,
+        1.37131391436909,
+        -0.014823598980848656,
+        1.6526566910312925
+      ],
+      "mae": 0.4319126604427708,
+      "baseline_mae": 0.5714285714285714,
+      "wape": 0.054231186064563154,
+      "train_end": "2025-12-03",
+      "test_start": "2025-12-04",
+      "test_end": "2025-12-31",
+      "forecast": [
+        {
+          "date": "2026-01-01",
+          "units": 8.41
+        },
+        {
+          "date": "2026-01-02",
+          "units": 7.22
+        },
+        {
+          "date": "2026-01-03",
+          "units": 6.48
+        },
+        {
+          "date": "2026-01-04",
+          "units": 6.74
+        },
+        {
+          "date": "2026-01-05",
+          "units": 7.81
+        },
+        {
+          "date": "2026-01-06",
+          "units": 8.9
+        },
+        {
+          "date": "2026-01-07",
+          "units": 9.19
+        }
+      ],
+      "forecast_7d_units": 54.75,
+      "worker": "Weslleys-MacBook-Air.local",
+      "passed_quality_gate": true
+    },
+    {
+      "sku": "AS-003",
+      "model_type": "ridge-seasonal-trend",
+      "weights": [
+        3.9148197698077585,
+        2.2745872650358923,
+        1.1023290156294718,
+        0.024033105709822367,
+        1.5741965940296436
+      ],
+      "mae": 0.3829713250789813,
+      "baseline_mae": 0.5,
+      "wape": 0.06345087042728684,
+      "train_end": "2025-12-03",
+      "test_start": "2025-12-04",
+      "test_end": "2025-12-31",
+      "forecast": [
+        {
+          "date": "2026-01-01",
+          "units": 6.65
+        },
+        {
+          "date": "2026-01-02",
+          "units": 5.7
+        },
+        {
+          "date": "2026-01-03",
+          "units": 5.12
+        },
+        {
+          "date": "2026-01-04",
+          "units": 5.36
+        },
+        {
+          "date": "2026-01-05",
+          "units": 6.24
+        },
+        {
+          "date": "2026-01-06",
+          "units": 7.1
+        },
+        {
+          "date": "2026-01-07",
+          "units": 7.3
+        }
+      ],
+      "forecast_7d_units": 43.47,
+      "worker": "Weslleys-MacBook-Air.local",
+      "passed_quality_gate": true
+    },
+    {
+      "sku": "AS-004",
+      "model_type": "ridge-seasonal-trend",
+      "weights": [
+        13.893945084036634,
+        7.871975695787486,
+        4.017436714426172,
+        -0.02120602146042863,
+        4.901652295208424
+      ],
+      "mae": 1.050956227369595,
+      "baseline_mae": 2.0,
+      "wape": 0.049456763640922115,
+      "train_end": "2025-12-03",
+      "test_start": "2025-12-04",
+      "test_end": "2025-12-31",
+      "forecast": [
+        {
+          "date": "2026-01-01",
+          "units": 23.53
+        },
+        {
+          "date": "2026-01-02",
+          "units": 20.06
+        },
+        {
+          "date": "2026-01-03",
+          "units": 17.9
+        },
+        {
+          "date": "2026-01-04",
+          "units": 18.68
+        },
+        {
+          "date": "2026-01-05",
+          "units": 21.83
+        },
+        {
+          "date": "2026-01-06",
+          "units": 25.0
+        },
+        {
+          "date": "2026-01-07",
+          "units": 25.82
+        }
+      ],
+      "forecast_7d_units": 152.82,
+      "worker": "Weslleys-MacBook-Air.local",
+      "passed_quality_gate": true
+    },
+    {
+      "sku": "AS-005",
+      "model_type": "ridge-seasonal-trend",
+      "weights": [
+        20.12847091537791,
+        10.758666871932071,
+        5.610714759489997,
+        0.24965826524503304,
+        6.720318984893326
+      ],
+      "mae": 1.6336216211203216,
+      "baseline_mae": 2.4642857142857144,
+      "wape": 0.05337386860136407,
+      "train_end": "2025-12-03",
+      "test_start": "2025-12-04",
+      "test_end": "2025-12-31",
+      "forecast": [
+        {
+          "date": "2026-01-01",
+          "units": 33.1
+        },
+        {
+          "date": "2026-01-02",
+          "units": 28.26
+        },
+        {
+          "date": "2026-01-03",
+          "units": 25.42
+        },
+        {
+          "date": "2026-01-04",
+          "units": 26.74
+        },
+        {
+          "date": "2026-01-05",
+          "units": 31.25
+        },
+        {
+          "date": "2026-01-06",
+          "units": 35.58
+        },
+        {
+          "date": "2026-01-07",
+          "units": 36.48
+        }
+      ],
+      "forecast_7d_units": 216.83,
+      "worker": "Weslleys-MacBook-Air.local",
+      "passed_quality_gate": true
+    },
+    {
+      "sku": "AS-006",
+      "model_type": "ridge-seasonal-trend",
+      "weights": [
+        9.046408324741794,
+        4.837619598172679,
+        2.503336441704086,
+        -0.026998404370309398,
+        3.1853711931655413
+      ],
+      "mae": 0.7174154253178205,
+      "baseline_mae": 1.125,
+      "wape": 0.05244812508850907,
+      "train_end": "2025-12-03",
+      "test_start": "2025-12-04",
+      "test_end": "2025-12-31",
+      "forecast": [
+        {
+          "date": "2026-01-01",
+          "units": 14.99
+        },
+        {
+          "date": "2026-01-02",
+          "units": 12.84
+        },
+        {
+          "date": "2026-01-03",
+          "units": 11.48
+        },
+        {
+          "date": "2026-01-04",
+          "units": 11.95
+        },
+        {
+          "date": "2026-01-05",
+          "units": 13.91
+        },
+        {
+          "date": "2026-01-06",
+          "units": 15.89
+        },
+        {
+          "date": "2026-01-07",
+          "units": 16.41
+        }
+      ],
+      "forecast_7d_units": 97.47,
+      "worker": "Weslleys-MacBook-Air.local",
+      "passed_quality_gate": true
+    },
+    {
+      "sku": "AS-007",
+      "model_type": "ridge-seasonal-trend",
+      "weights": [
+        2.069549767909928,
+        0.8896765847724772,
+        0.5251168116709353,
+        -0.0028137404373455143,
+        0.7928603604179731
+      ],
+      "mae": 0.3828458127131348,
+      "baseline_mae": 0.32142857142857145,
+      "wape": 0.12915280428876835,
+      "train_end": "2025-12-03",
+      "test_start": "2025-12-04",
+      "test_end": "2025-12-31",
+      "forecast": [
+        {
+          "date": "2026-01-01",
+          "units": 3.19
+        },
+        {
+          "date": "2026-01-02",
+          "units": 2.74
+        },
+        {
+          "date": "2026-01-03",
+          "units": 2.45
+        },
+        {
+          "date": "2026-01-04",
+          "units": 2.55
+        },
+        {
+          "date": "2026-01-05",
+          "units": 2.97
+        },
+        {
+          "date": "2026-01-06",
+          "units": 3.38
+        },
+        {
+          "date": "2026-01-07",
+          "units": 3.49
+        }
+      ],
+      "forecast_7d_units": 20.77,
+      "worker": "Weslleys-MacBook-Air.local",
+      "passed_quality_gate": false
+    },
+    {
+      "sku": "AS-008",
+      "model_type": "ridge-seasonal-trend",
+      "weights": [
+        3.033895817061571,
+        1.5428993571359013,
+        0.7770013607972703,
+        -0.03291447289388903,
+        1.144133911655804
+      ],
+      "mae": 0.3113495009569322,
+      "baseline_mae": 0.42857142857142855,
+      "wape": 0.06757973664181474,
+      "train_end": "2025-12-03",
+      "test_start": "2025-12-04",
+      "test_end": "2025-12-31",
+      "forecast": [
+        {
+          "date": "2026-01-01",
+          "units": 4.94
+        },
+        {
+          "date": "2026-01-02",
+          "units": 4.27
+        },
+        {
+          "date": "2026-01-03",
+          "units": 3.84
+        },
+        {
+          "date": "2026-01-04",
+          "units": 3.96
+        },
+        {
+          "date": "2026-01-05",
+          "units": 4.56
+        },
+        {
+          "date": "2026-01-06",
+          "units": 5.18
+        },
+        {
+          "date": "2026-01-07",
+          "units": 5.37
+        }
+      ],
+      "forecast_7d_units": 32.12,
+      "worker": "Weslleys-MacBook-Air.local",
+      "passed_quality_gate": true
+    }
+  ],
+  "synthetic": true
+}
