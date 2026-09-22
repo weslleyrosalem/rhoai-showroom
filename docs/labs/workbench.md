@@ -26,7 +26,6 @@ Open **Projects → AI Showroom → Workbenches → Aurora Supply — Data Scien
 |---|---|---|
 | `07-qwen-live-traffic.ipynb` | One test call, then six requests at concurrency 1, two seconds between starts, and 96 output tokens per request | Edit the configuration cell. Hard caps: 30 requests, 180 seconds, concurrency 2, and 256 output tokens per request. Tables and plots use actual response metrics. |
 | `08-qwen-guidellm.ipynb` | A real GuideLLM run requesting at most three completions at 0.1 requests/second, concurrency 1, and 64 output tokens | Inspect its report before changing the optional settings. Caps: 120 seconds of measurement, 180 seconds total, 0.1 requests/second, concurrency 2, and 128 output tokens. The optional cell only defines settings; it does not launch another run. |
-
 | `09-maas-api.ipynb` | Read the authorized model list and send one MaaS request with a masked API key | Configure the HTTPS endpoint and exact model ID. The optional quota probe is disabled by default; when deliberately enabled, it stops on the first 429 or error. |
 
 These three notebooks use the separate persistent environment `/opt/app-root/src/.venvs/aurora-inference`; they do not depend on packages installed into the base kernel. The manual notebook's test call must succeed before its loop starts. **Interrupt kernel** stops active client work; completed, failed, and interrupted outcomes remain distinct. A server may finish a request it already accepted after the client disconnects.
