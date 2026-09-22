@@ -78,6 +78,12 @@ python3 scripts/capacity.py --profile active-l40s-11 \
 
 `showroom-cpu-small` offers CPU/RAM; `showroom-l40s-1` requests one L40S; `showroom-l40s-4` requests four devices for tensor parallelism. L40S profiles require both the product label and `showroom.openshift.ai/gpu-pool=true`, avoiding the preserved GPU node.
 
+These three showroom profiles belong to the **`ai-showroom` project**. The administrator page **Settings → Environment setup → Hardware profiles** lists organization-wide profiles from the dashboard namespace; it does not list project profiles. Do not duplicate or promote the showroom profiles merely to populate that page.
+
+For the live demonstration, open **Model registry → Aurora Supply - Qwen3-4B → instruct-2507-cdbee75f → Deployments**. The Ready Qwen deployment shows **Showroom L40S · 1 GPU / 48 GB** with a **Project-scoped** badge. This native view was verified in the September 22 rehearsal. The profile supplies a default request of 4 CPUs, 24Gi host memory, and one GPU; the 48GB label describes GPU VRAM, not host memory. Project deployment/workbench forms use the project's profiles alongside eligible global profiles, subject to feature visibility. Inspect the selection without saving during the customer visit.
+
+The namespace distinction follows the [global profile page](https://github.com/opendatahub-io/odh-dashboard/blob/cc402383e903f71dcff388369eea86dcb2a94d59/packages/hardware-profiles/src/pages/HardwareProfiles.tsx) and [project/global selection logic](https://github.com/opendatahub-io/odh-dashboard/blob/cc402383e903f71dcff388369eea86dcb2a94d59/packages/hardware-profiles/src/pages/useHardwareProfilesByFeatureVisibility.ts). A profile describes allocation choices; its visibility does not establish current node capacity.
+
 Host RAM and VRAM are separate. Creating a hardware profile does not create a node. For scale-from-zero, selectors must also exist on the machinepool template; labels produced only after GPU Feature Discovery starts may prevent the autoscaler from identifying that pool. Confirm Ready nodes, allocatable devices, tolerations, storage, and registry access before presenting deployment options.
 
 `qwen-32b-multinode` runs two complete TP4 model replicas with mandatory placement on different hosts. It does not split one model across nodes. A PP2×TP4 experiment requires separate LeaderWorkerSet, preset, and transport validation.

@@ -62,6 +62,19 @@ The RAG BuildConfig and Workbench clone this repository. In a fork, update both 
 
 Complete [GitOps adoption](gitops.md), run the [test drives](test-drive.md), and maintain a validation record for your installation. GPU and MIG profiles require coordinated cloud capacity changes; the default overlay does not provision them.
 
+After GitOps adoption has attached the Application tracking metadata and the Workbench is Ready, expose its existing disk and mounted S3 connection in the native project tabs. This guarded helper changes metadata only; it neither creates credentials nor changes access. Set `SHOWROOM_USER` to the independently verified administrator identity.
+
+```bash
+python scripts/configure_workbench_visibility.py \
+  --expected-server "$SHOWROOM_SERVER" --expected-user "$SHOWROOM_USER"
+# Review the PLAN, then apply with a new private directory outside this checkout.
+python scripts/configure_workbench_visibility.py \
+  --expected-server "$SHOWROOM_SERVER" --expected-user "$SHOWROOM_USER" \
+  --apply --audit-dir /YOUR-PRIVATE-DIRECTORY/workbench-visibility
+```
+
+Verify **Aurora Supply — Workbench storage** in Cluster storage and **Aurora Supply — Workbench object storage** in Connections, attached to the running Workbench. Display metadata only; never reveal the connection's credential fields.
+
 ## Installation acceptance
 
 An authorized participant receives a model response, RAG sources, and MCP tool results; an unauthorized participant is denied. Ray experiments, MLflow artifacts, and evaluations have actual run IDs and results. Argo reaches Synced/Healthy and corrects a harmless drift. Selected GPU models become Ready and respond. Optional capabilities are marked validated only after their specific tests pass.

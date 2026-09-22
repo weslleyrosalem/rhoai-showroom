@@ -5,6 +5,7 @@ The native OGX/pgvector AutoRAG path is a separate lab.
 """
 import asyncio
 from collections import Counter
+from contextlib import nullcontext
 import json
 import math
 import os
@@ -50,7 +51,29 @@ def token_from_serviceaccount():
     return path.read_text().strip() if path.exists() else os.environ.get("MCP_TOKEN", "")
 
 
-async def tools_for_sku(sku):
+def span_context(mlflow, name, span_type):
+    return mlflow.start_span(name=name, span_type=span_type) if mlflow else nullcontext(None)
+
+
+async def call_mcp_tool(session, name, sku, mlflow=None):
+    # The trace records the approved SKU and protocol status, never headers or raw tool payloads.
+    with span_context(mlflow, name, "TOOL") as span:
+        if span:
+            span.set_inputs({"sku": sku})
+        try:
+            result = await session.call_tool(name, {"sku": sku})
+            if result.isError:
+                raise RuntimeError("MCP tool reported an error")
+            payload = result.model_dump(mode="json")
+        except Exception:
+            # MLflow records escaping exceptions: suppress upstream text and chained tracebacks.
+            raise RuntimeError("MCP tool request failed") from None
+        if span:
+            span.set_outputs({"tool": name, "status": "completed"})
+        return payload
+
+
+async def tools_for_sku(sku, mlflow=None):
     """All enterprise tool access goes through the governed MCP Gateway."""
     import httpx
     from mcp import ClientSession
@@ -63,10 +86,7 @@ async def tools_for_sku(sku):
                 await session.initialize()
                 results = {}
                 for name in ("aurora_get_stock", "aurora_get_replenishment_recommendation"):
-                    result = await session.call_tool(name, {"sku": sku})
-                    if result.isError:
-                        raise RuntimeError("MCP tool failed: " + name)
-                    results[name] = result.model_dump(mode="json")
+                    results[name] = await call_mcp_tool(session, name, sku, mlflow)
                 return results
 
 
@@ -119,8 +139,43 @@ def configure_tracing():
     if token:
         os.environ["MLFLOW_TRACKING_TOKEN"] = token
     os.environ.setdefault("MLFLOW_WORKSPACE", "ai-showroom")
-    mlflow.set_experiment("aurora-assistant")
+    experiment = mlflow.set_experiment("aurora-assistant-demo")
+    description = "Current English showroom test drive. Historical setup traces remain in aurora-assistant."
+    if experiment.tags.get("mlflow.note.content") != description:
+        mlflow.MlflowClient().set_experiment_tag(experiment.experiment_id, "mlflow.note.content", description)
     return mlflow
+
+
+def token_usage(usage):
+    """Translate actual OpenAI usage into MLflow's standard integer token fields."""
+    if not isinstance(usage, dict):
+        return {}
+    fields = {"input_tokens": "prompt_tokens", "output_tokens": "completion_tokens", "total_tokens": "total_tokens"}
+    values = {target: usage.get(source) for target, source in fields.items()}
+    if any(type(value) is not int or value < 0 or value > 1_000_000_000 for value in values.values()):
+        return {}
+    if values["total_tokens"] != values["input_tokens"] + values["output_tokens"]:
+        return {}
+    return values
+
+
+def decision_for_trace(decision):
+    """Allowlist the business card fields; never log an arbitrary tool payload."""
+    if not isinstance(decision, dict):
+        return None
+    summary = {}
+    for key in ("stock", "reorder_point", "coverage_days", "unit_price", "estimated_total", "target_stock", "recommended_quantity"):
+        value = decision.get(key)
+        if type(value) in (int, float) and math.isfinite(value) and 0 <= value < 1e12:
+            summary[key] = value
+    if isinstance(decision.get("sku"), str) and re.fullmatch(r"AS-\d{3}", decision["sku"]):
+        summary["sku"] = decision["sku"]
+    if decision.get("approval_role") in ("operations_manager", "assigned_buyer", "human_review_required"):
+        summary["approval_role"] = decision["approval_role"]
+    for key in ("order_created", "requires_human_approval"):
+        if type(decision.get(key)) is bool:
+            summary[key] = decision[key]
+    return summary
 
 
 def ask(question, retriever, use_tools=True):
@@ -128,17 +183,20 @@ def ask(question, retriever, use_tools=True):
         raise ValueError("Enter a question between 1 and 4,000 characters")
     guardrail_check(question, "user")
     mlflow = configure_tracing()
-    def traced(name, function, *args):
-        if mlflow:
-            with mlflow.start_span(name=name) as span:
-                value = function(*args)
-                span.set_attribute("status", "completed")
-                return value
-        return function(*args)
     def execute():
-        sources = traced("retrieve_tfidf", retriever.retrieve, question)
+        with span_context(mlflow, "retrieve_tfidf", "RETRIEVER") as retrieval_span:
+            sources = retriever.retrieve(question)
+            if retrieval_span:
+                retrieval_span.set_attribute("retrieval.method", "lexical TF-IDF")
+                retrieval_span.set_outputs({"document_ids": [source["document_id"] for source in sources]})
         sku = re.search(r"\bAS-\d{3}\b", question.upper())
-        tool_result = traced("mcp_gateway_tools", lambda: asyncio.run(tools_for_sku(sku.group()))) if sku and use_tools else {}
+        tool_result = {}
+        if sku and use_tools:
+            with span_context(mlflow, "mcp_gateway_tools", "CHAIN"):
+                try:
+                    tool_result = asyncio.run(tools_for_sku(sku.group(), mlflow))
+                except Exception:
+                    raise RuntimeError("MCP gateway connection or tool request failed") from None
         context = "\n\n".join("SOURCE [" + source["document_id"] + "]\n" + source["text"] for source in sources)
         messages = [
             {"role": "system", "content": "You are the assistant for Aurora Supply, a fictional company. "
@@ -149,13 +207,41 @@ def ask(question, retriever, use_tools=True):
              "Only propose replenishment for human approval. Use numeric quantities, totals, and approval_role "
              "from the tool result exactly; never guess or recompute an approval threshold. "
              "Distinguish seven-day forecasts from 21-day extrapolated inventory coverage. "
+             "The tool's target_stock is max(reorder_point, ceil(forecast_7d_units * 21 / 7)). "
+             "Its recommended_quantity is max(0, target_stock - stock). "
+             "Target stock is the inventory level BEFORE subtracting current stock; only the proposal "
+             "subtracts stock. Explain this distinction without calculating replacement values. "
              "The UI displays the authoritative numeric proposal separately; keep your narrative focused "
              "on the cited policy, assumptions, and limitations rather than repeating computed quantities or totals."},
             {"role": "user", "content": json.dumps({"question": question, "sources": context,
                                                         "tool_results": tool_result}, ensure_ascii=False)},
         ]
-        result = traced("maas_inference", complete, messages)
-        guardrail_check(result["answer"], "assistant")
+        with span_context(mlflow, "maas_inference", "LLM") as inference_span:
+            try:
+                result = complete(messages)
+            except Exception:
+                raise RuntimeError("MaaS inference request failed") from None
+            if inference_span:
+                usage = token_usage(result.get("usage"))
+                if usage:
+                    # Standard MLflow 3.14 attribute, counted once at the actual LLM span.
+                    inference_span.set_attribute("mlflow.chat.tokenUsage", usage)
+                model = result.get("model", "")
+                if isinstance(model, str) and re.fullmatch(r"[A-Za-z0-9_./:-]{1,200}", model):
+                    inference_span.set_attribute("mlflow.llm.model", model)
+                inference_span.set_attribute("mlflow.llm.provider", "OpenShift AI MaaS")
+            with span_context(mlflow, "output_policy_check", "GUARDRAIL") as check_span:
+                try:
+                    guardrail_check(result["answer"], "assistant")
+                except GuardrailBlocked:
+                    raise GuardrailBlocked("Content blocked by the safety guardrail") from None
+                except Exception:
+                    raise RuntimeError("Output policy check unavailable") from None
+                if check_span:
+                    check_span.set_outputs({"status": "success", "scope": "configured policy checks"})
+            # No answer or model message payload is captured before the output guardrail approves it.
+            if inference_span:
+                inference_span.set_outputs({"answer": result["answer"]})
         decision = None
         recommendation = tool_result.get("aurora_get_replenishment_recommendation", {})
         for content in recommendation.get("content", []):
@@ -169,11 +255,11 @@ def ask(question, retriever, use_tools=True):
                        "retrieval": "lexical TF-IDF", "tools_used": list(tool_result), "synthetic": True})
         return result
     if mlflow:
-        with mlflow.start_span(name="aurora_replenishment") as span:
+        with mlflow.start_span(name="aurora_replenishment", span_type="CHAIN") as span:
             span.set_attribute("dataset", "Aurora Supply synthetic")
             span.set_inputs({"question": question})
             result = execute()
-            span.set_outputs({"answer": result["answer"], "sources": result["sources"], "tools_used": result["tools_used"], "decision": result.get("decision"), "usage": result.get("usage", {})})
+            span.set_outputs({"answer": result["answer"], "sources": result["sources"], "tools_used": result["tools_used"], "decision": decision_for_trace(result.get("decision")), "usage": token_usage(result.get("usage"))})
             result["trace_id"] = span.trace_id
             return result
     return execute()

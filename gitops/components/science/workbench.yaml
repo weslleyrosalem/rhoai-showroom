@@ -3,6 +3,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: aurora-lab
   namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    opendatahub.io/dashboard: 'true'
+  annotations:
+    openshift.io/display-name: Aurora Supply — Workbench storage
+    openshift.io/description: Persistent notebooks, source code, and local experiment files for the Aurora Supply data science lab
 spec:
   accessModes: [ReadWriteOnce]
   resources:
