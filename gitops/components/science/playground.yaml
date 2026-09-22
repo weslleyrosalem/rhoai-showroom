@@ -158,6 +158,14 @@ data:
               verify: true
             headers:
               X-MaaS-Subscription: showroom-standard
+      - provider_id: aurora-qwen-private
+        provider_type: remote::vllm
+        config:
+          base_url: http://showroom-inference-maas-gateway-class.ai-showroom.svc.cluster.local:8080/ai-showroom/aurora-qwen-4b/v1
+          api_token: user-token-required
+          allowed_models:
+          - aurora-qwen-4b
+          max_tokens: 1024
       vector_io:
       - provider_id: pgvector
         provider_type: remote::pgvector
@@ -269,6 +277,13 @@ data:
         model_type: embedding
         metadata:
           embedding_dimension: 768
+      - provider_id: aurora-qwen-private
+        model_id: aurora-qwen-4b
+        provider_model_id: aurora-qwen-4b
+        model_type: llm
+        metadata:
+          display_name: "Aurora Qwen \u2014 tools and policy knowledge"
+          tool_calling: true
       vector_stores: []
     external_providers_dir: /opt/app-root/.llama/providers.d
     server:

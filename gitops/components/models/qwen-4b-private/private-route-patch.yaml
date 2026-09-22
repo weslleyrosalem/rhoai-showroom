@@ -4,8 +4,8 @@ metadata:
   name: aurora-qwen-4b
   namespace: ai-showroom
   annotations:
-    showroom.openshift.ai/access: private-benchmark-authorized-port-forward-only
-    opendatahub.io/display-name: Aurora Qwen3 4B — private inference benchmark
+    showroom.openshift.ai/access: private-native-auth-port-forward-and-approved-ogx-only
+    opendatahub.io/display-name: Aurora Qwen3 4B — native tools and private inference
     showroom.openshift.ai/validation: private-native-auth-and-epp-verified-topology-requires-live-check
 spec:
   router:

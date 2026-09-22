@@ -29,10 +29,9 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         return None  # Never forward a benchmark credential to another endpoint.
 
 
-POLICY = ('Aurora Supply is a fictional distributor. Use only the synthetic inventory below. '
-          'Recommend a replenishment proposal, never place an order. Safety stock is 20 units; '
-          'target is 14 days of demand. A human must approve any purchase.\n')
-INVENTORY = '\n'.join(f'SKU AUR-{i:03d}: on_hand={35+i%23}; daily_demand={3+i%7}; lead_days={2+i%5}; unit=box.' for i in range(48))
+POLICY = 'Aurora Supply is a fictional distributor. This frozen benchmark snapshot uses synthetic historical data, not live inventory. Recommend a replenishment proposal, never place an order. Target stock is max(reorder_point, ceil(forecast_7d_units * 21 / 7)); quantity is max(0, target_stock - stock). A human must review supplier lead time. Proposals above 5000 demo currency units require operations-manager approval; otherwise assigned-buyer approval. Forecast origin is 2025-12-31.\n'
+INVENTORY = '[{"category":"Filters","forecast_7d_units":130.26,"lead_time_days":5,"name":"H20 Hydraulic Filter","reorder_point":80,"sku":"AS-001","stock":45,"unit_price":42.0},{"category":"Sensors","forecast_7d_units":54.75,"lead_time_days":7,"name":"P10 Pressure Sensor","reorder_point":35,"sku":"AS-002","stock":120,"unit_price":125.0},{"category":"Valves","forecast_7d_units":43.47,"lead_time_days":10,"name":"V30 Control Valve","reorder_point":30,"sku":"AS-003","stock":18,"unit_price":210.0},{"category":"Hoses","forecast_7d_units":152.82,"lead_time_days":4,"name":"M15 Industrial Hose","reorder_point":70,"sku":"AS-004","stock":240,"unit_price":32.0},{"category":"Seals","forecast_7d_units":216.83,"lead_time_days":3,"name":"O25 O-ring Seal","reorder_point":100,"sku":"AS-005","stock":75,"unit_price":8.5},{"category":"Connectors","forecast_7d_units":97.47,"lead_time_days":6,"name":"C40 Quick Connector","reorder_point":50,"sku":"AS-006","stock":90,"unit_price":18.0},{"category":"Pumps","forecast_7d_units":22.5,"lead_time_days":14,"name":"B50 Compact Pump","reorder_point":12,"sku":"AS-007","stock":8,"unit_price":650.0},{"category":"Meters","forecast_7d_units":32.12,"lead_time_days":8,"name":"F60 Flow Meter","reorder_point":15,"sku":"AS-008","stock":35,"unit_price":290.0}]'
+
 
 
 def digest(value):
@@ -44,7 +43,7 @@ def messages(index, mode='repeated-prefix'):
     # in characters, but actual token counts must still come from server usage.
     salt = '00000000' if mode == 'repeated-prefix' else f'{index+1:08d}'
     return [{'role':'system','content':f'Synthetic experiment {salt}.\n'+POLICY+INVENTORY},
-            {'role':'user','content':f'For SKU AUR-{index%48:03d}, explain whether stock covers lead time and propose a quantity. Use at most three concise sentences.'}]
+            {'role':'user','content':f'For SKU AS-{index%8+1:03d}, explain whether stock covers lead time and propose a quantity. Use at most three concise sentences.'}]
 
 
 def percentile(values, q):

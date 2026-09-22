@@ -66,15 +66,15 @@ Run the bounded helper from the repository root. It verifies the independently s
 python3 scripts/inference_probe.py \
   --expected-server "$SHOWROOM_SERVER" \
   --expected-user "$SHOWROOM_USER" \
-  --require-backends 2 \
+  --require-backends 2 --measure-placement \
   --output /tmp/aurora-native-inference-new.json
 ```
 
-Use `--require-backends 1` for the single-node rehearsal. A two-node result requires two Ready backends on distinct nodes. This confirms the serving path and available topology; it does not establish that routing improves performance or that every backend handled a request.
+Use `--require-backends 1` for the single-node rehearsal. A two-node result requires two Ready backends on distinct nodes. The optional placement measurement sends eight additional requests with concurrency two, then records per-backend request and cache counter deltas. During the September 22 rehearsal, all eight succeeded; the picker counted eight and the two backends handled two and six requests. Local prefix hits increased by 16 and 1,136 tokens. These observations establish actual serving on both hosts; they do not compare routing algorithms, prove a speedup, or demonstrate cross-node KV transfer.
 
 ## Private Qwen access
 
-Use an operator-authorized port-forward; the Gateway has no public endpoint and its NetworkPolicy denies pod ingress. The native KServe AuthPolicy still requires a valid Kubernetes identity with model access. Do not use the MaaS API key for this separate native-auth path.
+Use an operator-authorized port-forward; the Gateway has no public endpoint and its NetworkPolicy admits only the specifically selected native Playground OGX pods on TCP8080; other pods remain denied. The OGX hop is same-namespace HTTP, while browser ingress and operator port-forward use TLS separately. The native KServe AuthPolicy still requires a valid Kubernetes identity with model access. Do not use the MaaS API key for this separate native-auth path.
 
 ```bash
 oc port-forward -n ai-showroom service/showroom-inference-maas-gateway-class \

@@ -42,3 +42,5 @@ python scripts/science.py trainer-export --result /path/to/training-result.json
 ```
 
 This is an explicit export of measured results. It is not automatic Trainer instrumentation, and it does not register or deploy the candidate.
+
+The native Jobs browser rehearsal confirmed the completed job, two workers, per-worker resources, both pods, and measured log output. The Details view currently leaves instrumented epoch/progress fields blank because this script does not emit the Trainer progress protocol. Show the actual logs and MLflow record; do not infer a progress metric from job completion.

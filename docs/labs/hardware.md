@@ -15,7 +15,7 @@ The current reference plan preserves `aiml-node`, adds a smaller single-GPU pool
 
 **(3 + 1) + (2 + 1) + (1 × 4) = 11 physical GPUs**, with at most nine outside upgrade overlap. The user limit remains 16. Recalculate before increasing any maximum or adding a pool. Both new L40S pools use `showroom.openshift.ai/gpu-pool=true`, `nvidia.com/gpu.product=NVIDIA-L40S`, and `nvidia.com/gpu=true:NoSchedule`.
 
-A new `g6e.2xlarge` node became Ready during the September 22 rehearsal; Qwen4B subsequently became Ready and returned successful authenticated responses. It now uses a dedicated private Gateway for a reproducible llm-d request path. Its two-replica overlay requires distinct `g6e.2xlarge` hosts; the second host remains a runtime acceptance item until observed Ready. Node readiness alone does not prove model readiness.
+A new `g6e.2xlarge` node became Ready during the September 22 rehearsal; Qwen4B subsequently became Ready and returned successful authenticated responses. It now uses a dedicated private Gateway for a reproducible llm-d request path. Its two-replica overlay requires distinct `g6e.2xlarge` hosts. The September 22 rehearsal verified both Ready backends on distinct hosts and successful requests through their native Gateway. Node readiness alone does not prove model readiness.
 
 The optional pending Qwen32B/TP4 workload and its dedicated MaaS references were removed from the live cluster after the four-GPU warmup failed to register a node. Its source remains available for a later capacity-verified run. The smaller pool cannot satisfy a four-GPU request. No TP4 or multi-node performance result was recorded. GPU workloads remain outside automatic Argo synchronization.
 

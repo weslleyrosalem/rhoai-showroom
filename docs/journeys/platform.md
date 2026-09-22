@@ -40,7 +40,7 @@ A fair Transformers/vLLM engine benchmark and an eight-GPU routing comparison ar
 | Models / deployments | Which endpoint is actually serving this interaction? | Follow the existing Llama for Aurora application traffic, and private Qwen for the isolated inference experiment. Inspect readiness, replica count, and actual requests. |
 | Hardware profiles | Where would this workload fit? | Match Qwen4B to one L40S per replica. Treat the four-GPU profile as a prepared option requiring Ready four-GPU capacity; do not launch it during the customer visit. |
 | MaaS / API keys | How do platform and visitor consumption differ? | Select the subscription explicitly. Compare the visitor's short quota with the standard application budget and the separately identifiable GuideLLM load. Never display key material. |
-| Playground | Can the assistant use current inventory and policy together? | Ask for a replenishment recommendation for `AUR-001`; inspect the tool's exact SKU, forecast provenance, and required approval. No purchase is executed. |
+| Playground | Can the assistant use current inventory and policy together? | Ask for a replenishment recommendation for `AS-001`; inspect the tool's exact SKU, forecast provenance, and required approval. No purchase is executed. |
 | Observability | Is the platform processing real work? | Correlate the request window with successful requests, errors, token counts, GPU utilization, and endpoint-picker/cache counters. Do not equate pod readiness or a counter increase with model quality. |
 
 ## Product maturity and laboratory scope

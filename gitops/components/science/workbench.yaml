@@ -20,8 +20,9 @@ metadata:
   annotations:
     notebooks.opendatahub.io/inject-auth: 'true'
     opendatahub.io/mlflow-instance: mlflow
+    opendatahub.io/feast-config: aurora_supply
     openshift.io/display-name: Aurora Supply — Data Science Lab
-    openshift.io/description: Synthetic demand, Ray, MLflow, RAG and evaluation notebooks
+    openshift.io/description: Synthetic demand, shared Feast features, Ray, native Trainer, MLflow, RAG and evaluation notebooks
     notebooks.opendatahub.io/last-image-selection: s2i-minimal-notebook:3.5
     opendatahub.io/image-display-name: Jupyter | Minimal | CPU | Python 3.12
 spec:

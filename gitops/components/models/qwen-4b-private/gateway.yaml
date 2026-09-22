@@ -1,53 +1,73 @@
 apiVersion: v1
-kind: List
-items:
-- apiVersion: v1
-  kind: ConfigMap
-  metadata:
-    name: showroom-inference-gateway-config
-    namespace: ai-showroom
-    labels:
-      app.kubernetes.io/part-of: rhoai-showroom
-      app.kubernetes.io/component: private-inference
-  data:
-    service: "spec:\n  type: ClusterIP\n"
-    deployment: "spec:\n  replicas: 1\n  template:\n    spec:\n      containers:\n      - name: istio-proxy\n  \
-      \      resources:\n          requests:\n            cpu: 100m\n            memory: 128Mi\n          limits:\n\
-      \            cpu: \"1\"\n            memory: 512Mi\n"
-- apiVersion: networking.k8s.io/v1
-  kind: NetworkPolicy
-  metadata:
-    name: showroom-inference-admin-only
-    namespace: ai-showroom
-    labels:
-      app.kubernetes.io/part-of: rhoai-showroom
-      app.kubernetes.io/component: private-inference
-  spec:
-    podSelector:
-      matchLabels:
-        gateway.networking.k8s.io/gateway-name: showroom-inference
-    policyTypes:
-    - Ingress
-    ingress: []
-- apiVersion: gateway.networking.k8s.io/v1
-  kind: Gateway
-  metadata:
-    name: showroom-inference
-    namespace: ai-showroom
-    labels:
-      app.kubernetes.io/part-of: rhoai-showroom
-      app.kubernetes.io/component: private-inference
-  spec:
-    gatewayClassName: maas-gateway-class
-    infrastructure:
-      parametersRef:
-        group: ''
-        kind: ConfigMap
-        name: showroom-inference-gateway-config
-    listeners:
-    - name: inference
-      protocol: HTTP
+kind: ConfigMap
+metadata:
+  name: showroom-inference-gateway-config
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: private-inference
+data:
+  service: |
+    spec:
+      type: ClusterIP
+  deployment: |
+    spec:
+      replicas: 1
+      template:
+        spec:
+          containers:
+          - name: istio-proxy
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: "1"
+                memory: 512Mi
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: showroom-inference-admin-only
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: private-inference
+spec:
+  podSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: showroom-inference
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: ogx
+          app.kubernetes.io/instance: lsd-genai-playground
+    ports:
+    - protocol: TCP
       port: 8080
-      allowedRoutes:
-        namespaces:
-          from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: showroom-inference
+  namespace: ai-showroom
+  labels:
+    app.kubernetes.io/part-of: rhoai-showroom
+    app.kubernetes.io/component: private-inference
+spec:
+  gatewayClassName: maas-gateway-class
+  infrastructure:
+    parametersRef:
+      group: ''
+      kind: ConfigMap
+      name: showroom-inference-gateway-config
+  listeners:
+  - name: inference
+    protocol: HTTP
+    port: 8080
+    allowedRoutes:
+      namespaces:
+        from: Same

@@ -50,7 +50,7 @@ def metrics(args):
 
 def prompt(nonce):
     prefix = f"Aurora measurement session {nonce}. Use only the fictional inventory below.\n"
-    prefix += "Policy: recommend only; never place orders. Cite inventory evidence. Orders above USD5000 need manager approval. Supplier lead time is seven days. Maintain fourteen days of stock.\n"
+    prefix += "Policy: recommend only; never place orders. Cite inventory evidence. Proposals above 5000 demo currency units need operations-manager approval; others need assigned-buyer approval. Review supplier lead time. Target twenty-one days of stock.\n"
     prefix += "\n".join(f"SKU-{i:03d}: on_hand={25+i}; daily_demand={2+i%5}; unit_cost_usd={10+i}; supplier=Northstar; last_count=2026-09-21." for i in range(48))
     return [{"role": "system", "content": prefix}, {"role": "user", "content": "In exactly one short sentence, explain whether SKU-003 needs a replenishment review. Do not place an order."}]
 
