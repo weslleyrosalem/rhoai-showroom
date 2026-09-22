@@ -88,10 +88,10 @@ def bootstrap(server, allow_shared_changes=False):
         shared.append((kind,filename,current))
     guard(server);oc('apply','-k',str(ROOT/'gitops/components/foundation'))
     secret('showroom-web-cookie','ai-showroom',{'cookie-secret':secrets.token_urlsafe(24)},server)
-    s3data=secret('showroom-s3-credentials','ai-showroom',{'AWS_ACCESS_KEY_ID':'aurora-'+secrets.token_hex(8),'AWS_SECRET_ACCESS_KEY':secrets.token_urlsafe(36),'AWS_S3_ENDPOINT':'http://showroom-s3.ai-showroom.svc:8333','AWS_DEFAULT_REGION':'us-east-1'},server,match_keys=('AWS_S3_ENDPOINT','AWS_DEFAULT_REGION'))
+    s3data=secret('showroom-s3-credentials','ai-showroom',{'AWS_ACCESS_KEY_ID':'aurora-'+secrets.token_hex(8),'AWS_SECRET_ACCESS_KEY':secrets.token_urlsafe(36),'AWS_S3_ENDPOINT':'http://showroom-s3.ai-showroom.svc.cluster.local:8333','AWS_DEFAULT_REGION':'us-east-1'},server,match_keys=('AWS_S3_ENDPOINT','AWS_DEFAULT_REGION'))
     values={k:base64.b64decode(v).decode() for k,v in s3data.items()}
     secret('showroom-s3-credentials','redhat-ods-applications',values,server,match_keys=tuple(values))
-    secret('mlflow-artifact-connection','ai-showroom',{**values,'AWS_S3_BUCKET':'aurora-artifacts','AWS_S3_ENDPOINT':'http://showroom-s3.ai-showroom.svc:8333','AWS_DEFAULT_REGION':'us-east-1'},server,match_keys=tuple(values))
+    secret('mlflow-artifact-connection','ai-showroom',{**values,'AWS_S3_BUCKET':'aurora-artifacts','AWS_S3_ENDPOINT':'http://showroom-s3.ai-showroom.svc.cluster.local:8333','AWS_DEFAULT_REGION':'us-east-1'},server,match_keys=tuple(values))
     secret('aurora-pgvector-credentials','ai-showroom',{'POSTGRESQL_USER':'vectoruser','POSTGRESQL_DATABASE':'vectordb','POSTGRESQL_PASSWORD':secrets.token_urlsafe(36)},server)
     # This internal connection uses network isolation; the placeholder is not an authentication credential.
     secret('aurora-ogx-connection','ai-showroom',{'OGX_CLIENT_BASE_URL':'http://lsd-genai-playground-service.ai-showroom.svc:8321','OGX_CLIENT_API_KEY':'internal-demo-no-external-access'},server,match_keys=('OGX_CLIENT_BASE_URL',))

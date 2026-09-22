@@ -204,6 +204,10 @@ spec:
             matchLabels: {kubernetes.io/metadata.name: redhat-ods-applications}
           podSelector:
             matchLabels: {app: rhods-dashboard}
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: redhat-ods-applications}
+          podSelector:
+            matchLabels: {deployment: autorag-ui}
       ports:
         - {port: 8321, protocol: TCP}
     - from:
