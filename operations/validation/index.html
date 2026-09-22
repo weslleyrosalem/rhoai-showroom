@@ -594,6 +594,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#notebook-rehearsal-and-extended-presentation-window" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notebook rehearsal and extended presentation window
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2190,6 +2201,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#notebook-rehearsal-and-extended-presentation-window" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notebook rehearsal and extended presentation window
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2277,6 +2299,11 @@
 <td>Functional flow passed; a later factual prose error is preserved in the human-review queue, with the deterministic proposal still correct</td>
 </tr>
 <tr>
+<td>Workbench inference and MaaS notebooks</td>
+<td>September 22, 13:38–13:40 UTC: configurable 07 passed its test and six-request loop; real GuideLLM 08 completed 3/3 with no errors or incomplete requests; MaaS 09 discovery and one chat returned 200 with 156 provider-reported tokens</td>
+<td>All three executed in the persistent Aurora Inference Demo kernel. GuideLLM observed 0.802 s mean latency and 40.46 ms client streaming TTFT across three requests; functional observation, not capacity or causal llm-d evidence</td>
+</tr>
+<tr>
 <td>Workbench and DSPA</td>
 <td>Running; actual distributed jobs and native optimization pipeline results inspected</td>
 <td>Individual notebook and pipeline paths passed</td>
@@ -2353,7 +2380,7 @@
 </tr>
 </tbody>
 </table>
-<p>The active cloud configuration has a conservative maximum of 11 physical GPUs, including every pool maximum and upgrade surge. The user-authorized hard ceiling is 16. These are allocation bounds, not the number of GPUs running continuously, and optional profiles cannot be combined without recalculating them.</p>
+<p>The earlier capacity plan had a conservative maximum of 11 physical GPUs, including pool maxima and upgrade surge. The user is revising capacity through Red Hat OCM; that earlier bound is not a verification of the current pool settings. The authorized hard ceiling remains 16 physical GPUs. Recalculate every pool maximum plus surge before further changes. A registered Ready node must also advertise allocatable GPUs before it counts as available inference capacity.</p>
 <p>The private Qwen gateway previously alternated between one and two desired replicas: its local Deployment override conflicted with the inherited autoscaler's minimum. The profile now sets both autoscaler bounds to one through its per-Gateway ConfigMap. This keeps the existing demo topology and does not change GPU capacity or shared gateway defaults. This optional profile was applied separately; the core Argo application's healthy status is not evidence that it reconciles this ConfigMap. See the <a href="https://github.com/weslleyrosalem/rhoai-showroom/tree/main/gitops/components/models/qwen-4b-private">private inference profile</a> for the reproducible configuration.</p>
 <p>The original Garak quick run used a one-example DAN marker detector. A marker alone does not establish harmful behavior. The final <a href="../../labs/owasp-evaluations/">matched OWASP pair</a> has complete per-response evidence and explicit matching thresholds: lower ASR is better; a zero-hit benchmark gate corresponds to an overall transformed score threshold of 1.0. Both final results fail consistently. The current deterministic NeMo regex rules do not improve the selected 33-response corpus. This is a four-probe subset mapped to the 2025 taxonomy, with separate controls and untested gaps for all ten risks; it is not full OWASP coverage. Report JSONL and HTML were explicitly uploaded through the workspace-aware MLflow SDK, then downloaded and SHA256-verified.</p>
 <h2 id="journey-acceptance-criteria">Journey acceptance criteria<a class="headerlink" href="#journey-acceptance-criteria" title="Permanent link">&para;</a></h2>
@@ -2370,6 +2397,9 @@
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>python<span class="w"> </span>scripts/showroom.py<span class="w"> </span>status<span class="w"> </span>--expected-server<span class="w"> </span><span class="s2">"</span><span class="nv">$SHOWROOM_SERVER</span><span class="s2">"</span>
 </code></pre></div>
 <p>MCP tests require their own dependencies, documented in the Aurora Tools README. Sanitize cluster evidence before publishing. Credentials, private hostnames, and customer data do not belong in this public guide.</p>
+<h2 id="notebook-rehearsal-and-extended-presentation-window">Notebook rehearsal and extended presentation window<a class="headerlink" href="#notebook-rehearsal-and-extended-presentation-window" title="Permanent link">&para;</a></h2>
+<p>The three <a href="../../labs/workbench/">Workbench notebooks</a> have editable endpoint/model settings, explicit authentication boundaries, and bounded requests. The MaaS key was supplied through the real Jupyter password-input channel; no key was written into notebook source or output. Its optional quota exercise remained disabled. The supplied synthetic approval answer identified the required Operations manager; successful transport alone is not a general model-quality verdict. The idempotent kernel setup also passed on the persistent Workbench without downloading packages or starting inference.</p>
+<p>For the revised September 22 presentation, the sustained load's persistent rate cap is <strong>0.05 requests/second through at least 12:30 p.m. Eastern</strong>. The original runner retains concurrency 1 until 11:00 a.m. and a ceiling of 2 afterward; only the offered-rate cap was changed, without restarting the Job. The scheduled readiness check restores the prior cap after 12:30 p.m., preserving any later user change. The absolute September 23, 11:59 a.m. Eastern stop remains unchanged.</p>
 
 
 

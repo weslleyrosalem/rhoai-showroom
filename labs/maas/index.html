@@ -2345,6 +2345,7 @@
 </code></pre></div>
 <p>On a new cluster, use <code>interactive</code> after the GPU preflight. <code>core</code> installs platform configuration only; its model reference cannot serve requests before a ready backend exists.</p>
 <h2 id="test-drive">Test drive<a class="headerlink" href="#test-drive" title="Permanent link">&para;</a></h2>
+<p>For the application view, open <code>09-maas-api.ipynb</code> in the <a href="../workbench/">Aurora Workbench</a>. Enter the approved inference endpoint and exact model ID, then supply the key through its masked prompt. Run the single-request path first; the optional quota probe is off by default.</p>
 <ol>
 <li>In the dashboard, create short-lived keys, selecting each subscription <strong>explicitly</strong>. <code>aiadmin</code> may also belong to the higher-priority <code>subplus</code>; automatic selection would invalidate the small-quota experiment.</li>
 <li>Store keys in a secret manager or session environment variables. Keep them out of shell history, documents, and screenshots.</li>
