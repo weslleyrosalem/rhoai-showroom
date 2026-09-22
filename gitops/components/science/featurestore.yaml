@@ -5,6 +5,7 @@ metadata:
   namespace: ai-showroom
   labels:
     app.kubernetes.io/part-of: rhoai-showroom
+    feature-store-ui: enabled
 spec:
   feastProject: aurora_supply
   feastProjectDir:
