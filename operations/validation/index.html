@@ -605,6 +605,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#closeout-pending-access-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Closeout pending access recovery
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2242,6 +2253,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#closeout-pending-access-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Closeout pending access recovery
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2264,6 +2286,7 @@
 
 <h1 id="validation-status">Validation status<a class="headerlink" href="#validation-status" title="Permanent link">&para;</a></h1>
 <p>Validation started on <strong>September 22, 2026 UTC</strong>. This record separates actual functional tests, deployed resources, accepted schemas, and optional features. A Ready Deployment does not prove an entire journey works.</p>
+<p><strong>September 23, 16:01 UTC: the sustained-load deadline has passed; stop verification is pending.</strong> Monitoring access expired, and the post-deadline identity check was unauthorized. The last confirmed workload snapshot is from September 23 at 02:19 UTC. The configured automatic stop is not evidence that the workload actually stopped. Final results and current service health still require authenticated verification.</p>
 <table>
 <thead>
 <tr>
@@ -2300,8 +2323,8 @@
 </tr>
 <tr>
 <td>GuideLLM</td>
-<td>At 10:44 UTC: 36 persisted reports; latest completed block: 60 successes, 0 errors, 0 incomplete requests; earlier qualification failures remain in the full history</td>
-<td>Sustained run active; reduced load September 22, 12:00–15:00 UTC; absolute deadline September 23 at 15:59 UTC</td>
+<td>Last verified September 23, 02:19 UTC: 126 persisted reports; 16,887 successes, 17 historical errors, 52 incomplete requests; latest completed block 60/60 successful</td>
+<td>Deadline September 23, 15:59 UTC has passed. Actual stop and final totals remain unverified because monitoring access expired. No restart was attempted</td>
 </tr>
 <tr>
 <td>MaaS</td>
@@ -2356,7 +2379,7 @@
 <tr>
 <td>Native Playground</td>
 <td>Qwen chat; returns policy with clickable citation; unsupported facts rejected; actual MCP stock and proposal results</td>
-<td>Browser test drive passed; temporary scoped MCP credential expires September 22 at 17:57 UTC</td>
+<td>Earlier browser test drive passed; temporary scoped MCP credential expired September 22 at 17:57 UTC. Renew it before another MCP test drive</td>
 </tr>
 <tr>
 <td>Native Trainer</td>
@@ -2444,7 +2467,10 @@
 <p>MCP tests require their own dependencies, documented in the Aurora Tools README. Sanitize cluster evidence before publishing. Credentials, private hostnames, and customer data do not belong in this public guide.</p>
 <h2 id="notebook-rehearsal-and-extended-presentation-window">Notebook rehearsal and extended presentation window<a class="headerlink" href="#notebook-rehearsal-and-extended-presentation-window" title="Permanent link">&para;</a></h2>
 <p>The three <a href="../../labs/workbench/">Workbench notebooks</a> have editable endpoint/model settings, explicit authentication boundaries, and bounded requests. The MaaS key was supplied through the real Jupyter password-input channel; no key was written into notebook source or output. Its optional quota exercise remained disabled. The supplied synthetic approval answer identified the required Operations manager; successful transport alone is not a general model-quality verdict. The idempotent kernel setup also passed on the persistent Workbench without downloading packages or starting inference.</p>
-<p>For the revised September 22 presentation, the sustained load's persistent rate cap is <strong>0.05 requests/second through at least 12:30 p.m. Eastern</strong>. The original runner retains concurrency 1 until 11:00 a.m. and a ceiling of 2 afterward; only the offered-rate cap was changed, without restarting the Job. The scheduled readiness check restores the prior cap after 12:30 p.m., preserving any later user change. The absolute September 23, 11:59 a.m. Eastern stop remains unchanged.</p>
+<p>For the revised September 22 presentation, the sustained load retained a <strong>0.05 requests/second cap through 12:30 p.m. Eastern</strong>. The original runner used concurrency 1 until 11:00 a.m. and a ceiling of 2 afterward. At 12:47 p.m., the scheduled check restored the prior cap of 0.5 without restarting the Job. Subsequent blocks at 0.25 and 0.5 requests/second completed 150 and 300 successful requests respectively, with one incomplete request in each. Inspection traced those two incomplete requests to the measurement-duration cutoff; they remain counted as incomplete. This does not establish the cause of every incomplete request in the full history.</p>
+<h2 id="closeout-pending-access-recovery">Closeout pending access recovery<a class="headerlink" href="#closeout-pending-access-recovery" title="Permanent link">&para;</a></h2>
+<p>The absolute deadline was September 23, 2026 at 11:59 a.m. Eastern (15:59 UTC). The last authenticated check verified the runner configuration and a dedicated load credential valid beyond that deadline. Administrative login expiration does not itself stop or restart the workload.</p>
+<p>Previously collected local evidence is retained, but the final reports on the results volume have not been retrieved. After restoring access, verify the existing Job and Pod termination, inspect the runner's final stop event, and preserve the complete JSON, CSV, and HTML reports with checksums. If the existing workload is still running, stop only that load workload while preserving its results volume and interactive model services. <strong>Do not restart or recreate the load after the deadline.</strong> Until these checks succeed, use the timestamped figures above as partial observations, not final benchmark totals or current availability claims.</p>
 
 
 
