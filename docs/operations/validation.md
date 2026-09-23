@@ -2,6 +2,8 @@
 
 Validation started on **September 22, 2026 UTC**. This record separates actual functional tests, deployed resources, accepted schemas, and optional features. A Ready Deployment does not prove an entire journey works.
 
+**September 23, 16:01 UTC: the sustained-load deadline has passed; stop verification is pending.** Monitoring access expired, and the post-deadline identity check was unauthorized. The last confirmed workload snapshot is from September 23 at 02:19 UTC. The configured automatic stop is not evidence that the workload actually stopped. Final results and current service health still require authenticated verification.
+
 | Area | Observed evidence | Status |
 |---|---|---|
 | Namespace and storage | ai-showroom, quota, RBAC, and S3 storage are available | Deployed |
@@ -9,7 +11,7 @@ Validation started on **September 22, 2026 UTC**. This record separates actual f
 | MLflow | Training/evaluation artifacts exported; current English app traces show retrieval, two actual tools, LLM tokens, and output policy checks | Persisted trace data, native timeline, usage, and two post-fix native tool calls validated; two actual responses await human review |
 | Tempo | Ready, 5 GiB persistent storage, 168-hour retention; authenticated query API passed at 07:27 UTC, with no traces in the six-hour search window | Workload integration not demonstrated; the validated Aurora trace path uses MLflow |
 | GitOps | At 07:20 UTC: Synced/Healthy at source revision `d806cde`; cosmetic namespace drift restored within a 32-second observation window | Reconciliation and self-heal passed |
-| GuideLLM | At 10:44 UTC: 36 persisted reports; latest completed block: 60 successes, 0 errors, 0 incomplete requests; earlier qualification failures remain in the full history | Sustained run active; reduced load September 22, 12:00–15:00 UTC; absolute deadline September 23 at 15:59 UTC |
+| GuideLLM | Last verified September 23, 02:19 UTC: 126 persisted reports; 16,887 successes, 17 historical errors, 52 incomplete requests; latest completed block 60/60 successful | Deadline September 23, 15:59 UTC has passed. Actual stop and final totals remain unverified because monitoring access expired. No restart was attempted |
 | MaaS | Anonymous 401; standard 200; limited subscription 200→429; recovery 200 | Functional test passed |
 | NeMo | Valid inputs/outputs allowed; synthetic email/secret/override blocked | Direct checks passed |
 | MCP and IPP | Public SDK tools; 14 auth/input cases; unsafe output 403; checker outage 503; private bypass denials | Functional security gates passed |
@@ -20,7 +22,7 @@ Validation started on **September 22, 2026 UTC**. This record separates actual f
 | Live llm-d notebook | At 13:55 UTC, notebook 10 ran both paths afresh: 32/32 successful requests, no errors/incomplete, backend 8/8 in both, EPP 0 versus 16 | Actual kernel execution and charts passed; controller cleanup confirmed. Cache fractions 86.43%/86.29% did not show a prefix-affinity gain; smaller observed llm-d latency is not causal proof |
 | AHEAD Granite MaaS | At 13:59 UTC: two Ready replicas, dedicated tenant route, one-model discovery 200, chat 200 / 80 tokens, anonymous 401, unsubscribed model 403, both raw backends denied from Workbench | Scoped presenter subscription passed; temporary key revoked. Optional profile is separate from core Argo; existing tenant-isolation placeholder and authorization cache limits remain documented |
 | Workbench and DSPA | Running; actual distributed jobs and native optimization pipeline results inspected | Individual notebook and pipeline paths passed |
-| Native Playground | Qwen chat; returns policy with clickable citation; unsupported facts rejected; actual MCP stock and proposal results | Browser test drive passed; temporary scoped MCP credential expires September 22 at 17:57 UTC |
+| Native Playground | Qwen chat; returns policy with clickable citation; unsupported facts rejected; actual MCP stock and proposal results | Earlier browser test drive passed; temporary scoped MCP credential expired September 22 at 17:57 UTC. Renew it before another MCP test drive |
 | Native Trainer | Two CPU workers on distinct hosts; complete job, resource/pod/log tabs inspected; holdout MAE0.82070 vs baseline1.33036 | Distributed training and native Jobs UI passed |
 | Feature Store | Feast0.65 Ready; eight-SKU materialization; authenticated200 and anonymous 401 | Runtime and native overview, lineage, features, historical dataset, and connected Aurora Workbench passed |
 | Prompt registry | Version1 @baseline and Version2 @demo visible with actual templates | Native version details passed; application runtime prompt remains separate |
@@ -67,4 +69,10 @@ MCP tests require their own dependencies, documented in the Aurora Tools README.
 
 The three [Workbench notebooks](../labs/workbench.md) have editable endpoint/model settings, explicit authentication boundaries, and bounded requests. The MaaS key was supplied through the real Jupyter password-input channel; no key was written into notebook source or output. Its optional quota exercise remained disabled. The supplied synthetic approval answer identified the required Operations manager; successful transport alone is not a general model-quality verdict. The idempotent kernel setup also passed on the persistent Workbench without downloading packages or starting inference.
 
-For the revised September 22 presentation, the sustained load's persistent rate cap is **0.05 requests/second through at least 12:30 p.m. Eastern**. The original runner retains concurrency 1 until 11:00 a.m. and a ceiling of 2 afterward; only the offered-rate cap was changed, without restarting the Job. The scheduled readiness check restores the prior cap after 12:30 p.m., preserving any later user change. The absolute September 23, 11:59 a.m. Eastern stop remains unchanged.
+For the revised September 22 presentation, the sustained load retained a **0.05 requests/second cap through 12:30 p.m. Eastern**. The original runner used concurrency 1 until 11:00 a.m. and a ceiling of 2 afterward. At 12:47 p.m., the scheduled check restored the prior cap of 0.5 without restarting the Job. Subsequent blocks at 0.25 and 0.5 requests/second completed 150 and 300 successful requests respectively, with one incomplete request in each. Inspection traced those two incomplete requests to the measurement-duration cutoff; they remain counted as incomplete. This does not establish the cause of every incomplete request in the full history.
+
+## Closeout pending access recovery
+
+The absolute deadline was September 23, 2026 at 11:59 a.m. Eastern (15:59 UTC). The last authenticated check verified the runner configuration and a dedicated load credential valid beyond that deadline. Administrative login expiration does not itself stop or restart the workload.
+
+Previously collected local evidence is retained, but the final reports on the results volume have not been retrieved. After restoring access, verify the existing Job and Pod termination, inspect the runner's final stop event, and preserve the complete JSON, CSV, and HTML reports with checksums. If the existing workload is still running, stop only that load workload while preserving its results volume and interactive model services. **Do not restart or recreate the load after the deadline.** Until these checks succeed, use the timestamped figures above as partial observations, not final benchmark totals or current availability claims.
